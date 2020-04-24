@@ -9,23 +9,23 @@ public class server{
 		System.out.println( "Klient podlaczony" );
 		Scanner scan = new Scanner( System.in );
 		
-		DataInputStream din = new DataInputStream( s.getInputStream() );
-		DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
+		BufferedReader din = new BufferedReader( new InputStreamReader( s.getInputStream() ) );
+		PrintWriter dout = new PrintWriter( s.getOutputStream(), true );
 		
 		Thread writer = new Thread( () -> {
-			try{
+			//try{
 				String messageOut = "";
 				while( !messageOut.equals( "q" ) && !messageOut.equals( "quit" ) ){
-					dout.writeUTF( messageOut );
+					dout.println( messageOut );
 					messageOut = scan.nextLine();
 				}
-			} catch( IOException ex ){};
+			//} catch( IOException ex ){};
 		});
 		Thread reader = new Thread( () -> {
 			try{	
 				String messageIn = "";
 				while( true ){
-					messageIn = din.readUTF();
+					messageIn = din.readLine();
 					System.out.print( "Michal: " + messageIn + "\n" );
 					messageIn = "";
 				}
