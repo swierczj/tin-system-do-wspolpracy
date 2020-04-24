@@ -6,18 +6,16 @@ public class client{
 	public static void main( String args[] ) throws IOException{
 		Socket s = new Socket( "25.139.176.21", 54111 );
 		DataInputStream din = new DataInputStream( s.getInputStream() );
-		DataOutputStream dout = new DataOutputStream( s.getOutputStream() );
+		PrintWriter dout = new PrintWriter( s.getOutputStream(), true );
 		Scanner scan = new Scanner( System.in );
 		
 		Thread writer = new Thread( () -> {
-			try{
 				String messageOut = "";
 				while( !messageOut.equals( "q" ) && !messageOut.equals( "quit" ) ){
-					dout.writeUTF( messageOut );
+					dout.println( messageOut );
 					messageOut = scan.nextLine();
 				}
 				return;
-			} catch( IOException ex ){};
 		});
 		Thread reader = new Thread( () -> {
 			try{	
