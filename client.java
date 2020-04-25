@@ -1,10 +1,16 @@
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 
 public class Client{
+	public static String messageIn = "";
+	public static boolean isAlive = true;
+	public static Thread reader, writer, keepAlive;
+	
 	public static void main( String args[] ) throws IOException{
 		Socket s;
+		
 		String ip = "localhost";
 		int port = 54000;
 		
@@ -24,30 +30,51 @@ public class Client{
 		PrintWriter dout = new PrintWriter( s.getOutputStream(), true );
 		Scanner scan = new Scanner( System.in );
 		
-		Thread reader = new Thread( () -> {
+		keepAlive = new Thread( () -> {
 			try{
-				String messageIn = "";
+				while( true ){
+					Thread.sleep( 10000 );
+					isAlive = false;
+					dout.println( "Am I connected?" );
+					Thread.sleep( 5000 );
+					if( !isAlive ) break;
+				}
+				s.close();
+				reader.interrupt();
+				writer.interrupt();
+				System.out.print( "Connection broken" );
+			}catch( InterruptedException iEx ){}
+			catch( IOException ioEx ){};
+		});
+			
+		reader = new Thread( () -> {
+			try{
 				while( true ){
 					messageIn = din.readLine();
+					isAlive = true;
 					System.out.print( "Server: " + messageIn + "\n" );
 					messageIn = "";
 				}
 			}catch( IOException ex ){};
 		});
 		
-		Thread writer = new Thread( () -> {
+		writer = new Thread( () -> {
 			try{
-				String messageOut = "";
+				String messageOut = "connected";
 				while( !messageOut.equals( "q" ) && !messageOut.equals( "quit" ) ){
 					dout.println( messageOut );
 					messageOut = scan.nextLine();
 				}
 				s.close();
 				reader.interrupt();
+				keepAlive.interrupt();
 			}catch( IOException ex ){};
 		});
+		
+			
 
 		writer.start();
 		reader.start();
+		keepAlive.start();
 	}
 }
