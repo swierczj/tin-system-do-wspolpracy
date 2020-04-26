@@ -4,9 +4,10 @@ import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 public class Client{
-	public static String messageIn = "";
-	public static boolean isAlive = true;
-	public static Thread reader, writer, keepAlive;
+	private static String messageIn = "";
+	private static volatile boolean isAlive = true;
+	private static Thread reader, writer, keepAlive;
+	private static volatile boolean running = true;
 	
 	public static void main( String args[] ) throws IOException{
 		Socket s;
@@ -32,47 +33,47 @@ public class Client{
 		
 		keepAlive = new Thread( () -> {
 			try{
-				while( true ){
+				while( isAlive && running ){
 					Thread.sleep( 10000 );
 					isAlive = false;
 					dout.println( "Am I connected?" );
 					Thread.sleep( 5000 );
-					if( !isAlive ) break;
 				}
-				s.close();
-				reader.interrupt();
-				writer.interrupt();
 				System.out.print( "Connection broken" );
-			}catch( InterruptedException iEx ){}
-			catch( IOException ioEx ){};
+				running = false;
+				scan.close();
+			}catch( InterruptedException iEx ){};
 		});
 			
 		reader = new Thread( () -> {
 			try{
-				while( true ){
+				while( running ){
 					messageIn = din.readLine();
+					if( messageIn == null ) break;
 					isAlive = true;
 					System.out.print( "Server: " + messageIn + "\n" );
 					messageIn = "";
 				}
-			}catch( IOException ex ){};
+				scan.close();
+				System.out.print( "Server disconnected you\n" );
+				running = false;
+			}catch( IOException ex ){System.out.print( "reader closed\n" );};
 		});
 		
 		writer = new Thread( () -> {
 			try{
 				String messageOut = "connected";
-				while( !messageOut.equals( "q" ) && !messageOut.equals( "quit" ) ){
+				while( !messageOut.equals( "q" ) && !messageOut.equals( "quit" ) && running ){
 					dout.println( messageOut );
 					messageOut = scan.nextLine();
 				}
 				s.close();
-				reader.interrupt();
-				keepAlive.interrupt();
-			}catch( IOException ex ){};
+				din.close();
+				running = false;
+			}
+			catch( IOException ex ){};
 		});
 		
-			
-
 		writer.start();
 		reader.start();
 		keepAlive.start();
