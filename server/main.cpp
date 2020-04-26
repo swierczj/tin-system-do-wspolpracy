@@ -10,10 +10,11 @@
 #include "serv_func.h"
 
 //windows
+/*
 #include <winsock.h>
 #include <windows.h>
 #include <ws2tcpip.h>
-
+*/
 
 int main()
 {
