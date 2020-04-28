@@ -7,13 +7,16 @@
 #include <string>
 #include <cstring>
 #include <sys/ioctl.h>
+#include <sstream>
+#include <netinet/tcp.h>
 #include "serv_func.h"
 
 //windows
+/*
 #include <winsock.h>
 #include <windows.h>
 #include <ws2tcpip.h>
-
+*/
 
 int main()
 {
@@ -151,7 +154,14 @@ int main()
                     while (true)
                     {
                         memset(buffer, 0, buff_size);
-                        // check if recv blocks
+                        // setting socket to be nonblocking
+                        if(ioctl(descriptor, FIONBIO, argp) == -1)
+                        {
+                            std::cerr << "ioctl() error with descriptor:" << descriptor << std::endl;
+                            close_conn = true;
+                            break;
+                        }
+                        //std::cout << "blocked on recv() with descriptor " << descriptor << std::endl;
                         int bytes_recv = recv(descriptor, buffer, buff_size, 0);
                         if (bytes_recv < 0)
                         {
@@ -170,22 +180,35 @@ int main()
                             break;
                         }
 
-                        //echo message back
-                        std::cout << "received: " << std::string(buffer, 0, bytes_recv);
-                        std::string echo_msg = "echo from server: ";
-                        echo_msg.append(std::string(buffer, 0, bytes_recv));
-                        if (send(descriptor, echo_msg.c_str(), echo_msg.size() + 1, 0) < 0)
+                        // setting QUICKACK option on, important in real time services, likely TCP_NODELAY needs to be turnt on too
+                        if (setsockopt(descriptor, IPPROTO_TCP, TCP_QUICKACK, argp, sizeof(opt_arg)) == -1)
                         {
-                            std::cerr << "send() error" << std::endl;
+                            std::cerr << "setsockopt() error with QUICKACK" << std::endl;
                             close_conn = true;
                             break;
                         }
 
-                        // send other clients the message
-                        // for (int out_socket = 0; out_socket < master.fd_count; out_socket++)
+                        std::cout << "server received: " << std::string(buffer, 0, bytes_recv) << std::endl;
+                        //forward message to other clients
+                        //forward_message()
+                        for (int tmp_desc = 0; tmp_desc <= max_sd; tmp_desc++)
+                        {
+                            if (FD_ISSET(tmp_desc, &master) && tmp_desc != listening && tmp_desc != descriptor)
+                            {
+                                std::ostringstream ss;
+                                ss << "SOCKET#" << tmp_desc << ": " << buffer;
+                                std::string msg = ss.str();
+                                if (send(tmp_desc, msg.c_str(), msg.size() + 1, 0) < 0)
+                                {
+                                    std::cerr << "send() error from SOCK#" << tmp_desc << std::endl;
+                                    close_conn = true;
+                                    break;
+                                }
+                            }
+                        }
 
                     } // while
-                    // if the close_conn was set true, we need to clean up and change number of descriptors
+                    // if the close_conn was set true, we need to clean up and change the max descriptor number
                     if (close_conn)
                     {
                         close(descriptor);

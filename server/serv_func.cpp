@@ -20,3 +20,12 @@ void print_host(sockaddr_in &addres)
     }
 }
 
+//std::string& get_host_name(sockaddr_in &addres)
+//{
+//    char host[NI_MAXHOST]; // client's remote name
+//    memset(host, 0, NI_MAXHOST);
+//    int address_size = sizeof(addres);
+//
+//
+//}
+
