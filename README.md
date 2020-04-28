@@ -23,7 +23,7 @@ Jest to prosty skrypt w Pythonie uruchamiany poleceniem:
 Wymagany jest Python3.#. Jako, że jest to etap jeszcze testowania to część rzeczy jest zahardkodowana czy nawet momentami bez sensu. 
 
 #### Serwer
-
+Serwer otrzymuje dane od użytkowników i przesyła dalej innym użytkownikom połączonym z serwerem. Działa na zasadzie pokoju rozmów. Można uruchomić poprzez napisany Makefile, właściwe pliki znajdują się w folderze server na branchu o tej samej nazwie.
 
 
 
