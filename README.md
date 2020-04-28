@@ -19,7 +19,9 @@ Na potrzeby tego etapu zostały stworzone trzy podstawowe aplikacje klienckie i 
 
 #### Klient administratorski
 Jest to prosty skrypt w Pythonie uruchamiany poleceniem:
-> Python3 client_main.py
+'''
+ Python3 client_main.py
+'''
 Wymagany jest Python3.#. Jako, że jest to etap jeszcze testowania to część rzeczy jest zahardkodowana czy nawet momentami bez sensu 
 
 
