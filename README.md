@@ -12,6 +12,14 @@ Na potrzeby tego etapu zostały stworzone trzy podstawowe aplikacje klienckie i 
 
 
 #### Klient desktopowy
+Aplikacja napisana w Javie. Działa na 3 oddzielnych wątkach: reader, writer i keep-alive.<br>
+* reader odpowiada za asynchroniczne czytanie danych z socketu.<br>
+* writer czyta strumień wejścia z klawiatury i wysyła dane przez socket<br>
+* keep-alive co 15 sekund wysyła wiadomość "Am I alive?" i jeśli w przeciągu 5 sekund nie uzyska odpowiedzi to informuje o zerwanym połączeniu. <br><br>
+
+Argumenty wywołania:
+1. Ip serwera (opcjonalny - domyślnie localhost)
+2. Port (opcjonalny - domyślnie 54000)
 
 #### Klient webowy 
 
