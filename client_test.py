@@ -15,7 +15,7 @@ HOST1 = "25.139.176.21"
 HOST = "127.0.0.1"
 PORT = 54000
 
-CONNECTION_ATTEMPTS = 2
+CONNECTION_ATTEMPTS = 3
 
 MSG_LEN = 64
 
@@ -58,7 +58,7 @@ class Client(threading.Thread):
                 if(it < no_attempts-1):
                     continue
                 self.client_socket.close()
-                sys.exit()
+                #sys.exit()
 
 
     def send_receive_loop(self):
@@ -93,6 +93,7 @@ class Client(threading.Thread):
 
 
     def send(self,message):
+
         try:
             total_sent = 0
             while total_sent < len(message):
@@ -109,6 +110,7 @@ class Client(threading.Thread):
             self.client_socket.close()
             sys.exit()
 
+
     def receive(self,mess_len):
 
         try:
@@ -120,7 +122,7 @@ class Client(threading.Thread):
                 """ handling closed connection from server """
                 log.info("Server closed connection ")
                 self.client_socket.close()
-                time.sleep(10)
+
                 sys.exit()
 
         except socket.error as e:#ConnectionResetError
@@ -130,10 +132,6 @@ class Client(threading.Thread):
             sys.exit()
             #self.client_socket.close()
 
-
-    """ czy napewno potrzbne"""
-    def recoonnect(self):
-        pass
 
 
 log.debug('Client import succesful.')
