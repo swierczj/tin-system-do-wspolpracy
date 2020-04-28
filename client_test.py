@@ -58,7 +58,7 @@ class Client(threading.Thread):
                 if(it < no_attempts-1):
                     continue
                 self.client_socket.close()
-                #sys.exit()
+                sys.exit()
 
 
     def send_receive_loop(self):
