@@ -79,6 +79,10 @@ public class Client {
         keepAlive.start();
     }
 
+    public int login() {
+        return 0;
+    }
+
 
     private int createReader() {
         AtomicInteger toReturn = new AtomicInteger(0);
