@@ -11,13 +11,9 @@ public class main {
         Client client = new Client(ip, port);
         if (client.connect()==0)
         {
-            client.createKeepAlive();
-            client.createReader();
-            client.createWriter();
+            client.createThreads();
 
-            client.getKeepAlive().start();
-            client.getReader().start();
-            client.getWriter().start();
+            client.startThreads();
         }
 
     }

@@ -66,7 +66,21 @@ public class Client {
         return 0;
     }
 
-    public int createReader() {
+    public int createThreads() {
+        createWriter();
+        createReader();
+        createKeepAlive();
+        return 0;
+    }
+
+    public void startThreads() {
+        writer.start();
+        reader.start();
+        keepAlive.start();
+    }
+
+
+    private int createReader() {
         AtomicInteger toReturn = new AtomicInteger(0);
         reader = new Thread( () -> {
             try{
@@ -88,7 +102,7 @@ public class Client {
         return toReturn.intValue();
     }
 
-    public int createWriter() {
+    private int createWriter() {
         AtomicInteger toReturn = new AtomicInteger(0);
         writer = new Thread( () -> {
             try{
@@ -109,7 +123,7 @@ public class Client {
     }
 
 
-    public int createKeepAlive() {
+    private int createKeepAlive() {
         AtomicInteger toReturn = new AtomicInteger(0);
         keepAlive = new Thread( () -> {
             try{
