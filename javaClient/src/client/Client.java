@@ -53,19 +53,20 @@ public class Client{
         return writer;
     }
 
-    private int getHeader(){
-        Header header = Header.parseFrom( input );
+    private int getHeader() throws IOException{
+        String header = input.readLine();
         if( header == null ) return -1;        // Message is null - end of story
+        int type = Integer.parseInt( header.substring( 4, 8 ) );
         isAlive = true;
-        switch( header.getMsgType() ){
-            case PUBLIC_KEY:
-                getServerPublicKey();
-                break;
-            case STATEMENT:
+        switch( type ){
+            case 1:
                 getStatement();
                 break;
-            case EDIT:
+            case 2:
                 getEdit();
+                break;
+            case 3:
+                getServerPublicKey();
                 break;
         }
         return 0;
@@ -103,11 +104,11 @@ public class Client{
 
     private void askForPublicKey(){
         String msg = "Dawaj mi kurwa ten klucz!";
-        Header.Builder header = Header.newBuilder();
-        header.setMsgLength( msg.length() );
-        header.setMsgType( STATEMENT );
         Protocol.Statement.Builder statement = Protocol.Statement.newBuilder();
         statement.setInfo( PUBLIC_KEY_REQUEST );
+        Header.Builder header = Header.newBuilder();
+        header.setMsgLength(  );
+        header.setMsgType( STATEMENT );
         header.build().writeTo( output );
         statement.build().writeTo( output );
     }
