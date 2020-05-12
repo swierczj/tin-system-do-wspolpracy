@@ -53,13 +53,52 @@ public class Client{
         return writer;
     }
 
-    private void getHeader(){
+    private int getHeader(){
         Header header = Header.parseFrom( input );
+        if( header == null ) return -1;        // Message is null - end of story
+        isAlive = true;
         switch( header.getMsgType() ){
             case PUBLIC_KEY:
                 getServerPublicKey();
                 break;
+            case STATEMENT:
+                getStatement();
+                break;
+            case EDIT:
+                getEdit();
+                break;
         }
+        return 0;
+    }
+
+    private void getEdit(){
+        Protocol.Edit edit = Protocol.Edit.parseFrom( input );
+        System.out.print( edit.getData() );
+    } //TODO
+
+    private void getStatement(){
+        Protocol.Statement statement = Protocol.Statement.parseFrom( input );
+        switch( statement.getInfo() ){
+            case KEEP_ALIVE:
+                isAlive = true;
+                break;
+            case REQUEST_LOGIN:
+                login();
+                break;
+            case LOGIN_ACCEPTED:
+                System.out.print( "Login accepted\n" );
+                break;
+            case LOGIN_REJECTED:
+                System.out.print( "Login rejected. Try again\n");
+                login();
+                break;
+            default:
+                System.out.print( "No i co z tego???\n");
+        }
+    } //TODO
+
+    private void login(){
+        //TODO
     }
 
     private void askForPublicKey(){
@@ -117,26 +156,22 @@ public class Client{
         keepAlive.start();
     }
 
-    public int login(){
-        return 0;
-    }
-
-
     private int createReader(){
         AtomicInteger toReturn = new AtomicInteger( 0 );
         reader = new Thread( () -> {
-            try{
-                while( isRunning ){
-                    messageIn = input.readLine();
-                    if( messageIn == null ) break;
-                    isAlive = true;
-                    System.out.print( "Server: " + messageIn + "\n" );
-                    messageIn = "";
-                }
-            }catch( IOException ex ){
-                System.out.print( "reader closed\n" );
-                toReturn.set( -1 );
-            }
+            while( isRunning && getHeader() == 0 );
+//            try{
+//                while( isRunning && getHeader() == 0 ){
+//                    messageIn = input.readLine();
+//                    if( messageIn == null ) break;
+//                    isAlive = true;
+//                    System.out.print( "Server: " + messageIn + "\n" );
+//                    messageIn = "";
+//                }
+//            }catch( IOException ex ){
+//                System.out.print( "reader closed\n" );
+//                toReturn.set( -1 );
+//            }
             scanner.close();
             System.out.print( "Server disconnected you\n" );
             isRunning = false;
