@@ -1,6 +1,5 @@
 package client;
 
-import client.Protocol.Header;
 import client.Protocol.Key;
 import com.google.protobuf.ByteString;
 
@@ -13,13 +12,16 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static client.Protocol.Header.MsgType.*;
 import static client.Protocol.Key.KeyType.PUBLIC;
 import static client.Protocol.Statement.Info.PUBLIC_KEY_REQUEST;
 
 public class Client{
     private static final int HEADER_STATEMENT_LENGTH = 2;
     private static final int HEADER_LENGTH_LENGTH = 2;
+    private static final int LOGIN = 0;
+    private static final int STATEMENT = 1;
+    private static final int EDIT = 2;
+    private static final int PUBLIC_KEY = 3;
 
     private static String ip = null;
     private static int port = 0;
@@ -68,8 +70,8 @@ public class Client{
         return header;
     }
 
-    private String makeHeader( int statement, String msg ){
-            return intToString( statement, HEADER_STATEMENT_LENGTH ) + intToString( msg.length(), HEADER_LENGTH_LENGTH );
+    private String makeHeader( int type, int length ){
+            return intToString( type, HEADER_STATEMENT_LENGTH ) + intToString( length, HEADER_LENGTH_LENGTH );
     }
 
     private int getHeader() throws IOException{
@@ -78,13 +80,13 @@ public class Client{
         int type = Integer.parseInt( header.substring( 4, 8 ) );
         isAlive = true;
         switch( type ){
-            case 1:
+            case STATEMENT:
                 getStatement();
                 break;
-            case 2:
+            case EDIT:
                 getEdit();
                 break;
-            case 3:
+            case PUBLIC_KEY:
                 getServerPublicKey();
                 break;
         }
@@ -117,37 +119,34 @@ public class Client{
         }
     } //TODO
 
-    private void login(){
-        //TODO
-    }
-
-    private void askForPublicKey(){
-        Protocol.Statement.Builder statement = Protocol.Statement.newBuilder();
-        statement.setInfo( PUBLIC_KEY_REQUEST );
-        String statMsg = statement.toString();
-        String headMsg = makeHeader( 1, statMsg );
-        output.println( headMsg );
-        output.println( statMsg );
-    }
-
     private void getServerPublicKey() throws IOException{
         Key publicKey = Key.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
         if( publicKey.getKeyType() == PUBLIC ){
             serverPublicKey = publicKey.getKey();
             System.out.print( "Key received from server\n" );
         }else{
-            askForPublicKey();
+            writeStatement( PUBLIC_KEY_REQUEST );
             System.out.print( "Key not received. I will try again\n" );
         }
+    }
+
+    private void login(){
+        //TODO
     }
 
     private void writeEdit( String msg ){
         Protocol.Edit.Builder edit = Protocol.Edit.newBuilder();
         edit.setData( msg );
         String editMsg = edit.toString();
-        String headMsg = makeHeader( 2, editMsg );
-        output.println( headMsg );
+        output.println( makeHeader( EDIT, editMsg.length() ) );
         output.println( editMsg );
+    }
+
+    private void writeStatement( Protocol.Statement.Info info ){
+        Protocol.Statement.Builder statement = Protocol.Statement.newBuilder();
+        statement.setInfo( info );
+        String statMsg = statement.toString();
+        output.println( makeHeader( STATEMENT, statMsg.length() ) );
     }
 
     public int connect() throws IOException{
