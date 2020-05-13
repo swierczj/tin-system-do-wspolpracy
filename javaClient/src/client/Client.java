@@ -2,6 +2,8 @@ package client;
 
 import client.Protocol.Header;
 import client.Protocol.Key;
+import com.google.protobuf.ByteString;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,11 +13,14 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static client.Protocol.Header.MsgType.STATEMENT;
+import static client.Protocol.Header.MsgType.*;
 import static client.Protocol.Key.KeyType.PUBLIC;
 import static client.Protocol.Statement.Info.PUBLIC_KEY_REQUEST;
 
 public class Client{
+    private static final int HEADER_STATEMENT_LENGTH = 2;
+    private static final int HEADER_LENGTH_LENGTH = 2;
+
     private static String ip = null;
     private static int port = 0;
     private Socket socket;
@@ -53,6 +58,20 @@ public class Client{
         return writer;
     }
 
+    private String intToString( int value, int length ){    // returns string of length "length", fulfill with zeros
+        int intLength = String.valueOf( value ).length();
+        String header = "";
+        if( intLength > length ) return "";
+        for( int i = length; i > intLength; --i )
+            header += "0";
+        header += "value";
+        return header;
+    }
+
+    private String makeHeader( int statement, String msg ){
+            return intToString( statement, HEADER_STATEMENT_LENGTH ) + intToString( msg.length(), HEADER_LENGTH_LENGTH );
+    }
+
     private int getHeader() throws IOException{
         String header = input.readLine();
         if( header == null ) return -1;        // Message is null - end of story
@@ -72,13 +91,13 @@ public class Client{
         return 0;
     }
 
-    private void getEdit(){
-        Protocol.Edit edit = Protocol.Edit.parseFrom( input );
+    private void getEdit() throws IOException{
+        Protocol.Edit edit = Protocol.Edit.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
         System.out.print( edit.getData() );
     } //TODO
 
-    private void getStatement(){
-        Protocol.Statement statement = Protocol.Statement.parseFrom( input );
+    private void getStatement() throws IOException{
+        Protocol.Statement statement = Protocol.Statement.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
         switch( statement.getInfo() ){
             case KEEP_ALIVE:
                 isAlive = true;
@@ -103,18 +122,16 @@ public class Client{
     }
 
     private void askForPublicKey(){
-        String msg = "Dawaj mi kurwa ten klucz!";
         Protocol.Statement.Builder statement = Protocol.Statement.newBuilder();
         statement.setInfo( PUBLIC_KEY_REQUEST );
-        Header.Builder header = Header.newBuilder();
-        header.setMsgLength(  );
-        header.setMsgType( STATEMENT );
-        header.build().writeTo( output );
-        statement.build().writeTo( output );
+        String statMsg = statement.toString();
+        String headMsg = makeHeader( 1, statMsg );
+        output.println( headMsg );
+        output.println( statMsg );
     }
 
-    private void getServerPublicKey(){
-        Key publicKey = Key.parseFrom( input );
+    private void getServerPublicKey() throws IOException{
+        Key publicKey = Key.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
         if( publicKey.getKeyType() == PUBLIC ){
             serverPublicKey = publicKey.getKey();
             System.out.print( "Key received from server\n" );
@@ -122,6 +139,15 @@ public class Client{
             askForPublicKey();
             System.out.print( "Key not received. I will try again\n" );
         }
+    }
+
+    private void writeEdit( String msg ){
+        Protocol.Edit.Builder edit = Protocol.Edit.newBuilder();
+        edit.setData( msg );
+        String editMsg = edit.toString();
+        String headMsg = makeHeader( 2, editMsg );
+        output.println( headMsg );
+        output.println( editMsg );
     }
 
     public int connect() throws IOException{
@@ -160,19 +186,11 @@ public class Client{
     private int createReader(){
         AtomicInteger toReturn = new AtomicInteger( 0 );
         reader = new Thread( () -> {
-            while( isRunning && getHeader() == 0 );
-//            try{
-//                while( isRunning && getHeader() == 0 ){
-//                    messageIn = input.readLine();
-//                    if( messageIn == null ) break;
-//                    isAlive = true;
-//                    System.out.print( "Server: " + messageIn + "\n" );
-//                    messageIn = "";
-//                }
-//            }catch( IOException ex ){
-//                System.out.print( "reader closed\n" );
-//                toReturn.set( -1 );
-//            }
+            while( true ){
+                try{
+                    if( !( isRunning && getHeader() == 0 ) ) break;
+                }catch( IOException ignored ){}
+            }
             scanner.close();
             System.out.print( "Server disconnected you\n" );
             isRunning = false;
@@ -186,7 +204,7 @@ public class Client{
             try{
                 String messageOut = "connected";
                 while( !messageOut.equals( "q" ) && !messageOut.equals( "quit" ) && isRunning ){
-                    output.println( messageOut );
+                    writeEdit( messageOut );
                     messageOut = scanner.nextLine();
                 }
                 socket.close();
@@ -198,7 +216,6 @@ public class Client{
         } );
         return toReturn.intValue();
     }
-
 
     private int createKeepAlive(){
         AtomicInteger toReturn = new AtomicInteger( 0 );
