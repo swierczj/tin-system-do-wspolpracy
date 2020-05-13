@@ -3,10 +3,7 @@ package client;
 import client.Protocol.Key;
 import com.google.protobuf.ByteString;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -96,7 +93,7 @@ public class Client{
     private void getEdit() throws IOException{
         Protocol.Edit edit = Protocol.Edit.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
         System.out.print( edit.getData() );
-    } //TODO
+    }
 
     private void getStatement() throws IOException{
         Protocol.Statement statement = Protocol.Statement.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
@@ -111,13 +108,13 @@ public class Client{
                 System.out.print( "Login accepted\n" );
                 break;
             case LOGIN_REJECTED:
-                System.out.print( "Login rejected. Try again\n");
+                System.out.print( "Login rejected. Try again\n" );
                 login();
                 break;
             default:
-                System.out.print( "No i co z tego???\n");
+                System.out.print( "No i co z tego???\n" );
         }
-    } //TODO
+    }
 
     private void getServerPublicKey() throws IOException{
         Key publicKey = Key.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
@@ -131,7 +128,14 @@ public class Client{
     }
 
     private void login(){
-        //TODO
+        Protocol.LoginInfo.Builder loginInfo = Protocol.LoginInfo.newBuilder();
+        System.out.print( "Login: " );
+        loginInfo.setLogin( scanner.nextLine() );
+        System.out.print( "Password: " );
+        loginInfo.setPassword( new String( System.console().readPassword() ) );
+        String loginMsg = loginInfo.toString();
+        output.println( makeHeader( LOGIN, loginMsg.length() ) );
+        output.println( loginMsg );
     }
 
     private void writeEdit( String msg ){
