@@ -289,18 +289,91 @@ void Server::cleanup(int max_desc, fd_set* set)
 
 void Server::client_login(int sockfd)
 {
-    std::cout << "w client_login" << std::endl;
-    protocol::Header header;
-    std::cout << "setting len" << std::endl;
-    header.set_msglength(2);
-    std::cout << "setting msgtype" << std::endl;
-    header.set_msgtype(protocol::Header::LOGIN);
-    std::cout << "setting size" << std::endl;
-    int size = header.ByteSizeLong();
-    char* login_msg = new char[size];
-    header.SerializeToArray(login_msg, size);
-    if (send(sockfd, login_msg, size + 1, 0) < 0)
-    	std::cerr << "send() error from SOCK#" << sockfd << std::endl;
-        //res = true;
-        //break;)
+	int msg_type = 1;
+    int msg_len = 2;
+    std::string msg = make_header(msg_type, msg_len);
+    if (send(sockfd, msg.c_str(), msg.size() , 0) < 0)
+        std::cerr << "send() error from SOCK#" << sockfd << std::endl;
+
+    int header_size = 6;
+    char buff[header_size];
+    int bytes_left = header_size;
+    if (make_nonblocking(sockfd) < 0)
+    	std::cerr << "nonblocking error" << std::endl;
+    std::cout << "bytes left, initial: " << bytes_left << std::endl;	
+    while (bytes_left > 0)
+    {
+        std::cout << "first recv() while" << std::endl;
+        int bytes_recv = recv(sockfd, buff, header_size, 0);
+        std::cout << "after recv(): " << bytes_recv << std::endl;
+        if (bytes_recv < 0)
+        {
+            if (errno != EWOULDBLOCK)
+                std::cerr << "recv() error, bytes left: " << bytes_left << std::endl;
+            //break;
+        }
+        else if (bytes_recv == 0)
+        {
+            std::cout << "client disconnected bytes left: " << bytes_left << std::endl;
+            break;
+        }
+        else
+        {
+            bytes_left -= bytes_recv;
+            std::cout << "receive SUCCESFUL bytes left: " << bytes_left << std::endl;
+        }
+    }
+
+    std::string str_num(buff + 2, 4);
+    std::cout << "str_num: " << str_num << std::endl;
+    int login_size = std::stoi(str_num);
+    char login[login_size];
+    bytes_left = login_size;
+    while (bytes_left > 0)
+    {
+        std::cout << "second recv() while" << std::endl;
+        int bytes_recv = recv(sockfd, login, login_size, 0);
+        std::cout << "recv() result: " << bytes_recv << std::endl;
+        if (bytes_recv < 0)
+        {
+            if (errno != EWOULDBLOCK)
+                std::cerr << "recv() error, bytes left: " << bytes_left << std::endl;
+            //break;
+        }
+        else if (bytes_recv == 0)
+        {
+            std::cout << "client disconnected bytes left: " << bytes_left << std::endl;
+            break;
+        }
+        else
+        {
+            bytes_left -= bytes_recv;
+            std::cout << "receive SUCCESFUL bytes left: " << bytes_left << std::endl;
+        }
+    }
+
+    protocol::LoginInfo login_inf;
+    login_inf.ParseFromString(login);
+    std::cout << "login: " << login_inf.login() << std::endl;
+    std::cout << "passwd: " << login_inf.password() << std::endl;        
+}
+
+std::string Server::make_header(int msg_type, int msg_len)
+{
+    std::string result;
+    if (msg_type < 10)
+        result = std::to_string(0) + std::to_string(msg_type);
+    else
+        result = std::to_string(msg_type);
+    std::string len = std::to_string(msg_len);
+    result += len;
+    if(result.size() < 6)
+    {
+        int diff = 6 - result.size();
+        std::string padding;
+        for (int i = 0; i < diff; i++)
+            padding += std::to_string(0);
+        result.insert(2, padding);
+    }
+    return result;
 }

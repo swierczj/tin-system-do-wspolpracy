@@ -43,6 +43,7 @@ private:
     void cleanup(int max_desc, fd_set* set);
 
     void client_login(int sockfd);
+    std::string make_header(int msg_type, int msg_len);
 public:
     Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1) {}
     void run();
