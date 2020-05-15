@@ -7,6 +7,7 @@ import time
 import logging as log
 import my_errors
 import utilities as util
+import protocol_wrapper as protowrap
 
 
 
@@ -18,7 +19,7 @@ HOST1 = "25.139.176.21"
 HOST = "127.0.0.1"
 PORT = 54000
 
-LEN_OF_HEADER = 4 #on that many bytes length of header will come
+LEN_OF_HEADER = 6 #on that many bytes length of header will come
 
 CONNECTION_ATTEMPTS = 3
 
@@ -35,6 +36,7 @@ class Client(threading.Thread):
         self.running = util.LockedBool(True)
         self.send_buffer = Send_buffer()
         self.receive_buffer = Receive_buffer()
+        self.receive_buffer.get_send_buffer(self.send_buffer)
 
 
     def run(self) -> None:
@@ -81,11 +83,11 @@ class Client(threading.Thread):
             read_socket,write_socket,exception_socket = select.select(sl,sl,sl)
 
             if self.client_socket in read_socket:
-                self.receive(MSG_LEN)
+                self.receive()
 
             if self.client_socket in write_socket:
                 self.send()
-                log.debug("send")
+
 
 
             if self.client_socket in exception_socket:
@@ -93,7 +95,6 @@ class Client(threading.Thread):
                 log.critical("Error on socket or smth")
                 self.client_socket.close()
                 sys.exit()
-
 
 
     def send(self):
@@ -110,13 +111,15 @@ class Client(threading.Thread):
             raise my_errors.ConnectionBrokenSend
 
 
-    def receive(self,mess_len):
+    def receive(self):
 
         try:
             message_len = self.receive_buffer.get_length_of_incoming_message()
-            r_data = self.client_socket.recv()
+            log.debug(f"{self.receive_buffer.bytes_to_receive}")
+            r_data = self.client_socket.recv(message_len)
 
-            log.debug(f"[{len(r_data)}] bytes received : {r_data.decode('utf-8')} ")
+            log.debug(f"[{len(r_data)}] bytes received : {r_data} ")
+
 
             if r_data == b"":
                 """ handling closed connection from server """
@@ -139,10 +142,13 @@ class Client(threading.Thread):
 
     def start_running(self):
         self.running.set_locked_bool(True)
-
+        self.send_receive_loop()
 
     def stop_running(self):
         self.running.set_locked_bool(False)
+
+    def get_client_controller(self,client_controller):
+        self.client_controller = client_controller
 
 
 
@@ -176,6 +182,7 @@ class Send_buffer(util.Buffer_control):
         if self.total_sent == self.bytes_to_send and self.total_sent > 0:
             self.total_sent = 0
             self.completed_sending = True
+            self.remove_from_buffer()
 
 
 class Receive_buffer(util.Buffer_control):
@@ -185,8 +192,8 @@ class Receive_buffer(util.Buffer_control):
         self.bytes_to_receive = LEN_OF_HEADER
         self.total_received = 0
         self.status = 0
-        self.completed_receiving = True
-        self.message = "" # or b""
+        self.message = b"" # or b""
+        self.type_of_incoming_message = None
 
 
     def read_from_buffer(self):
@@ -196,49 +203,56 @@ class Receive_buffer(util.Buffer_control):
     def get_length_of_incoming_message(self):
         return self.bytes_to_receive - self.total_received
 
+    def get_send_buffer(self,send_buffer):
+        self.send_buffer = send_buffer
+
     def collect_message(self,message_part):
         self.message+= message_part
         self.total_received+=len(message_part)
 
         if self.total_received == self.bytes_to_receive:
-            self.add_to_buffer(self.message)
-            self.message = ""
+
             self.total_received = 0
+            if self.status == 0:
+                self.status = 1
+                log.debug(f"received header: {self.message}")
 
 
-    def update_bytes_to_receive(self):
-        pass
-
-    def received_whole_part(self):
-        pass
-
+                header = protowrap.Header(message=self.message.decode('utf-8'))# protowrap.Header(self.message.decode('utf-8))
+                self.type_of_incoming_message = header.get_msg_type()
+                self.bytes_to_receive = header.get_msg_length()
+                log.debug(f"msgType {self.type_of_incoming_message} msgLength {self.bytes_to_receive}")
 
 
+                """dummy code"""
+                self.bytes_to_receive = 40
+                self.received_whole_message()
+                self.type_of_incoming_message = 0
+
+
+            elif self.status == 1:
+                self.status =0
+                self.received_whole_message()
+                self.bytes_to_receive = LEN_OF_HEADER
+
+            self.total_received = 0
+            self.message = b""  # b""
+
+
+    def received_whole_message(self):
+
+        if self.type_of_incoming_message == protowrap.STATEMENT:#1
+            login_mes = protowrap.LoginMessage(login="chyba", password="kurwa dziala 69").get_message()
+
+            log.debug(f"login mess: {login_mes} ")
+            login_len = len(login_mes)
+            type = protowrap.LOGIN
+            header = protowrap.Header(msgtype=type,msglength=login_len).get_message()
+            log.debug(f"header: {header}")
+            full_message = header + login_mes #strip('\n')
+            log.debug(f"full login message  {full_message}")
+            self.send_buffer.write_to_buffer(full_message)
 
 
 
 
-
-
-
-
-log.debug('Client import succesful.')
-
-
-"""
-        try:
-            total_sent = 0
-            while total_sent < len(message):
-                sent = self.client_socket.send(message[total_sent:].encode('utf-8'))
-                if sent == 0:
-                    log.error("Lost connection")
-
-                log.debug(f"[{sent}] bytes sent: -> {message[total_sent:]} ")
-                total_sent += sent
-
-        except socket.error as e:
-            log.error("Connection broken")
-            log.error(e)
-            raise my_errors.ConnectionBrokenSend
-
-"""

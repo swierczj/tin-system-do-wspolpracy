@@ -15,5 +15,10 @@ class ConnectionBrokenReceive(Exception):
 class ConnectionBrokenSend(Exception):
     pass
 
-class ConnectionClosedByServer:
+
+class ConnectionClosedByServer(Exception):
+    pass
+
+
+class InvalidLoginData(Exception):
     pass
