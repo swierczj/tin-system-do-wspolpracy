@@ -6,18 +6,23 @@ public class OurProtocol {
     private String password;
 
 
-    public OurProtocol(String message) {
+    public OurProtocol(String message, int state) {
         this.message = message;
-        login = "";
-        password = "";
+        if (state == 1) {
+            loginAndPassword();
+        }
     }
 
-    private void loginAndPassword() {
-       String splitted[] = message.split("\n");
-       login = splitted[0];
-       password = splitted[1];
+    private int loginAndPassword() {
+        String splitted[] = message.split("\n");
+        if (splitted.length != 2)
+            return -1;
+        login = splitted[0];
+        password = splitted[1];
+        return 0;
     }
     public String getLogin() {
+
         return login;
     }
 
