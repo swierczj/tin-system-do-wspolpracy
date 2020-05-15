@@ -4,19 +4,23 @@ public class OurProtocol {
     private String message;
     private String login;
     private String password;
+    private int statement;
 
 
     public OurProtocol(String login, String password){
         setLoginAndPassword(login, password);
     }
 
-    public OurProtocol(String message, int state) {
+    public OurProtocol(String message, int type) {
         this.message = message;
-        if (state == 1) {
-            if (loginAndPassword() != 0) {
-                login = null;
-                password = null;
-            }
+        switch (type) {
+            case 0:
+                if (loginAndPassword() != 0) {
+                    login = null;
+                    password = null;
+                }
+            case 1:
+                statement = Integer.parseInt( message );
         }
     }
 
@@ -58,5 +62,9 @@ public class OurProtocol {
         login = splitted[0];
         password = splitted[1];
         return 0;
+    }
+
+    public int getStatement(){
+        return statement;
     }
 }
