@@ -21,11 +21,8 @@ public class OurProtocol {
     }
 
     public OurProtocol (int statement) {
-        if (statement == 0) {
-            message = "trututu";
-        } else if (statement == 1) {
-            message = "trololo";
-        }
+        Integer toString = statement;
+        message = toString.toString();
 
         login = null;
         password = null;
