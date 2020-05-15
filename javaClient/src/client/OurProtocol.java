@@ -20,6 +20,23 @@ public class OurProtocol {
         }
     }
 
+    public OurProtocol (int statement) {
+        if (statement == 0) {
+            message = "trututu";
+        } else if (statement == 1) {
+            message = "trololo";
+        }
+
+        login = null;
+        password = null;
+    }
+
+    public OurProtocol (String edit) {
+        message = edit;
+        login = null;
+        password = null;
+    }
+
     public String getLogin() {
 
         return login;
@@ -35,7 +52,7 @@ public class OurProtocol {
 
     private void setLoginAndPassword(String login, String password) {
         this.message = login + "\n" + password;
-    } 
+    }
 
     private int loginAndPassword() {
         String splitted[] = message.split("\n");
