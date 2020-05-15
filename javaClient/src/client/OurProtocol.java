@@ -6,6 +6,10 @@ public class OurProtocol {
     private String password;
 
 
+    public OurProtocol(String login, String password){
+        setLoginAndPassword(login, password);
+    }
+
     public OurProtocol(String message, int state) {
         this.message = message;
         if (state == 1) {
@@ -28,6 +32,10 @@ public class OurProtocol {
     public String getPassword() {
         return password;
     }
+
+    private void setLoginAndPassword(String login, String password) {
+        this.message = login + "\n" + password;
+    } 
 
     private int loginAndPassword() {
         String splitted[] = message.split("\n");
