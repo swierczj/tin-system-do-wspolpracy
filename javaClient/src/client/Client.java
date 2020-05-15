@@ -1,16 +1,11 @@
 package client;
 
-import client.Protocol.Key;
-import com.google.protobuf.ByteString;
-
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static client.Protocol.Key.KeyType.PUBLIC;
-import static client.Protocol.Statement.Info.PUBLIC_KEY_REQUEST;
 
 public class Client{
     private static final int HEADER_STATEMENT_LENGTH = 2;
@@ -19,6 +14,14 @@ public class Client{
     private static final int STATEMENT = 1;
     private static final int EDIT = 2;
     private static final int PUBLIC_KEY = 3;
+    private static final int KEEP_ALIVE = 0;
+    private static final int REQUEST_LOGIN = 1;
+    private static final int LOGIN_ACCEPTED = 2;
+    private static final int LOGIN_REJECTED = 3;
+    private static final int LOG_OUT = 4;
+    private static final int WORK_END = 5;
+    private static final int PUBLIC_KEY_REQUEST = 6;
+
 
     private static String ip = null;
     private static int port = 0;
@@ -91,13 +94,13 @@ public class Client{
     }
 
     private void getEdit() throws IOException{
-        Protocol.Edit edit = Protocol.Edit.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
-        System.out.print( edit.getData() );
+        OurProtocol edit = new OurProtocol( input.readLine(), EDIT );
+        System.out.print( edit.getMessage() );
     }
 
     private void getStatement() throws IOException{
-        Protocol.Statement statement = Protocol.Statement.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
-        switch( statement.getInfo() ){
+        OurProtocol statement = new OurProtocol( input.readLine(), STATEMENT );
+        switch( statement.getStatement() ){
             case KEEP_ALIVE:
                 isAlive = true;
                 break;
@@ -117,40 +120,36 @@ public class Client{
     }
 
     private void getServerPublicKey() throws IOException{
-        Key publicKey = Key.parseFrom( ByteString.copyFrom( input.readLine(), "UTF_8" ) );
-        if( publicKey.getKeyType() == PUBLIC ){
-            serverPublicKey = publicKey.getKey();
+        OurProtocol key = new OurProtocol( input.readLine(), PUBLIC_KEY );
+        if( key.getKeyType() == 1 ){
+            serverPublicKey = key.getKey();
             System.out.print( "Key received from server\n" );
         }else{
             writeStatement( PUBLIC_KEY_REQUEST );
-            System.out.print( "Key not received. I will try again\n" );
+            System.out.print( "It's not public key. I will try again\n" );
         }
     }
 
     private void login(){
-        Protocol.LoginInfo.Builder loginInfo = Protocol.LoginInfo.newBuilder();
         System.out.print( "Login: " );
-        loginInfo.setLogin( scanner.nextLine() );
+        String login = scanner.nextLine();
         System.out.print( "Password: " );
-        loginInfo.setPassword( new String( System.console().readPassword() ) );
-        String loginMsg = loginInfo.toString();
-        output.println( makeHeader( LOGIN, loginMsg.length() ) );
-        output.println( loginMsg );
+        String password = new String( System.console().readPassword() );
+        OurProtocol loginMsg = new OurProtocol( login, password );
+        output.println( makeHeader( LOGIN, loginMsg.getMessage().length() ) );
+        output.println( loginMsg.getMessage() );
     }
 
     private void writeEdit( String msg ){
-        Protocol.Edit.Builder edit = Protocol.Edit.newBuilder();
-        edit.setData( msg );
-        String editMsg = edit.toString();
-        output.println( makeHeader( EDIT, editMsg.length() ) );
-        output.println( editMsg );
+        OurProtocol editMsg = new OurProtocol( msg );
+        output.println( makeHeader( EDIT, editMsg.getMessage().length() ) );
+        output.println( editMsg.getMessage() );
     }
 
-    private void writeStatement( Protocol.Statement.Info info ){
-        Protocol.Statement.Builder statement = Protocol.Statement.newBuilder();
-        statement.setInfo( info );
-        String statMsg = statement.toString();
-        output.println( makeHeader( STATEMENT, statMsg.length() ) );
+    private void writeStatement( int statement ){
+        OurProtocol statMsg = new OurProtocol( statement );
+        output.println( makeHeader( STATEMENT, statMsg.getMessage().length() ) );
+        output.println( statMsg.getMessage() );
     }
 
     public int connect() throws IOException{
@@ -227,7 +226,7 @@ public class Client{
                 while( isAlive && isRunning ){
                     Thread.sleep( 10000 );
                     isAlive = false;
-                    output.println( "Am I connected?" );
+                    writeStatement( KEEP_ALIVE );
                     Thread.sleep( 5000 );
                 }
                 System.out.print( "Connection broken" );

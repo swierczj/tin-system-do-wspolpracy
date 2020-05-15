@@ -5,6 +5,8 @@ public class OurProtocol {
     private String login;
     private String password;
     private int statement;
+    private int keyType;
+    private String key;
 
 
     public OurProtocol(String login, String password){
@@ -12,15 +14,22 @@ public class OurProtocol {
     }
 
     public OurProtocol(String message, int type) {
-        this.message = message;
         switch (type) {
             case 0:
-                if (loginAndPassword() != 0) {
+                if (loginAndPassword( message ) != 0) {
                     login = null;
                     password = null;
                 }
             case 1:
                 statement = Integer.parseInt( message );
+            case 2:
+                this.message = message;
+            case 3:
+                if (keyAndType( message ) != 0) {
+                    key = null;
+                    keyType = -1;
+                }
+
         }
     }
 
@@ -55,8 +64,8 @@ public class OurProtocol {
         this.message = login + "\n" + password;
     }
 
-    private int loginAndPassword() {
-        String splitted[] = message.split("\n");
+    private int loginAndPassword( String message ) {
+        String[] splitted = this.message.split("\n");
         if (splitted.length != 2)
             return -1;
         login = splitted[0];
@@ -64,7 +73,20 @@ public class OurProtocol {
         return 0;
     }
 
+    private int keyAndType( String message ) {
+        String[] splitted = this.message.split("\n");
+        if (splitted.length != 2)
+            return -1;
+        keyType = Integer.parseInt( splitted[0] );
+        key = splitted[1];
+        return 0;
+    }
+
     public int getStatement(){
         return statement;
     }
+    public int getKeyType(){
+        return keyType;
+    }
+    public String getKey(){ return key; }
 }
