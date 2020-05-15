@@ -11,6 +11,11 @@ public class OurProtocol {
         if (state == 1) {
             if (loginAndPassword() == -1)
                 System.out.println("Wrong login or password");
+            else {
+                login = null;
+                password = null;
+            }
+
         }
     }
 
