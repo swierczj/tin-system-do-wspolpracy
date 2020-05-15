@@ -83,9 +83,13 @@ public class Client{
 
     private int getHeader() throws IOException{
         String header = readLine( 6 );
-        if( header == null ) return -1;
+        if( header == null ){
+            System.out.print( "Improper header\n" );
+            return -1;
+        }
         int type = Integer.parseInt( header.substring( 4, 8 ) );
         int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
+        System.out.print( "Header: type = " + type + ", message length = " + msgLength );
         isAlive = true;
         switch( type ){
             case STATEMENT:
