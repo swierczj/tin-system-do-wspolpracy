@@ -9,13 +9,10 @@ public class OurProtocol {
     public OurProtocol(String message, int state) {
         this.message = message;
         if (state == 1) {
-            if (loginAndPassword() == -1)
-                System.out.println("Wrong login or password");
-            else {
+            if (loginAndPassword() != 0) {
                 login = null;
                 password = null;
             }
-
         }
     }
 
