@@ -60,6 +60,13 @@ public class Client{
         return writer;
     }
 
+    private String readLine( int len ) throws IOException{
+        char[] msg = null;
+        int readChars = input.read( msg, 0, len );
+        if( readChars != 6 ) return null;        // Message is null - end of story
+        return new String( msg );
+    }
+
     private String intToString( int value, int length ){    // returns string of length "length", fulfill with zeros
         int intLength = String.valueOf( value ).length();
         String header = "";
@@ -75,31 +82,32 @@ public class Client{
     }
 
     private int getHeader() throws IOException{
-        String header = input.readLine();
-        if( header == null ) return -1;        // Message is null - end of story
+        String header = readLine( 6 );
+        if( header == null ) return -1;
         int type = Integer.parseInt( header.substring( 4, 8 ) );
+        int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
         isAlive = true;
         switch( type ){
             case STATEMENT:
-                getStatement();
+                getStatement( msgLength );
                 break;
             case EDIT:
-                getEdit();
+                getEdit( msgLength );
                 break;
             case PUBLIC_KEY:
-                getServerPublicKey();
+                getServerPublicKey( msgLength );
                 break;
         }
         return 0;
     }
 
-    private void getEdit() throws IOException{
-        OurProtocol edit = new OurProtocol( input.readLine(), EDIT );
+    private void getEdit( int msgLength ) throws IOException{
+        Protocol edit = new Protocol( readLine( msgLength ), EDIT );
         System.out.print( edit.getMessage() );
     }
 
-    private void getStatement() throws IOException{
-        OurProtocol statement = new OurProtocol( input.readLine(), STATEMENT );
+    private void getStatement( int msgLength ) throws IOException{
+        Protocol statement = new Protocol( readLine( msgLength ), STATEMENT );
         switch( statement.getStatement() ){
             case KEEP_ALIVE:
                 isAlive = true;
@@ -119,8 +127,8 @@ public class Client{
         }
     }
 
-    private void getServerPublicKey() throws IOException{
-        OurProtocol key = new OurProtocol( input.readLine(), PUBLIC_KEY );
+    private void getServerPublicKey( int msgLength ) throws IOException{
+        Protocol key = new Protocol( readLine( msgLength ), PUBLIC_KEY );
         if( key.getKeyType() == 1 ){
             serverPublicKey = key.getKey();
             System.out.print( "Key received from server\n" );
@@ -135,19 +143,19 @@ public class Client{
         String login = scanner.nextLine();
         System.out.print( "Password: " );
         String password = new String( System.console().readPassword() );
-        OurProtocol loginMsg = new OurProtocol( login, password );
+        Protocol loginMsg = new Protocol( login, password );
         output.println( makeHeader( LOGIN, loginMsg.getMessage().length() ) );
         output.println( loginMsg.getMessage() );
     }
 
     private void writeEdit( String msg ){
-        OurProtocol editMsg = new OurProtocol( msg );
+        Protocol editMsg = new Protocol( msg );
         output.println( makeHeader( EDIT, editMsg.getMessage().length() ) );
         output.println( editMsg.getMessage() );
     }
 
     private void writeStatement( int statement ){
-        OurProtocol statMsg = new OurProtocol( statement );
+        Protocol statMsg = new Protocol( statement );
         output.println( makeHeader( STATEMENT, statMsg.getMessage().length() ) );
         output.println( statMsg.getMessage() );
     }
