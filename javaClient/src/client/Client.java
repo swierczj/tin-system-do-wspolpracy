@@ -91,7 +91,7 @@ public class Client{
         try{
             type = Integer.parseInt( header.substring( 0, 2 ) );
             msgLength = Integer.parseInt( header.substring( 2, 6 ) );
-        } catch( NumberFormatException exception ) { System.out.print( "Kurwa cyfry mają byc!!!\n" ); };
+        } catch( NumberFormatException exception ) { System.out.print( "Kurwa cyfry mają byc!!! A nie jakies: " + header "\n"); };
         System.out.print( "Header: type = " + type + ", message length = " + msgLength + '\n' );
         isAlive = true;
         switch( type ){
