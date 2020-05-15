@@ -9,18 +9,11 @@ public class OurProtocol {
     public OurProtocol(String message, int state) {
         this.message = message;
         if (state == 1) {
-            loginAndPassword();
+            if (loginAndPassword() == -1)
+                System.out.println("Wrong login or password");
         }
     }
 
-    private int loginAndPassword() {
-        String splitted[] = message.split("\n");
-        if (splitted.length != 2)
-            return -1;
-        login = splitted[0];
-        password = splitted[1];
-        return 0;
-    }
     public String getLogin() {
 
         return login;
@@ -34,4 +27,12 @@ public class OurProtocol {
         return password;
     }
 
+    private int loginAndPassword() {
+        String splitted[] = message.split("\n");
+        if (splitted.length != 2)
+            return -1;
+        login = splitted[0];
+        password = splitted[1];
+        return 0;
+    }
 }
