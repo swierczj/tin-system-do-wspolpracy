@@ -40,7 +40,7 @@ void Server::run()
                 desc_ready -= 1;
                 if (current_desc == listening)
                     run_server = handle_new_connection(listening);
-                else
+                else if (!is_logged(current_desc) || (!is_logged(current_desc) && get_socket_write_state(current_desc) != IDLE)) /*TODO*/
                     handle_existing_incoming_connection(current_desc);
             }
             // handle situation when server must be the one to initialize communication
@@ -52,7 +52,7 @@ void Server::run()
                 if (desc_to_login.count(current_desc))
                 {
                     int login_info = client_login(current_desc);
-                    if (login_info == LOGIN_SUCCESSFUL)
+                    if (login_info == MSG_SENT)
                     	std::cout << "header sent" << std::endl;
 //                    else if (login_info == 9)
 //                    	conn_to_write -= 1;
@@ -210,11 +210,24 @@ bool Server::handle_new_connection(int accept_sd)
         // add incoming connection to master set
         FD_SET(new_cli, &master);
         desc_to_login.insert(std::make_pair(new_cli, std::make_pair(0, header_size)));
+        init_socket_state(new_cli);
         conn_to_write += 1;
+        if (make_nonblocking(new_cli) < 0)
+        {
+            std::cerr << "make nonblocking error" << std::endl;
+            break;
+            // res = false; ??
+        }
+        if (set_socket_opt(new_cli, IPPROTO_TCP, TCP_QUICKACK, true) < 0)
+        {
+            std::cerr << "make quickack error" << std::endl;
+            break;
+            // res = false; ??
+        }
         // connection established
 
-        std::string welcome_msg = "Hello from server!\n";
-        send(new_cli, welcome_msg.c_str(), welcome_msg.size() + 1, 0);
+        //std::string welcome_msg = "Hello from server!\n";
+        //send(new_cli, welcome_msg.c_str(), welcome_msg.size() + 1, 0);
         //client_login(sockfd);
 
         print_host(client);
@@ -228,7 +241,7 @@ bool Server::handle_new_connection(int accept_sd)
 void Server::handle_existing_incoming_connection(int sockfd)
 {
     std::cout << "descriptor " << sockfd << " is readable" << std::endl;
-    int buff_size = 4096;
+    //int buff_size = 4096;
     char buffer[buff_size];
     bool close_conn = false;
     bool change_cli = false;
@@ -440,20 +453,7 @@ int Server::send_header(int msg_type, int msg_len, int sockfd)
             return -1; // change client, EWOULDBLOCK occured
         else if (bytes_sent < -1)
             return -2;
-        // all data was sent
-//        else if (bytes_sent == to_send)
-//        {
-//            bytes_left = 0;
-//            desc_to_login[sockfd].first = 0;
-//            desc_to_login[sockfd].second = msg_len;
-//        }
-//        // part of bytes sent
-//        else
-//        {
-//            bytes_left -= bytes_sent;
-//            desc_to_login[sockfd].first = 0; // bytes to receive
-//            desc_to_login[sockfd].second = bytes_left; // bytes left to send
-//        }
+        // some data was sent
         return bytes_sent;
     }
     else
@@ -510,12 +510,52 @@ int Server::send_statement(int sockfd, int info, int nbytes)
     return bytes_sent;
 }
 
-//char* Server::prepare_buff_to_send(int full_size, int to_send, const std::string &msg, char* buffer)
-//{
-//    int offset = full_size - to_send;
-//    std::cout << "offset = " << offset << std::endl;
-//    std::cout << "prep buffer, string: " << msg.substr(offset, to_send) << std::endl;
-//    buffer = msg.substr(offset, to_send).c_str();
-//    std::cout << "after c_str(), buff: " << buff[0] << std::endl;
-//    return buff;
-//}
+bool Server::is_logged(int sockfd)
+{
+    return desc_to_login.count(sockfd) > 0;
+}
+
+int Server::get_socket_read_state(int sockfd)
+{
+    return clients_state[sockfd].first.first;
+}
+
+int Server::get_socket_read_bytes_number(int sockfd)
+{
+    return clients_state[sockfd].first.second;
+}
+
+int Server::get_socket_write_state(int sockfd)
+{
+    return clients_state[sockfd].second.first;
+}
+
+int Server::get_socket_write_bytes_number(int sockfd)
+{
+    return clients_state[sockfd].second.second;
+}
+
+void Server::set_socket_read_state(int sockfd, int val)
+{
+    clients_state[sockfd].first.first = val;
+}
+
+void Server::set_socket_read_bytes_number(int sockfd, int val)
+{
+    clients_state[sockfd].first.second = val;
+}
+
+void Server::set_socket_write_state(int sockfd, int val)
+{
+    clients_state[sockfd].second.first = val;
+}
+
+void Server::set_socket_write_bytes_number(int sockfd, int val)
+{
+    clients_state[sockfd].second.second = val;
+}
+
+void Server::init_socket_state(int sockfd)
+{
+    clients_state.insert(std::make_pair(sockfd, std::make_pair(std::make_pair(IDLE, 0), std::make_pair(HEADER_TO_SEND, header_size))));
+}
