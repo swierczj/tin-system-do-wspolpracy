@@ -52,11 +52,13 @@ void Server::run()
                 if (desc_to_login.count(current_desc))
                 {
                     int login_info = client_login(current_desc);
-                    if(login_info == LOGIN_SUCCESSFUL)
+                    if (login_info == LOGIN_SUCCESSFUL)
                     	std::cout << "header sent" << std::endl;
 //                    else if (login_info == 9)
 //                    	conn_to_write -= 1;
-                    else
+                    else if (login_info == WORK_END)
+                    	std::cout << "work end occured" << std::endl;
+                    else	
                     	std::cout << "else in writing" << std::endl;	
                 }
             }
@@ -330,11 +332,12 @@ void Server::cleanup(int max_desc, fd_set* set)
 int Server::client_login(int sockfd)
 {
     int res;
+    int req_len = get_byte_width(LOGIN_REQ);
     // if first header
-    std::cout << "in login func sockfd: " << sockfd << ", to SEND: " << desc_to_login[sockfd].second << " to RECV: " << desc_to_login[sockfd].first << std::endl;
+    std::cout << "in login func sockfd: " << sockfd << ", to SEND: " << desc_to_login[sockfd].second << " to RECV: " << desc_to_login[sockfd].first << " and req_len: " << req_len << std::endl;
     if (desc_to_login[sockfd].first == 0 && desc_to_login[sockfd].second == header_size)
     {
-        res = send_header(STATEMENT, 1, sockfd);
+        res = send_header(STATEMENT, req_len, sockfd);
         if (res == -1)
         {
             std::cout << "blocking operation, return to select" << std::endl;
@@ -342,14 +345,19 @@ int Server::client_login(int sockfd)
         }
         else if (res == header_size)
         {
-            std::cout << "success sent " << res << " bytes" << std::endl;
-            conn_to_write -= 1;
-            return LOGIN_SUCCESSFUL;
+            std::cout << "success sent " << res << " bytes, REQ len:" << req_len << std::endl;
+            desc_to_login[sockfd].first = 0;
+            desc_to_login[sockfd].second = req_len;
+            // now send message
+            //conn_to_write -= 1;
+            //return LOGIN_SUCCESSFUL;
         }
         else if (res > -1 && res < header_size)
         {
         	std::cout << "partial send: " << res << " bytes" << std::endl;
-        	return LOGIN_INCOMPLETE;        
+        	desc_to_login[sockfd].first = 0;
+        	desc_to_login[sockfd].second = header_size - res;
+        	return LOGIN_INCOMPLETE;
         }
         else
         {
@@ -357,7 +365,39 @@ int Server::client_login(int sockfd)
         	return res;
         }	
     }
-    return 9;
+    if (desc_to_login[sockfd].first == 0 && desc_to_login[sockfd].second == req_len)
+    {
+        std::cout << "before send statement" << std::endl;
+        res = send_statement(sockfd, LOGIN_REQ, req_len);
+        if (res == -1)
+        {
+            std::cout << "blocking operation, return to select" << std::endl;
+            return -1;
+        }
+        else if (res == req_len)
+        {
+            std::cout << "success sent " << res << " bytes in statement" << std::endl;
+            desc_to_login[sockfd].first = header_size;
+            desc_to_login[sockfd].second = 0;
+            // now send message
+            conn_to_write -= 1;
+            //return LOGIN_SUCCESSFUL;
+            return Server::LOGIN_SUCCESSFUL;
+        }
+        else if (res > -1 && res < header_size)
+        {
+            std::cout << "partial send: " << res << " bytes" << std::endl;
+            desc_to_login[sockfd].first = 0;
+            desc_to_login[sockfd].second = req_len - res;
+            return LOGIN_INCOMPLETE;
+        }
+        else
+        {
+            std::cout << "other error: " << res;
+            return res;
+        }
+    }
+    return Server::WORK_END;
 }
 
 std::string Server::make_header(int msg_type, int msg_len)
@@ -391,26 +431,29 @@ int Server::send_header(int msg_type, int msg_len, int sockfd)
         int bytes_sent = 0;
         int bytes_left = header_size;
         int offset = header_size - to_send;
+        //char* msg_to_send;
+        //prepare_buff_to_send(header_size, to_send, header, msg_to_send);
         auto msg_to_send = header.substr(offset, to_send).c_str();
         bytes_sent = nonblock_send(sockfd, msg_to_send, to_send);
+        std::cout << "msg to send 1 char: " << *msg_to_send << std::endl;
         if (bytes_sent == -1)
             return -1; // change client, EWOULDBLOCK occured
         else if (bytes_sent < -1)
             return -2;
         // all data was sent
-        else if (bytes_sent == to_send)
-        {
-            bytes_left = 0;
-            desc_to_login[sockfd].first = 0;
-            desc_to_login[sockfd].second = msg_len;
-        }
-        // part of bytes sent
-        else
-        {
-            bytes_left -= bytes_sent;
-            desc_to_login[sockfd].first = 0; // bytes to receive
-            desc_to_login[sockfd].second = bytes_left; // bytes left to send
-        }
+//        else if (bytes_sent == to_send)
+//        {
+//            bytes_left = 0;
+//            desc_to_login[sockfd].first = 0;
+//            desc_to_login[sockfd].second = msg_len;
+//        }
+//        // part of bytes sent
+//        else
+//        {
+//            bytes_left -= bytes_sent;
+//            desc_to_login[sockfd].first = 0; // bytes to receive
+//            desc_to_login[sockfd].second = bytes_left; // bytes left to send
+//        }
         return bytes_sent;
     }
     else
@@ -420,6 +463,7 @@ int Server::send_header(int msg_type, int msg_len, int sockfd)
 
 int Server::nonblock_send(int sockfd, const char *buff, int nbytes)
 {
+    std::cout << "in nonblock send, buff: " << buff[0] << std::endl;
     int bytes_sent = send(sockfd, buff, nbytes, 0);
     if (bytes_sent < 0)
     {
@@ -434,3 +478,44 @@ int Server::nonblock_send(int sockfd, const char *buff, int nbytes)
     // some data was sent
     return bytes_sent;
 }
+
+int Server::get_byte_width(int num)
+{
+    if (num < 0)
+        return -1;
+    int res = 0;
+    std::cout << "in get_b_width, num: " << num << std::endl;
+    do
+    {
+        num /= 10;
+        res += 1;
+    }
+    while (num > 0);
+    std::cout << "result from width: " << res << std::endl;
+    return res;
+}
+
+int Server::send_statement(int sockfd, int info, int nbytes)
+{
+    std::string statement = std::to_string(info);
+    int offset = statement.size() - nbytes;
+    auto buff = statement.substr(offset, nbytes).c_str();
+    //prepare_buff_to_send(statement.size(), nbytes, statement, buff);
+    std::cout << "buff to send 1 char: " << *buff << std::endl;
+    int bytes_sent = nonblock_send(sockfd, buff, nbytes);
+    if (bytes_sent == -1)
+        return -1; // change client, EWOULDBLOCK occured
+    else if (bytes_sent < -1)
+        return -2;
+    return bytes_sent;
+}
+
+//char* Server::prepare_buff_to_send(int full_size, int to_send, const std::string &msg, char* buffer)
+//{
+//    int offset = full_size - to_send;
+//    std::cout << "offset = " << offset << std::endl;
+//    std::cout << "prep buffer, string: " << msg.substr(offset, to_send) << std::endl;
+//    buffer = msg.substr(offset, to_send).c_str();
+//    std::cout << "after c_str(), buff: " << buff[0] << std::endl;
+//    return buff;
+//}
