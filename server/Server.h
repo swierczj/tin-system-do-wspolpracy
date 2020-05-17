@@ -26,7 +26,7 @@ private:
     typedef int bytes_to_send;
     typedef std::pair<bytes_to_receive, bytes_to_send> bytes_pair;
     uint16_t port_number;
-    enum server_consts { msg_type_len = 2, header_size = 6, default_port = 54000 };
+    enum server_consts { LOGIN_SUCCESSFUL = 0, LOGIN_INCOMPLETE = 1, msg_type_len = 2, header_size = 6, default_port = 54000 };
     enum header_msg_type {LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3};
     enum statement_info {KEEP_ALIVE = 0, LOGIN_REQ = 1, LOGIN_ACC = 2, LOGIN_REJ = 3, LOG_OUT = 4, WORK_END = 5, PUB_KEY_REQ = 6};
     int max_sd;
@@ -46,7 +46,7 @@ private:
     int select_fds(int nfds, fd_set* read_set = nullptr, fd_set* write_set = nullptr, fd_set* exc_set = nullptr, int timeout_sec = -1);
     //bool is_in_set(int sockfd, fd_set* sock_set);
     bool handle_new_connection(int accept_sd);
-    void handle_existing_connection(int sockfd);
+    void handle_existing_incoming_connection(int sockfd);
     bool forward_message(int sockfd, char* bytes);
     void remove_socket(int sockfd, int max_desc, fd_set* set);
     void cleanup(int max_desc, fd_set* set);
@@ -55,6 +55,7 @@ private:
     std::string make_header(int msg_type, int msg_len);
     int send_header(int msg_type, int msg_len, int sockfd);
     //int sendall(int to_send)
+    int nonblock_send(int sockfd, const char* buff, int nbytes);
 public:
     Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1), conn_to_write(0) {}
     void run();

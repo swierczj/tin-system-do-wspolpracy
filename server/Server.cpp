@@ -20,29 +20,44 @@ void Server::run()
     while (run_server)
     {
         fd_set read_set = master;
-        int socket_count = select_fds(max_sd + 1, &read_set);
+        fd_set write_set;
+        int socket_count;
+        if (conn_to_write > 0)
+        {
+            write_set = master;
+            socket_count = select_fds(max_sd + 1, &read_set, &write_set);
+        }
+        else
+            socket_count = select_fds(max_sd + 1, &read_set);
         if (socket_count < 1)
             break;
         int desc_ready = socket_count;
         for (int current_desc = 0; current_desc <= max_sd && desc_ready > 0; current_desc++)
         {
+            std::cout << "current desc: " << current_desc << " socket count: " << socket_count << "ready descs: " << desc_ready << std::endl;
             if (FD_ISSET(current_desc, &read_set))
             {
                 desc_ready -= 1;
                 if (current_desc == listening)
                     run_server = handle_new_connection(listening);
                 else
-                    handle_existing_connection(current_desc);
+                    handle_existing_incoming_connection(current_desc);
             }
             // handle situation when server must be the one to initialize communication
-            if (conn_to_write > 0 || FD_ISSET(current_desc, &write_set))
+            if (conn_to_write > 0 && FD_ISSET(current_desc, &write_set))
             {
+                std::cout << "in writing sockets" << std::endl;
                 desc_ready -= 1;
-                if (desc_to_login.count(sockfd))
+                std::cout << "desc ready: " << desc_ready << std::endl;
+                if (desc_to_login.count(current_desc))
                 {
-                    /*TODO*/
-                    if(client_login(sockfd) < 0)
-                        break;
+                    int login_info = client_login(current_desc);
+                    if(login_info == LOGIN_SUCCESSFUL)
+                    	std::cout << "header sent" << std::endl;
+//                    else if (login_info == 9)
+//                    	conn_to_write -= 1;
+                    else
+                    	std::cout << "else in writing" << std::endl;	
                 }
             }
         }
@@ -155,6 +170,10 @@ int Server::select_fds(int nfds, fd_set* read_set, fd_set* write_set, fd_set* ex
         timeout_ptr = &timeout;
     }
 
+    std::cout << std::endl << "blocked on select()";
+    if (write_set != nullptr)
+    	std::cout << " with write";
+    std::cout << std::endl;	
     res = select(nfds + 1, read_set, write_set, exc_set, timeout_ptr);
     if (res == -1)
         std::cerr << "select() error" << std::endl;
@@ -194,6 +213,8 @@ bool Server::handle_new_connection(int accept_sd)
 
         std::string welcome_msg = "Hello from server!\n";
         send(new_cli, welcome_msg.c_str(), welcome_msg.size() + 1, 0);
+        //client_login(sockfd);
+
         print_host(client);
         if (new_cli > max_sd)
             max_sd = new_cli;
@@ -202,7 +223,7 @@ bool Server::handle_new_connection(int accept_sd)
     return res;
 }
 
-void Server::handle_existing_connection(int sockfd)
+void Server::handle_existing_incoming_connection(int sockfd)
 {
     std::cout << "descriptor " << sockfd << " is readable" << std::endl;
     int buff_size = 4096;
@@ -216,14 +237,14 @@ void Server::handle_existing_connection(int sockfd)
         // setting socket to be nonblocking
         if (make_nonblocking(sockfd) < 0)
             close_conn = true;
-        else
-        {
+        //else
+        //{
             //if login incomplete
-            if (desc_to_login.count(sockfd))
-            {
-                if(client_login(sockfd) < 0)
-                    change_cli = true;
-            }
+            //if (desc_to_login.count(sockfd))
+            //{
+            //    if(client_login(sockfd) < 0)
+            //        change_cli = true;
+            //}
             else
             {
                 std::cout << "blocked on recv()" << std::endl;
@@ -255,7 +276,7 @@ void Server::handle_existing_connection(int sockfd)
                     }
                 }
             }
-        }
+        //}
     } // while
     // if the close_conn was set true, we need to clean up and change the max descriptor number
     if (close_conn)
@@ -310,6 +331,7 @@ int Server::client_login(int sockfd)
 {
     int res;
     // if first header
+    std::cout << "in login func sockfd: " << sockfd << ", to SEND: " << desc_to_login[sockfd].second << " to RECV: " << desc_to_login[sockfd].first << std::endl;
     if (desc_to_login[sockfd].first == 0 && desc_to_login[sockfd].second == header_size)
     {
         res = send_header(STATEMENT, 1, sockfd);
@@ -318,12 +340,24 @@ int Server::client_login(int sockfd)
             std::cout << "blocking operation, return to select" << std::endl;
             return -1;
         }
-        else if (res >= 0)
+        else if (res == header_size)
         {
-            std::cout << "success(?) sent " << res << " bytes" << std::endl;
-            return res;
+            std::cout << "success sent " << res << " bytes" << std::endl;
+            conn_to_write -= 1;
+            return LOGIN_SUCCESSFUL;
         }
+        else if (res > -1 && res < header_size)
+        {
+        	std::cout << "partial send: " << res << " bytes" << std::endl;
+        	return LOGIN_INCOMPLETE;        
+        }
+        else
+        {
+        	std::cout << "other error: " << res;
+        	return res;
+        }	
     }
+    return 9;
 }
 
 std::string Server::make_header(int msg_type, int msg_len)
@@ -358,16 +392,11 @@ int Server::send_header(int msg_type, int msg_len, int sockfd)
         int bytes_left = header_size;
         int offset = header_size - to_send;
         auto msg_to_send = header.substr(offset, to_send).c_str();
-        bytes_sent = send(sockfd, msg_to_send, to_send, 0);
-        if (bytes_sent < 0)
-        {
-            if (errno != EWOULDBLOCK)
-            {
-                std::cerr << "send() error" << std::endl;
-                return -2;
-            }
+        bytes_sent = nonblock_send(sockfd, msg_to_send, to_send);
+        if (bytes_sent == -1)
             return -1; // change client, EWOULDBLOCK occured
-        }
+        else if (bytes_sent < -1)
+            return -2;
         // all data was sent
         else if (bytes_sent == to_send)
         {
@@ -387,4 +416,21 @@ int Server::send_header(int msg_type, int msg_len, int sockfd)
     else
         std::cout << "no statement lol";
     return -3;
+}
+
+int Server::nonblock_send(int sockfd, const char *buff, int nbytes)
+{
+    int bytes_sent = send(sockfd, buff, nbytes, 0);
+    if (bytes_sent < 0)
+    {
+        if (errno != EWOULDBLOCK)
+        {
+            std::cerr << "send() error" << std::endl;
+            return -2;
+        }
+        std::cerr << "EWOULDBLOCK occured" << std::endl;
+        return -1; // change client, EWOULDBLOCK occured
+    }
+    // some data was sent
+    return bytes_sent;
 }
