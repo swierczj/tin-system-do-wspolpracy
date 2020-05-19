@@ -16,26 +16,37 @@
 #include <sstream>
 #include <netinet/tcp.h>
 #include <map>
+//#include <algorithm>
+#include <vector>
 #include "serv_func.h"
+#include "Header.h"
 #include "protocol.pb.h"
+
+//class Header;
+Header parse_from_string(std::string const &str);
 
 class Server
 {
 private:
     typedef int bytes_to_receive;
     typedef int bytes_to_send;
-    typedef int socket_state;
+    typedef int msg_state;
+    typedef std::pair<std::pair<msg_state, bytes_to_receive>, std::pair<msg_state, bytes_to_send>> socket_state;
     typedef std::pair<bytes_to_receive, bytes_to_send> bytes_pair;
+    typedef char* recv_buffer;
 
     uint16_t port_number;
-    enum server_consts { LOGIN_SUCCESSFUL = 0, LOGIN_INCOMPLETE = 1, msg_type_len = 2, header_size = 6, default_port = 54000 };
+    enum server_consts { IDLE = -1, HEADER = -1, HEADER_TO_SEND = 0, HEADER_SENT = 1, MSG_SENT = 2, HEADER_TO_RECV = 0
+                       , HEADER_RECVD = 1, MSG_RECVD = 2, LOGIN_SUCCESSFUL = 0, LOGIN_INCOMPLETE = 1, msg_type_len = 2
+                       , header_size = 6, default_port = 54000 };
     enum header_msg_type {LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3};
     enum statement_info {KEEP_ALIVE = 0, LOGIN_REQ = 1, LOGIN_ACC = 2, LOGIN_REJ = 3, LOG_OUT = 4, WORK_END = 5, PUB_KEY_REQ = 6};
     int max_sd;
     int listening;
     fd_set master;
-    std::map<int, socket_state> send_state;
+    std::map<int, socket_state> clients_state;
     std::map<int, bytes_pair> desc_to_login;
+    std::map<int, std::vector<char>> recv_buffers;
     int conn_to_write;
     //int header_size;
     
@@ -57,11 +68,25 @@ private:
     int client_login(int sockfd);
     std::string make_header(int msg_type, int msg_len);
     int send_header(int msg_type, int msg_len, int sockfd);
-    //int sendall(int to_send)
     int nonblock_send(int sockfd, const char* buff, int nbytes);
     int send_statement(int sockfd, int info, int nbytes);
     int get_byte_width(int num);
-    //char* prepare_buff_to_send(int full_size, int to_send, const std::string &msg, char *buffer);
+    bool is_logged(int sockfd);
+    int get_socket_read_state(int sockfd);
+    int get_socket_read_bytes_number(int sockfd);
+    int get_socket_write_state(int sockfd);
+    int get_socket_write_bytes_number(int sockfd);
+    void set_socket_read_state(int sockfd, int val);
+    void set_socket_read_bytes_number(int sockfd, int val);
+    void set_socket_write_state(int sockfd, int val);
+    void set_socket_write_bytes_number(int sockfd, int val);
+    void init_socket_state(int sockfd);
+    int get_to_write_connections_number();
+    void handle_existing_outbound_connection(int sockfd);
+    int nonblock_recv(int sockfd, char* buff, int nbytes);
+    int receive_message(int sockfd);
+    void cpy_to_recv_buff(char* buff, int len, int sockfd);
+    void parse_login_info_from_string(std::string const &msg);
 public:
     Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1), conn_to_write(0) {}
     void run();
