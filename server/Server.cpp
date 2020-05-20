@@ -40,18 +40,13 @@ void Server::run()
                 desc_ready -= 1;
                 if (current_desc == listening)
                     run_server = handle_new_connection(listening);
-<<<<<<< HEAD
                 else if (!is_logged(current_desc) || /*(!is_logged(current_desc) &&*/ get_socket_write_state(current_desc) != IDLE) /*TODO*/
-=======
-                else if (!is_logged(current_desc) || (!is_logged(current_desc) && get_socket_write_state(current_desc) != IDLE)) /*TODO*/
->>>>>>> 60b719a3efdc75583deb86a7a852ddf7adf0cc88
                     handle_existing_incoming_connection(current_desc);
             }
             // handle situation when server must be the one to initialize communication
             if (get_to_write_connections_number() > 0 && FD_ISSET(current_desc, &write_set))
             {
                 desc_ready -= 1;
-<<<<<<< HEAD
                 handle_existing_outbound_connection(current_desc);
 
                 // end
@@ -63,14 +58,6 @@ void Server::run()
 //                    int login_info = client_login(current_desc);
 //                    if (login_info == MSG_SENT)
 //                    	std::cout << "header sent" << std::endl;
-=======
-                std::cout << "desc ready: " << desc_ready << std::endl;
-                if (desc_to_login.count(current_desc))
-                {
-                    int login_info = client_login(current_desc);
-                    if (login_info == MSG_SENT)
-                    	std::cout << "header sent" << std::endl;
->>>>>>> 60b719a3efdc75583deb86a7a852ddf7adf0cc88
 //                    else if (login_info == 9)
 //                    	conn_to_write -= 1;
 //                    else if (login_info == WORK_END)
@@ -227,15 +214,10 @@ bool Server::handle_new_connection(int accept_sd)
         // add incoming connection to master set
         FD_SET(new_cli, &master);
         desc_to_login.insert(std::make_pair(new_cli, std::make_pair(0, header_size)));
-<<<<<<< HEAD
         std::cout << "after insert to desc_to_login" << std::endl;
         recv_buffers.insert(std::make_pair(new_cli, std::vector<char>()));
         init_socket_state(new_cli);
         //conn_to_write += 1;
-=======
-        init_socket_state(new_cli);
-        conn_to_write += 1;
->>>>>>> 60b719a3efdc75583deb86a7a852ddf7adf0cc88
         if (make_nonblocking(new_cli) < 0)
         {
             std::cerr << "make nonblocking error" << std::endl;
@@ -265,7 +247,7 @@ bool Server::handle_new_connection(int accept_sd)
 void Server::handle_existing_incoming_connection(int sockfd)
 {
     std::cout << "descriptor " << sockfd << " is readable" << std::endl;
-    //int buff_size = 4096;
+    int buff_size = 4096;
     char buffer[buff_size];
     bool close_conn = false;
     bool change_cli = false;
@@ -652,11 +634,7 @@ int Server::send_statement(int sockfd, int info, int nbytes)
 
 bool Server::is_logged(int sockfd)
 {
-<<<<<<< HEAD
     return desc_to_login.count(sockfd) == 0;
-=======
-    return desc_to_login.count(sockfd) > 0;
->>>>>>> 60b719a3efdc75583deb86a7a852ddf7adf0cc88
 }
 
 int Server::get_socket_read_state(int sockfd)
@@ -702,7 +680,6 @@ void Server::set_socket_write_bytes_number(int sockfd, int val)
 void Server::init_socket_state(int sockfd)
 {
     clients_state.insert(std::make_pair(sockfd, std::make_pair(std::make_pair(IDLE, 0), std::make_pair(HEADER_TO_SEND, header_size))));
-<<<<<<< HEAD
 }
 
 int Server::get_to_write_connections_number()
@@ -808,6 +785,3 @@ void Server::parse_login_info_from_string(const std::string &msg)
 //
 //    }
 //}
-=======
-}
->>>>>>> 60b719a3efdc75583deb86a7a852ddf7adf0cc88

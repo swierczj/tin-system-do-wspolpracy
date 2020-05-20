@@ -1,4 +1,0 @@
-g++ -c -l /usr/include/ -L /usr/local/include/google/protobuf main.cpp Server.cpp Server.h serv_func.cpp serv_func.h protocol.pb.cc protocol.pb.h -lprotobuf -pthread
-
-g++ -g main.o Server.o serv_func.o protocol.pb.o -o server -lprotobuf -pthread
-

@@ -36,11 +36,7 @@ private:
     typedef char* recv_buffer;
 
     uint16_t port_number;
-<<<<<<< HEAD
     enum server_consts { IDLE = -1, HEADER = -1, HEADER_TO_SEND = 0, HEADER_SENT = 1, MSG_SENT = 2, HEADER_TO_RECV = 0
-=======
-    enum server_consts { IDLE = -1, HEADER_TO_SEND = 0, HEADER_SENT = 1, MSG_SENT = 2, HEADER_TO_RECV = 0
->>>>>>> 60b719a3efdc75583deb86a7a852ddf7adf0cc88
                        , HEADER_RECVD = 1, MSG_RECVD = 2, LOGIN_SUCCESSFUL = 0, LOGIN_INCOMPLETE = 1, msg_type_len = 2
                        , header_size = 6, default_port = 54000 };
     enum header_msg_type {LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3};
@@ -85,15 +81,12 @@ private:
     void set_socket_write_state(int sockfd, int val);
     void set_socket_write_bytes_number(int sockfd, int val);
     void init_socket_state(int sockfd);
-<<<<<<< HEAD
     int get_to_write_connections_number();
     void handle_existing_outbound_connection(int sockfd);
     int nonblock_recv(int sockfd, char* buff, int nbytes);
     int receive_message(int sockfd);
     void cpy_to_recv_buff(char* buff, int len, int sockfd);
     void parse_login_info_from_string(std::string const &msg);
-=======
->>>>>>> 60b719a3efdc75583deb86a7a852ddf7adf0cc88
 public:
     Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1), conn_to_write(0) {}
     void run();
