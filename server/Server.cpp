@@ -34,17 +34,20 @@ void Server::run()
         int desc_ready = socket_count;
         for (int current_desc = 0; current_desc <= max_sd && desc_ready > 0; current_desc++)
         {
-            std::cout << "current desc: " << current_desc << " socket count: " << socket_count << "ready descs: " << desc_ready << std::endl;
+            std::cout << "current desc: " << current_desc << " socket count: " << socket_count << " ready descs: " << desc_ready << std::endl;
             if (FD_ISSET(current_desc, &read_set))
             {
+                std::cout << "check read set" << std::endl;
                 desc_ready -= 1;
                 if (current_desc == listening)
                     run_server = handle_new_connection(listening);
-                else if (!is_logged(current_desc) || /*(!is_logged(current_desc) &&*/ get_socket_write_state(current_desc) != IDLE) /*TODO*/
+                else if (!is_logged(current_desc) || /*(!is_logged(current_desc) &&*/ get_socket_read_state(current_desc) != IDLE)
                     handle_existing_incoming_connection(current_desc);
+
             }
             // handle situation when server must be the one to initialize communication
-            if (get_to_write_connections_number() > 0 && FD_ISSET(current_desc, &write_set))
+            //std::cout << "for loop, before get_socket_write check cli state.size: " << clients_state.size() << std::endl;
+            if ((get_socket_write_state(current_desc) == HEADER_TO_SEND || get_socket_write_state(current_desc) == HEADER_SENT) /*get_to_write_connections_number() > 0*/ && FD_ISSET(current_desc, &write_set))
             {
                 desc_ready -= 1;
                 handle_existing_outbound_connection(current_desc);
@@ -66,6 +69,9 @@ void Server::run()
 //                    	std::cout << "else in writing" << std::endl;	
 //                }
             }
+            else if (!(get_socket_write_state(current_desc) == HEADER_TO_SEND || get_socket_write_state(current_desc) == HEADER_SENT) /*get_to_write_connections_number() > 0*/ && FD_ISSET(current_desc, &write_set))
+                desc_ready -= 1;
+            //std::cout << "for loop, after get_socket_write check cli state.size: " << clients_state.size() << std::endl;
         }
     }
     cleanup(max_sd, &master);
@@ -214,7 +220,7 @@ bool Server::handle_new_connection(int accept_sd)
         // add incoming connection to master set
         FD_SET(new_cli, &master);
         desc_to_login.insert(std::make_pair(new_cli, std::make_pair(0, header_size)));
-        std::cout << "after insert to desc_to_login" << std::endl;
+        //std::cout << "after insert to desc_to_login, desc_to_login size: " << desc_to_login.size() << std::endl;
         recv_buffers.insert(std::make_pair(new_cli, std::vector<char>()));
         init_socket_state(new_cli);
         //conn_to_write += 1;
@@ -372,7 +378,7 @@ int Server::client_login(int sockfd)
     int to_send = get_socket_write_bytes_number(sockfd);
     int to_recv = get_socket_read_bytes_number(sockfd);
     // if first header
-    std::cout << "in login func sockfd: " << sockfd << ", to SEND: " << get_socket_write_bytes_number(sockfd) << " to RECV: " << get_socket_read_bytes_number(sockfd); // << " and req_len: " << req_len << std::endl;
+    std::cout << "in login func sockfd: " << sockfd << ", to SEND: " << get_socket_write_bytes_number(sockfd) << " to RECV: " << get_socket_read_bytes_number(sockfd) << std::endl; // << " and req_len: " << req_len << std::endl;
     if (/*desc_to_login[sockfd].first == 0 && desc_to_login[sockfd].second == header_size */ get_socket_write_state(sockfd) == HEADER_TO_SEND && get_socket_read_state(sockfd) == IDLE)
     {
         res = send_header(STATEMENT, req_len, sockfd);
@@ -384,16 +390,8 @@ int Server::client_login(int sockfd)
         else if (res == to_send)
         {
             std::cout << "success sent " << res << " bytes, REQ len:" << req_len << std::endl;
-            //set_socket_read_bytes_number(sockfd, 0);
-            //set_socket_read_state(sockfd, IDLE);
             set_socket_write_bytes_number(sockfd, req_len);
             set_socket_write_state(sockfd, HEADER_SENT);
-            //desc_to_login[sockfd].first = 0;
-            //desc_to_login[sockfd].second = req_len;
-            // now send message
-            /*TODO: last partial send i.e. header is sent <- DONE (but not tested)*/
-            //conn_to_write -= 1;
-            //return LOGIN_SUCCESSFUL;
         }
         else if (res > 0 && res < to_send)
         {
@@ -401,7 +399,6 @@ int Server::client_login(int sockfd)
             //set_socket_read_bytes_number(sockfd, 0);
             //set_socket_read_state(sockfd, IDLE);
             set_socket_write_bytes_number(sockfd, to_send - res);
-            //set_socket_write_state(sockfd, HEADER_SENT);
         	//return LOGIN_INCOMPLETE; (??)
         }
         else
@@ -473,7 +470,7 @@ int Server::client_login(int sockfd)
             std::cout << "partial recv: " << res << " bytes" << std::endl;
             //desc_to_login[sockfd].first = 0;
             //desc_to_login[sockfd].second = req_len - res;
-            set_socket_write_bytes_number(sockfd, to_recv - res);
+            set_socket_read_bytes_number(sockfd, to_recv - res);
             //return LOGIN_INCOMPLETE; // (??)
         }
         else if (res == 0)
@@ -489,6 +486,7 @@ int Server::client_login(int sockfd)
     }
     if (get_socket_read_state(sockfd) == HEADER_RECVD && get_socket_write_state(sockfd) == MSG_SENT)
     {
+        std::cout << "header recvd, now get login" << std::endl;
         to_recv = get_socket_read_bytes_number(sockfd);
         res = receive_message(sockfd);
         if (res == -1)
@@ -505,7 +503,7 @@ int Server::client_login(int sockfd)
             //Header header = parse_from_string(std::string(recv_buffers[sockfd].begin(), recv_buffers[sockfd].end()));
             set_socket_read_state(sockfd, MSG_RECVD);
             set_socket_read_bytes_number(sockfd, 0);
-            set_socket_write_state(sockfd, HEADER_TO_SEND);
+            set_socket_write_state(sockfd, IDLE/*HEADER_TO_SEND*/);
             set_socket_write_bytes_number(sockfd, header_size);
             // cleanup the buffer
             recv_buffers[sockfd].clear();
@@ -517,7 +515,7 @@ int Server::client_login(int sockfd)
             std::cout << "partial recv: " << res << " bytes" << std::endl;
             //desc_to_login[sockfd].first = 0;
             //desc_to_login[sockfd].second = req_len - res;
-            set_socket_write_bytes_number(sockfd, to_recv - res);
+            set_socket_read_bytes_number(sockfd, to_recv - res);
             //return LOGIN_INCOMPLETE; // (??)
         }
         else if (res == 0)
@@ -570,7 +568,7 @@ int Server::send_header(int msg_type, int msg_len, int sockfd)
         //prepare_buff_to_send(header_size, to_send, header, msg_to_send);
         auto msg_to_send = header.substr(offset, to_send).c_str();
         bytes_sent = nonblock_send(sockfd, msg_to_send, to_send);
-        std::cout << "msg to send 1 char: " << *msg_to_send << std::endl;
+        //std::cout << "msg to send 1 char: " << *msg_to_send << std::endl;
         if (bytes_sent == -1)
             return -1; // change client, EWOULDBLOCK occured
         else if (bytes_sent < -1)
@@ -585,7 +583,7 @@ int Server::send_header(int msg_type, int msg_len, int sockfd)
 
 int Server::nonblock_send(int sockfd, const char *buff, int nbytes)
 {
-    std::cout << "in nonblock send, buff: " << buff[0] << std::endl;
+    //std::cout << "in nonblock send, buff: " << buff[0] << std::endl;
     int bytes_sent = send(sockfd, buff, nbytes, 0);
     if (bytes_sent < 0)
     {
@@ -623,7 +621,7 @@ int Server::send_statement(int sockfd, int info, int nbytes)
     int offset = statement.size() - nbytes;
     auto buff = statement.substr(offset, nbytes).c_str();
     //prepare_buff_to_send(statement.size(), nbytes, statement, buff);
-    std::cout << "buff to send 1 char: " << *buff << std::endl;
+    //std::cout << "buff to send 1 char: " << *buff << std::endl;
     int bytes_sent = nonblock_send(sockfd, buff, nbytes);
     if (bytes_sent == -1)
         return -1; // change client, EWOULDBLOCK occured
@@ -639,21 +637,29 @@ bool Server::is_logged(int sockfd)
 
 int Server::get_socket_read_state(int sockfd)
 {
+    if (!clients_state.count(sockfd))
+        return -2;
     return clients_state[sockfd].first.first;
 }
 
 int Server::get_socket_read_bytes_number(int sockfd)
 {
+    if (!clients_state.count(sockfd))
+        return -2;
     return clients_state[sockfd].first.second;
 }
 
 int Server::get_socket_write_state(int sockfd)
 {
+    if (!clients_state.count(sockfd))
+        return -2;
     return clients_state[sockfd].second.first;
 }
 
 int Server::get_socket_write_bytes_number(int sockfd)
 {
+    if (!clients_state.count(sockfd))
+        return -2;
     return clients_state[sockfd].second.second;
 }
 
@@ -679,22 +685,25 @@ void Server::set_socket_write_bytes_number(int sockfd, int val)
 
 void Server::init_socket_state(int sockfd)
 {
+    //std::cout << "inserting new sock to client state: " << sockfd << " size: " << clients_state.size() << std::endl;
     clients_state.insert(std::make_pair(sockfd, std::make_pair(std::make_pair(IDLE, 0), std::make_pair(HEADER_TO_SEND, header_size))));
+    //std::cout << "after insert client state size: " << clients_state.size() << std::endl;
 }
 
 int Server::get_to_write_connections_number()
 {
     int count = 0;
+    //std::cout << "cli state size in get_to_write: " << clients_state.size() << std::endl;
     //if (clients_state.size() == 0)
     //    return 0;
     for (auto &elem : clients_state)
     {
         auto sockfd = elem.first;
-        //std::cout << "socket in for loop: " << sockfd << "and get_sock_write st: " << get_socket_write_state(sockfd) << std::endl;
-        if (get_socket_write_state(sockfd) != MSG_SENT)
+        //std::cout << "socket in for loop: " << sockfd << " and get_sock_write st: " << get_socket_write_state(sockfd) << std::endl;
+        if (get_socket_write_state(sockfd) == HEADER_TO_SEND || get_socket_write_state(sockfd) == HEADER_SENT)
             count += 1;
     }
-    std::cout << "get_conns(): " << count << std::endl;
+    //std::cout << "after get to write cli size: " << clients_state.size() << " and result: " << count << std::endl;
     return count;
 }
 
@@ -725,7 +734,8 @@ void Server::handle_existing_outbound_connection(int sockfd)
         }
         else
         {
-            std::cout << "logged user may edit the document" << std::endl;
+            std::cout << "logged user may edit the document, some writing from server here" << std::endl;
+            change_client = true;
         }
     }
 }
@@ -773,7 +783,7 @@ void Server::parse_login_info_from_string(const std::string &msg)
     int split_pos = msg.find('\n');
     std::string login = msg.substr(0, split_pos);
     std::string passwd = msg.substr(split_pos + 1, msg.size());
-    std:: cout << "login: " << login << " passwd: " << passwd << std::endl;
+    std::cout << "login: " << login << " passwd: " << passwd << std::endl;
 }
 
 //int Server::receive_message(int msg_type, int sockfd)

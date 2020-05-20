@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-c -g
+CXXFLAGS=-c -g -std=gnu++11
 
 all: server
 
@@ -22,6 +22,6 @@ serv_func.o: serv_func.h serv_func.cpp
 	$(CXX) $(CXXFLAGS) serv_func.h serv_func.cpp
 	
 clean:
-	rm -rf *o server
+	rm -rf *h.gch *o server
 
 

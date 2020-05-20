@@ -20,7 +20,7 @@
 #include <vector>
 #include "serv_func.h"
 #include "Header.h"
-#include "protocol.pb.h"
+//#include "protocol.pb.h"
 
 //class Header;
 Header parse_from_string(std::string const &str);
