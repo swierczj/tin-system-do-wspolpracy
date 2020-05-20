@@ -22,3 +22,7 @@ class ConnectionClosedByServer(Exception):
 
 class InvalidLoginData(Exception):
     pass
+
+
+class CorruptedHeader(Exception):
+    pass

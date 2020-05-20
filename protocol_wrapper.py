@@ -1,14 +1,19 @@
 
+"""module responsible for translating protocol"""
+import my_errors
+HEADER_LENGTH = 6
+""" Message types in header"""
 LOGIN = 0
 STATEMENT = 1
 EDIT = 2
 PUBLIC_KEY = 3
 
-#serializacja szyfyzacjia dostarczalność
-class message:
+
+class Message:
     pass
 
-class Header(message):
+
+class Header:
     def __init__(self, **kwargs):
 
         if 'message' in kwargs:
@@ -17,7 +22,7 @@ class Header(message):
                 self.msgType = int(self.message[:2])
                 self.msgLength = int(self.message[4:])
             except ValueError:
-                pass
+                raise my_errors.CorruptedHeader
 
         elif 'msglength' and 'msgtype' in kwargs:
             self.msgType = kwargs.get('msgtype')
@@ -28,21 +33,19 @@ class Header(message):
     def get_msg_type(self):
         return self.msgType
 
-
     def get_msg_length(self):
-        return  self.msgLength
-
+        return self.msgLength
 
     def get_message(self):
         return self.message
 
 
-class LoginMessage(message):
+class LoginMessage(Message):
 
     def __init__(self,**kwargs):
 
-        if 'message' in kwargs:
-            self.login,self.password = kwargs.get('message').split()
+        if 'Message' in kwargs:
+            self.login,self.password = kwargs.get('Message').split()
 
         elif 'login' and 'password' in kwargs:
             self.login =  kwargs.get('login')
@@ -57,18 +60,14 @@ class LoginMessage(message):
 
     def get_login(self):
         return self.login
+
     def get_password(self):
         return self.message
 
 
-class Statement(message):
+class Statement(Message):
     pass
 
-
-loginmes = LoginMessage(login='byq1',password='byq2')
-print(loginmes.get_length_of_message())
-login2= LoginMessage(message=loginmes.get_message())
-print(login2.get_login())
 
 
 
