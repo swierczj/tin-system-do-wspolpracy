@@ -1,9 +1,6 @@
 #ifndef TIN_SERVER_H
 #define TIN_SERVER_H
 
-//#include <cstdint>
-//#include <vector>
-
 #include <iostream>
 #include <sys/types.h>
 #include <unistd.h>
@@ -20,9 +17,8 @@
 #include <vector>
 #include "serv_func.h"
 #include "Header.h"
-//#include "protocol.pb.h"
+#include "ClientsMonitor.h"
 
-//class Header;
 Header parse_from_string(std::string const &str);
 
 class Server
@@ -47,8 +43,7 @@ private:
     std::map<int, socket_state> clients_state;
     std::map<int, bytes_pair> desc_to_login;
     std::map<int, std::vector<char>> recv_buffers;
-    int conn_to_write;
-    //int header_size;
+    ClientsMonitor clients;
     
     int set_listening();
     int set_socket(int sock_domain = AF_INET, int sock_type = SOCK_STREAM, int proto = 0);
@@ -71,24 +66,26 @@ private:
     int nonblock_send(int sockfd, const char* buff, int nbytes);
     int send_statement(int sockfd, int info, int nbytes);
     int get_byte_width(int num);
-    bool is_logged(int sockfd);
-    int get_socket_read_state(int sockfd);
-    int get_socket_read_bytes_number(int sockfd);
-    int get_socket_write_state(int sockfd);
-    int get_socket_write_bytes_number(int sockfd);
-    void set_socket_read_state(int sockfd, int val);
-    void set_socket_read_bytes_number(int sockfd, int val);
-    void set_socket_write_state(int sockfd, int val);
-    void set_socket_write_bytes_number(int sockfd, int val);
-    void init_socket_state(int sockfd);
-    int get_to_write_connections_number();
+    /* ------------------ ClientsMonitor ------------------*/
+//    bool is_logged(int sockfd);
+//    int get_socket_read_state(int sockfd);
+//    int get_socket_read_bytes_number(int sockfd);
+//    int get_socket_write_state(int sockfd);
+//    int get_socket_write_bytes_number(int sockfd);
+//    void set_socket_read_state(int sockfd, int val);
+//    void set_socket_read_bytes_number(int sockfd, int val);
+//    void set_socket_write_state(int sockfd, int val);
+//    void set_socket_write_bytes_number(int sockfd, int val);
+//    void init_socket_state(int sockfd);
+//    int get_to_write_connections_number();
+    /* ------------------ end ------------------ */
     void handle_existing_outbound_connection(int sockfd);
     int nonblock_recv(int sockfd, char* buff, int nbytes);
     int receive_message(int sockfd);
     void cpy_to_recv_buff(char* buff, int len, int sockfd);
     void parse_login_info_from_string(std::string const &msg);
 public:
-    Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1), conn_to_write(0) {}
+    Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1) {}
     void run();
 };
 
