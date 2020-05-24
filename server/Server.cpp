@@ -629,7 +629,7 @@ void Server::handle_existing_outbound_connection(int sockfd)
             {
                 if (res != -1)
                     std::cerr << "error" << std::endl;
-                // EWOULDBLOCK
+                //EWOULDBLOCK
                 change_client = true;
             }
             else if (res == WORK_END || res == LOGIN_SUCCESSFUL)
