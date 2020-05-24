@@ -18,6 +18,7 @@
 #include "serv_func.h"
 #include "Header.h"
 #include "ClientsMonitor.h"
+#include "RecvBuffers.h"
 
 Header parse_from_string(std::string const &str);
 
@@ -27,7 +28,7 @@ private:
     typedef int bytes_to_receive;
     typedef int bytes_to_send;
     typedef int msg_state;
-    typedef std::pair<std::pair<msg_state, bytes_to_receive>, std::pair<msg_state, bytes_to_send>> socket_state;
+    //typedef std::pair<std::pair<msg_state, bytes_to_receive>, std::pair<msg_state, bytes_to_send>> socket_state;
     typedef std::pair<bytes_to_receive, bytes_to_send> bytes_pair;
     typedef char* recv_buffer;
 
@@ -40,10 +41,12 @@ private:
     int max_sd;
     int listening;
     fd_set master;
-    std::map<int, socket_state> clients_state;
+    //std::map<int, socket_state> clients_state;
     std::map<int, bytes_pair> desc_to_login;
-    std::map<int, std::vector<char>> recv_buffers;
+    //std::map<int, std::vector<char>> recv_buffers;
+    RecvBuffers recv_buffers;
     ClientsMonitor clients;
+
     
     int set_listening();
     int set_socket(int sock_domain = AF_INET, int sock_type = SOCK_STREAM, int proto = 0);
@@ -58,7 +61,7 @@ private:
     void handle_existing_incoming_connection(int sockfd);
     bool forward_message(int sockfd, char* bytes);
     void remove_socket(int sockfd, int max_desc, fd_set* set);
-    void cleanup(int max_desc, fd_set* set);
+    void cleanup(int max_desc, fd_set* set); /*TODO: update clients and recv_buffers*/
 
     int client_login(int sockfd);
     std::string make_header(int msg_type, int msg_len);
@@ -66,24 +69,13 @@ private:
     int nonblock_send(int sockfd, const char* buff, int nbytes);
     int send_statement(int sockfd, int info, int nbytes);
     int get_byte_width(int num);
-    /* ------------------ ClientsMonitor ------------------*/
-//    bool is_logged(int sockfd);
-//    int get_socket_read_state(int sockfd);
-//    int get_socket_read_bytes_number(int sockfd);
-//    int get_socket_write_state(int sockfd);
-//    int get_socket_write_bytes_number(int sockfd);
-//    void set_socket_read_state(int sockfd, int val);
-//    void set_socket_read_bytes_number(int sockfd, int val);
-//    void set_socket_write_state(int sockfd, int val);
-//    void set_socket_write_bytes_number(int sockfd, int val);
-//    void init_socket_state(int sockfd);
-//    int get_to_write_connections_number();
-    /* ------------------ end ------------------ */
     void handle_existing_outbound_connection(int sockfd);
     int nonblock_recv(int sockfd, char* buff, int nbytes);
     int receive_message(int sockfd);
-    void cpy_to_recv_buff(char* buff, int len, int sockfd);
-    void parse_login_info_from_string(std::string const &msg);
+    //void cpy_to_recv_buff(char* buff, int len, int sockfd);
+    void parse_login_info_from_string(std::string const &msg); /* TODO: class handling password */
+
+    fd_set init_set_with_fds(std::vector<int> const &fds);
 public:
     Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1) {}
     void run();

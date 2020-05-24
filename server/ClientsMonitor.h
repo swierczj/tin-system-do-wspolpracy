@@ -4,6 +4,7 @@
 #include <utility>
 #include <map>
 #include <set>
+#include <vector>
 #include "Header.h"
 
 class ClientsMonitor
@@ -32,6 +33,7 @@ public:
     int get_to_write_connections_number();
     bool is_logged(int sockfd);
     int get_existing_conns();
+    std::vector<int> get_write_descriptors();
 
 };
 

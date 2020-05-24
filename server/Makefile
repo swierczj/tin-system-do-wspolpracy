@@ -3,14 +3,17 @@ CXXFLAGS=-c -g -std=gnu++11
 
 all: server
 
-server: main.o Server.o ClientsMonitor.o Header.o Message.o serv_func.o 
-	$(CXX) main.o Server.o ClientsMonitor.o Header.o Message.o serv_func.o -o server
+server: main.o Server.o RecvBuffers.o ClientsMonitor.o Header.o Message.o serv_func.o 
+	$(CXX) main.o Server.o RecvBuffers.o ClientsMonitor.o Header.o Message.o serv_func.o -o server
 
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) main.cpp
 	
 Server.o: Server.h Server.cpp
 	$(CXX) $(CXXFLAGS) Server.h Server.cpp 	
+
+RecvBuffers.o: RecvBuffers.h RecvBuffers.cpp
+	$(CXX) $(CXXFLAGS) RecvBuffers.h RecvBuffers.cpp
 
 ClientsMonitor.o: ClientsMonitor.h ClientsMonitor.cpp
 	$(CXX) $(CXXFLAGS) ClientsMonitor.h ClientsMonitor.cpp

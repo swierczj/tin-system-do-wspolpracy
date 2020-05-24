@@ -74,3 +74,15 @@ int ClientsMonitor::get_existing_conns()
 {
     return clients_state.size();
 }
+
+std::vector<int> ClientsMonitor::get_write_descriptors()
+{
+    std::vector<int> res;
+    for (auto &elem : clients_state)
+    {
+        auto sockfd = elem.first;
+        if (get_socket_write_state(sockfd) == HEADER_TO_SEND || get_socket_write_state(sockfd) == HEADER_SENT)
+            res.push_back(sockfd);
+    }
+    return res;
+}
