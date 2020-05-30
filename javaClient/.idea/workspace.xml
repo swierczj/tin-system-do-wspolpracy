@@ -19,7 +19,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Gui - dziala logowanie przynajmniej wysylanie" />
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Gui - dziala logowanie przynajmniej wysylanie">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -120,22 +126,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590846701447" />
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1590859877198">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1590860712350">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859877198" />
-    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1590859877198">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
+    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1590860712350">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859877198" />
-    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1590859877198">
+    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
+    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1590860712350">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859877198" />
-    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1590859877198">
+    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1590860712350">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859877198" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
     <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1590859699787">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -168,16 +174,9 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590858764341" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/client/Client.java</url>
-          <line>135</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590860118560">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860118560" />
   </component>
 </project>

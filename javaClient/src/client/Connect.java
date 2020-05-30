@@ -33,14 +33,19 @@ public class Connect{
         } catch( NumberFormatException e ){
             port = 0;
         }
-        createClient();
+        if( createClient() == 0 )     // hide window
+            loginButton.getScene().getWindow().hide();
     }
 
     private int createClient() throws IOException{
-        client = new Client( ip, port );
-        if( client.connect() != 0 ){
-            displayError( "Cannot connect to " + ip + ":" + portField.getText() );
-            return -1;
+        if( !connected ){
+            client = new Client( ip, port );
+            if( client.connect() != 0 ){
+                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
+                return -1;
+            }
+            connected = true;
+            System.out.print( "connect" );
         }
         client.setLoginData( loginField.getText(), passwordField.getText() );
         if( client.login() != 0 ){
@@ -63,10 +68,12 @@ public class Connect{
     @FXML private TextField portField;
     @FXML private PasswordField passwordField;
     @FXML private CheckBox defaultCheckBox;
+    @FXML private Button loginButton;
     private String defaultIp = "185.20.175.81";
     private String defaultPort = "54000";
     private String ip;
     private int port;
+    private boolean connected = false;
 
     private Client client;
 }

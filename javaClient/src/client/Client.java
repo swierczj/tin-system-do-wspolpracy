@@ -37,6 +37,7 @@ public class Client{
     private String login;
     private String password;
     private boolean logged = false;
+    private boolean canLogIn = false;
 
     public Client( String ip, int port ){
         Client.ip = ip;
@@ -96,7 +97,7 @@ public class Client{
         Protocol statement = new Protocol( readLine( msgLength ), STATEMENT );
         switch( statement.getStatement() ){
             case KEEP_ALIVE -> isAlive = true;
-            case REQUEST_LOGIN -> login();
+            case REQUEST_LOGIN -> canLogIn = true;
             case LOGIN_ACCEPTED -> logged = true;
             case LOGIN_REJECTED -> logged = false;
             default -> System.out.print( "No i co z tego???\n" );
@@ -114,7 +115,9 @@ public class Client{
         }
     }
 
-    public int login (){
+    public int login () throws IOException{
+        //getMsg();
+        //if( !canLogIn ) return -1;      TODO na razie wyłączone żebym mógł testować dalej
         Protocol loginMsg = new Protocol( login, password );
         writeMsg( LOGIN, loginMsg.getMessage() );
         System.out.print( logged );
