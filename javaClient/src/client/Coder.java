@@ -17,18 +17,7 @@ public class Coder implements Serializable {
 
 
     public static void setKey (String myKey) {
-        MessageDigest sha = null;
-        try {
-            key = myKey.getBytes("UTF-8");
-            sha = MessageDigest.getInstance("SHA-1");
-            key = sha.digest(key);
-            key = Arrays.copyOf(key, 16);
-            secretKey = new SecretKeySpec(key, "AES");
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("ups");
-        } catch (UnsupportedEncodingException e) {
-            System.out.println("ops");
-        }
+            secretKey = new SecretKeySpec(myKey.getBytes(), "AES");
     }
 
     public static String encrypt(String strToEncrypt, String secret)
