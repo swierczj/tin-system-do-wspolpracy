@@ -1,5 +1,11 @@
 package client;
 
+import com.gluonhq.charm.glisten.visual.Theme;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -22,6 +28,7 @@ public class Client{
     private static final int WORK_END = 5;
     private static final int PUBLIC_KEY_REQUEST = 6;
 
+    private Notepad notepad;
 
     private static String ip = null;
     private static int port = 0;
@@ -29,15 +36,11 @@ public class Client{
     private BufferedReader input;
     private PrintWriter output;
     private Scanner scanner;
-    private static Thread reader, writer, keepAlive;
-    private static volatile boolean isAlive = false;
-    private static volatile boolean isRunning = false;
-    private static String messageIn = "";
-    private static String serverPublicKey = "";
-    private String login;
-    private String password;
-    private boolean logged = false;
-    private boolean canLogIn = false;
+    private static Thread reader, writer, keepAlive, notepadThread;
+    private static volatile boolean isAlive = false, isRunning = false;
+    private static String messageIn = "", serverPublicKey = "";
+    private String login, password;
+    private boolean logged = false,canLogIn = false;
 
     public Client( String ip, int port ){
         Client.ip = ip;
@@ -161,18 +164,40 @@ public class Client{
         return 0;
     }
 
+    public void createGUI() throws IOException{
+        FXMLLoader fxmlLoader = new FXMLLoader( getClass().getResource( "notepad.fxml" ) );
+        Stage stage = new Stage();
+        stage.setTitle( "Notepad" );
+        stage.setScene( new Scene( fxmlLoader.load(), 1280, 720 ) );
+        stage.setResizable( false );
+        stage.show();
+        notepad = fxmlLoader.getController();
+        createThreads();
+        startThreads();
+    }
+
     public int createThreads(){
-        createWriter();
-        createReader();
+        //createWriter();
+        //createReader();
+        createNotepadThread();
         createKeepAlive();
         return 0;
     }
 
     public void startThreads(){
-        writer.start();
-        reader.start();
+        //writer.start();
+        //reader.start();
+        //notepadThread.start();
         keepAlive.start();
     }
+
+    private void createNotepadThread(){
+        notepadThread = new Thread( () -> {
+            while( true ){
+            }
+        } );
+    }
+
 
     private int createReader(){
         AtomicInteger toReturn = new AtomicInteger( 0 );

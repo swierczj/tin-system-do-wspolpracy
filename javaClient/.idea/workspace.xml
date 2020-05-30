@@ -19,7 +19,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Gui - dziala logowanie przynajmniej wysylanie">
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="GUI - chowa okno logowania">
+      <change afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" afterDir="false" />
@@ -94,7 +95,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590859897223</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="GUI - chowa okno logowania">
+      <created>1590861075683</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1590861075683</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -107,11 +115,13 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Create GUI start" />
     <MESSAGE value="Gui - dziala logowanie przynajmniej wysylanie" />
-    <option name="LAST_COMMIT_MESSAGE" value="Gui - dziala logowanie przynajmniej wysylanie" />
+    <MESSAGE value="GUI - chowa okno logowania" />
+    <option name="LAST_COMMIT_MESSAGE" value="GUI - chowa okno logowania" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -126,38 +136,38 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590846701447" />
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1590860712350">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1590869852998">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
-    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1590860712350">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
+    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1590869852998">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
-    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1590860712350">
+    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
+    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1590869852998">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
-    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1590860712350">
+    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1590869852998">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860712350" />
-    <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1590859699787">
+    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
+    <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1590869084629">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859699787" />
-    <state width="1876" height="342" key="GridCell.Tab.1.center" timestamp="1590859699786">
+    <state width="1876" height="342" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
+    <state width="1876" height="342" key="GridCell.Tab.1.center" timestamp="1590869084629">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859699786" />
-    <state width="1876" height="342" key="GridCell.Tab.1.left" timestamp="1590859699786">
+    <state width="1876" height="342" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
+    <state width="1876" height="342" key="GridCell.Tab.1.left" timestamp="1590869084629">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859699786" />
-    <state width="1876" height="342" key="GridCell.Tab.1.right" timestamp="1590859699787">
+    <state width="1876" height="342" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
+    <state width="1876" height="342" key="GridCell.Tab.1.right" timestamp="1590869084629">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590859699787" />
+    <state width="1876" height="342" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
     <state x="625" y="279" key="NewModule_or_Project.wizard" timestamp="1590845685624">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

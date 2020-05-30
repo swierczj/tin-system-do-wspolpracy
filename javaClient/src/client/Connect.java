@@ -52,6 +52,7 @@ public class Connect{
             displayError( "Login or password incorrect." );
             return -2;
         }
+        client.createGUI();
         return 0;
     }
 
