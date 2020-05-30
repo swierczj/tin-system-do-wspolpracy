@@ -80,7 +80,6 @@ public class Notepad{
         }
         char c;
         List< pair > position;      // position CRDT
-        int time;                   // when created
         private class pair{
             pair( int p, int c ){ pos = p; creator = c; }
             public int pos;         // sign position
