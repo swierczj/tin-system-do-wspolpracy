@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client{
     private static final int HEADER_STATEMENT_LENGTH = 2;
-    private static final int HEADER_LENGTH_LENGTH = 2;
+    private static final int HEADER_LENGTH_LENGTH = 4;
     private static final int LOGIN = 0;
     private static final int STATEMENT = 1;
     private static final int EDIT = 2;
@@ -34,34 +34,22 @@ public class Client{
     private static volatile boolean isRunning = false;
     private static String messageIn = "";
     private static String serverPublicKey = "";
+    private String login;
+    private String password;
+    private boolean logged = false;
 
     public Client( String ip, int port ){
-        this.ip = ip;
-        this.port = port;
+        Client.ip = ip;
+        Client.port = port;
     }
 
-    public int getPort(){
-        return port;
-    }
-
-    public String getIp(){
-        return ip;
-    }
-
-    public static Thread getKeepAlive(){
-        return keepAlive;
-    }
-
-    public static Thread getReader(){
-        return reader;
-    }
-
-    public static Thread getWriter(){
-        return writer;
+    public void setLoginData( String login, String password ){
+        this.login = login;
+        this.password = password;
     }
 
     private String readLine( int len ) throws IOException{
-        char[] msg = null;
+        char[] msg = new char[ len ];
         int readChars = input.read( msg, 0, len );
         if( readChars != 6 ) return null;        // Message is null - end of story
         return new String( msg );
@@ -69,36 +57,34 @@ public class Client{
 
     private String intToString( int value, int length ){    // returns string of length "length", fulfill with zeros
         int intLength = String.valueOf( value ).length();
-        String header = "";
         if( intLength > length ) return "";
-        for( int i = length; i > intLength; --i )
-            header += "0";
-        header += "value";
-        return header;
+        return "0".repeat( length - intLength ) + String.valueOf( value );
     }
 
     private String makeHeader( int type, int length ){
             return intToString( type, HEADER_STATEMENT_LENGTH ) + intToString( length, HEADER_LENGTH_LENGTH );
     }
 
-    private int getHeader() throws IOException{
-        String header = readLine( 6 );
-        if( header == null ) return -1;
-        int type = Integer.parseInt( header.substring( 4, 8 ) );
-        int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
-        isAlive = true;
-        switch( type ){
-            case STATEMENT:
-                getStatement( msgLength );
-                break;
-            case EDIT:
-                getEdit( msgLength );
-                break;
-            case PUBLIC_KEY:
-                getServerPublicKey( msgLength );
-                break;
+    private int getMsg() throws IOException{
+        int[] header = getHeader();
+        switch( header[ 0 ] ){
+            case STATEMENT -> getStatement( header[ 1 ] );
+            case EDIT -> getEdit( header[ 1 ] );
+            case PUBLIC_KEY -> getServerPublicKey( header[ 1 ] );
         }
         return 0;
+    }
+
+    private int[] getHeader() throws IOException{
+        String header = readLine( 6 );
+        int[] ret = { -1, -1 };
+        if( header != null ){
+            int type = Integer.parseInt( header.substring( 4, 8 ) );
+            int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
+            isAlive = true;
+            ret = new int[]{ type, msgLength };
+        }
+        return ret;
     }
 
     private void getEdit( int msgLength ) throws IOException{
@@ -109,21 +95,11 @@ public class Client{
     private void getStatement( int msgLength ) throws IOException{
         Protocol statement = new Protocol( readLine( msgLength ), STATEMENT );
         switch( statement.getStatement() ){
-            case KEEP_ALIVE:
-                isAlive = true;
-                break;
-            case REQUEST_LOGIN:
-                login();
-                break;
-            case LOGIN_ACCEPTED:
-                System.out.print( "Login accepted\n" );
-                break;
-            case LOGIN_REJECTED:
-                System.out.print( "Login rejected. Try again\n" );
-                login();
-                break;
-            default:
-                System.out.print( "No i co z tego???\n" );
+            case KEEP_ALIVE -> isAlive = true;
+            case REQUEST_LOGIN -> login();
+            case LOGIN_ACCEPTED -> logged = true;
+            case LOGIN_REJECTED -> logged = false;
+            default -> System.out.print( "No i co z tego???\n" );
         }
     }
 
@@ -138,26 +114,28 @@ public class Client{
         }
     }
 
-    private void login(){
-        System.out.print( "Login: " );
-        String login = scanner.nextLine();
-        System.out.print( "Password: " );
-        String password = new String( System.console().readPassword() );
+    public int login (){
         Protocol loginMsg = new Protocol( login, password );
-        output.println( makeHeader( LOGIN, loginMsg.getMessage().length() ) );
-        output.println( loginMsg.getMessage() );
+        writeMsg( LOGIN, loginMsg.getMessage() );
+        System.out.print( logged );
+        //if( !logged ) return -1;      TODO na razie wyłączone żebym mógł testować dalej
+        return 0;
     }
 
     private void writeEdit( String msg ){
         Protocol editMsg = new Protocol( msg );
-        output.println( makeHeader( EDIT, editMsg.getMessage().length() ) );
-        output.println( editMsg.getMessage() );
+        writeMsg( EDIT, editMsg.getMessage() );
     }
 
     private void writeStatement( int statement ){
         Protocol statMsg = new Protocol( statement );
-        output.println( makeHeader( STATEMENT, statMsg.getMessage().length() ) );
-        output.println( statMsg.getMessage() );
+        writeMsg( STATEMENT, statMsg.getMessage() );
+    }
+
+    private void writeMsg( int type, String msg ){
+        String header = makeHeader( type, msg.length() );
+        output.println( header );
+        output.println( msg );
     }
 
     public int connect() throws IOException{
@@ -198,7 +176,7 @@ public class Client{
         reader = new Thread( () -> {
             while( true ){
                 try{
-                    if( !( isRunning && getHeader() == 0 ) ) break;
+                    if( !( isRunning && getMsg() == 0 ) ) break;
                 }catch( IOException ignored ){}
             }
             scanner.close();
