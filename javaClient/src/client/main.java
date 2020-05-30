@@ -1,27 +1,23 @@
 package client;
 
-import java.io.IOException;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class main{
-    public static void main( String args[] ) throws IOException{
+public class main extends Application{
 
-        Coder coder = new Coder();
-        System.out.println(coder.encrypt("message 1","1234567890123456"));
+    @Override
+    public void start( Stage primaryStage ) throws Exception{
+        Parent root = FXMLLoader.load( getClass().getResource( "connect.fxml" ) );
+        primaryStage.setTitle( "Connect" );
+        primaryStage.setScene( new Scene( root, 392, 213) );
+        primaryStage.setResizable( false );
+        primaryStage.show();
+    }
 
-        String ip = "25.139.176.21";
-        int port = 54000;
-
-        if( args.length > 0 )
-            ip = args[ 0 ];
-        if( args.length > 1 )
-            port = Integer.parseInt( args[ 1 ] );
-
-        Client client = new Client( ip, port );
-        if( client.connect() == 0 ){
-            client.createThreads();
-
-            client.startThreads();
-        }
-
+    public static void main( String[] args ) {
+        launch( args );
     }
 }

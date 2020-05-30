@@ -28,7 +28,7 @@
             <MenuItem mnemonicParsing="false" text="Undo" />
             <MenuItem mnemonicParsing="false" text="Redo" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
+            <MenuItem fx:id="displayChangesBuffer" mnemonicParsing="false" text="Display changes" />
             <MenuItem mnemonicParsing="false" text="Copy" />
             <MenuItem mnemonicParsing="false" text="Paste" />
             <MenuItem mnemonicParsing="false" text="Delete" />
