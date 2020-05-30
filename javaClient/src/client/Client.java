@@ -61,7 +61,7 @@ public class Client{
     }
 
     private String readLine( int len ) throws IOException{
-        char[] msg = new char[ 6 ];
+        char[] msg = null;
         int readChars = input.read( msg, 0, len );
         if( readChars != 6 ) return null;        // Message is null - end of story
         return new String( msg );
@@ -82,17 +82,10 @@ public class Client{
     }
 
     private int getHeader() throws IOException{
-        int type = -1, msgLength = 0;
         String header = readLine( 6 );
-        if( header == null ){
-            System.out.print( "Improper header\n" );
-            return -1;
-        }
-        try{
-            type = Integer.parseInt( header.substring( 0, 2 ) );
-            msgLength = Integer.parseInt( header.substring( 2, 6 ) );
-        } catch( NumberFormatException exception ) { System.out.print( "Kurwa cyfry mają byc!!! A nie jakies: " + header + "\n"); };
-        System.out.print( "Header: type = " + type + ", message length = " + msgLength + '\n' );
+        if( header == null ) return -1;
+        int type = Integer.parseInt( header.substring( 4, 8 ) );
+        int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
         isAlive = true;
         switch( type ){
             case STATEMENT:
