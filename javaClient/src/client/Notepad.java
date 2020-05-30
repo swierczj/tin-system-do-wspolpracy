@@ -1,5 +1,6 @@
 package client;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -27,6 +28,11 @@ public class Notepad{
         Character c = getChar( key, caretPos, 0 );
         text.add( caretPos, c );
         charBuffer.add( c );
+    }
+
+    @FXML private void displayChangesBuffer( ActionEvent event ){
+        for( Character c : charBuffer )
+            System.out.print( c.toString() + "\n");
     }
 
     // alg without deleting chars

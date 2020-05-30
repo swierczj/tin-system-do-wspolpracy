@@ -19,13 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="GUI - chowa okno logowania">
-      <change afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="GUI - ja pierdole">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/notepad.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +99,28 @@
       <option name="project" value="LOCAL" />
       <updated>1590861075683</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="GUI - ja pierdole">
+      <created>1590880481775</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1590880481776</updated>
+    </task>
+    <task id="LOCAL-00005" summary="GUI - ja pierdole">
+      <created>1590880693641</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1590880693641</updated>
+    </task>
+    <task id="LOCAL-00006" summary="GUI - ja pierdole">
+      <created>1590880948421</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1590880948421</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -121,7 +139,8 @@
     <MESSAGE value="Create GUI start" />
     <MESSAGE value="Gui - dziala logowanie przynajmniej wysylanie" />
     <MESSAGE value="GUI - chowa okno logowania" />
-    <option name="LAST_COMMIT_MESSAGE" value="GUI - chowa okno logowania" />
+    <MESSAGE value="GUI - ja pierdole" />
+    <option name="LAST_COMMIT_MESSAGE" value="GUI - ja pierdole" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -136,22 +155,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590846701447" />
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1590869852998">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1590880971876">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
-    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1590869852998">
+    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
+    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1590880971876">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
-    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1590869852998">
+    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
+    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1590880971876">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
-    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1590869852998">
+    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1590880971876">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869852998" />
+    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
     <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1590869084629">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -168,6 +187,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1876" height="342" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
+    <state x="267" y="85" width="1620" height="870" key="MergeDialog" timestamp="1590880667368">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="267" y="85" width="1620" height="870" key="MergeDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880667368" />
+    <state x="848" y="386" width="389" height="268" key="MultipleFileMergeDialog" timestamp="1590880667373">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="848" y="386" width="389" height="268" key="MultipleFileMergeDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880667373" />
     <state x="625" y="279" key="NewModule_or_Project.wizard" timestamp="1590845685624">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -176,10 +203,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="93" key="SettingsEditor/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590858728609" />
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1590860009858">
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1590880712343">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860009858" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880712343" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1590858764341">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
