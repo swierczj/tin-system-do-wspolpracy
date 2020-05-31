@@ -26,6 +26,16 @@ public class Notepad{
         } );
     }
 
+    public String getChanges(){
+        StringBuilder str = new StringBuilder();
+        for( Character c : addedBuffer )
+            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
+        str.append( ( char )BUFFER_SPLITTER_ASCII_CODE );
+        for( Character c : deletedBuffer )
+            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
+        return str.toString();
+    }
+
     private void proceedKeyTyped( KeyEvent keyEvent ){
         int caretPos = textArea.getCaretPosition();
         if( keyEvent.getCharacter().equals( String.valueOf( ( char )( 127 ) ) ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
@@ -53,23 +63,8 @@ public class Notepad{
     }
 
     @FXML private void displayChangesBuffer( ActionEvent event ){       // TODO only for check, to remove from final version
-        System.out.print( getAddedCharacters() + "\ndeleted:\n" + getDeletedCharacters() );
+        System.out.print( getChanges() );
     }
-
-    public String getAddedCharacters(){
-        StringBuilder str = new StringBuilder();
-        for( Character c : addedBuffer )
-            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
-        return str.toString();
-    }
-
-    public String getDeletedCharacters(){
-        StringBuilder str = new StringBuilder();
-        for( Character c : deletedBuffer )
-            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
-        return str.toString();
-    }
-
 
     // text[ 0 ] = 0, invisible, only for 'on begin insertions' case
     // text[ index ] is previous char
@@ -145,7 +140,8 @@ public class Notepad{
     private List< Character > text;
     private List< Character > addedBuffer;
     private List< Character > deletedBuffer;
-    private final int CHAR_SPLITTER_ASCII_CODE = 28;   // File separator ( to split characters in message )
+    private final int CHAR_SPLITTER_ASCII_CODE = 29;   // Group separator ( to split characters in message )
+    private final int BUFFER_SPLITTER_ASCII_CODE = 28; // File sparator ( to split added chars from deleted )
 
     private class Character{
         Character(){
