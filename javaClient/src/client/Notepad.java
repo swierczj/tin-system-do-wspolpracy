@@ -70,12 +70,13 @@ public class Notepad{
 
     private void proceedKeyTyped( KeyEvent keyEvent ){
         int caretPos = textArea.getCaretPosition();
+        int diff = text.size() - textArea.getLength() - 1;      // How many chars deleted
         if( keyEvent.getCharacter().equals( String.valueOf( ( char )( 127 ) ) ) || keyEvent.getCharacter().equals( "\b" ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
-            int diff = text.size() - textArea.getLength() - 1;      // How many chars deleted
             int charPos = caretPos + 1;      // delete what was before caret so what is on position
             removeMultipleChars( diff, charPos );
         } else{
             int charPos = caretPos - 1;      // append on previous caret pos, so on actPos - 1
+            removeMultipleChars( diff + 1, caretPos );
             String key = keyEvent.getCharacter();               // numerating from 1 is applied in getChar() algorithm
             Character c = getChar( key, charPos );
             text.add( charPos + 1, c );
@@ -90,6 +91,9 @@ public class Notepad{
             deletedBuffer.add( c );
             System.out.print( "\ndelete: " + c.toString() );
         }
+    }
+    private void addMultipleChars( String s, int position ){
+
     }
 
     @FXML private void displayChangesBuffer(){       // TODO only for check, to remove from final version

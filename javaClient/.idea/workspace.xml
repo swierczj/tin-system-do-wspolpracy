@@ -25,11 +25,7 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="dodano przesuwanie kursora po wprowadzeniu zmian z serwera">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Protocol.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Protocol.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodalem usuwanie wielu znakow (przez zaznaczenie)">
       <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -245,7 +241,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590951261238</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Dodalem usuwanie wielu znakow (przez zaznaczenie)">
+      <created>1590962677509</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1590962677509</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -307,7 +310,8 @@
     <MESSAGE value="remove i add dodane (dodaja znaki przyslane od innych)" />
     <MESSAGE value="dodano obsluge id clienta przysylanego przez serwer" />
     <MESSAGE value="dodano przesuwanie kursora po wprowadzeniu zmian z serwera" />
-    <option name="LAST_COMMIT_MESSAGE" value="dodano przesuwanie kursora po wprowadzeniu zmian z serwera" />
+    <MESSAGE value="Dodalem usuwanie wielu znakow (przez zaznaczenie)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dodalem usuwanie wielu znakow (przez zaznaczenie)" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
