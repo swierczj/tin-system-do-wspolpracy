@@ -40,7 +40,7 @@ public class Client{
     private static String serverPublicKey = "";
     private String login, password;
     private boolean logged = false,canLogIn = false;
-    private int clientId = 777;
+    private int clientId;
 
     public Client( String ip, int port ){
         Client.ip = ip;

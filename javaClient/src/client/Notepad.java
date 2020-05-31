@@ -31,25 +31,38 @@ public class Notepad{
 
     // Function applies incoming changes (from server)
     public void applyChanges( String changes ){
+        int caretPos = textArea.getCaretPosition();
         String[] temp = changes.split( String.valueOf( ( char )BUFFER_SPLITTER_ASCII_CODE ), 0 );
         String[] addedChars = temp[ 0 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
         String[] deletedChars = temp[ 1 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
         for( String c : addedChars )
-            addChar( toCharacter( c ) );
+            addChar( toCharacter( c ), caretPos );
         for( String c : deletedChars )
-            removeChar( toCharacter( c ) );
+            removeChar( toCharacter( c ), caretPos );
+        StringBuilder str = new StringBuilder();
+        for( Character c : text )
+            str.append( c.c );
+        textArea.setText( str.toString() );
     }
 
-    private void removeChar( Character c ){
-        text.remove( c );
+    private void removeChar( Character c, int caretPos ){
+        for( int i = 1; i < text.size(); ++i ){
+            if( compare( c, text.get( i ) ) == 0 ){
+                text.remove( i );
+                if( i <= caretPos )
+                    textArea.positionCaret( caretPos - 1 );
+            }
+        }
     }
 
-    private void addChar( Character c ){
+    private void addChar( Character c, int caretPos ){
         for( int i = 1; i < text.size(); ++i ){     // first char is 0
             int temp = compare( c, text.get( i ) );
             if( temp == 1 );    // faster loop, it's almost always true
             else if( temp == -1 ){
                 text.add( i, c );       // add before greater char
+                if( i <= caretPos )
+                    textArea.positionCaret( caretPos + 1 );
                 return;
             } else return;      // compare returned 0 or -2
         }
@@ -220,7 +233,7 @@ public class Notepad{
         }
     }
 
-    private int clientId = 0;      // TODO
+    private int clientId = 7777;      // TODO
 
     public void setClientId( int clientId ){
         this.clientId = clientId;
