@@ -1,9 +1,11 @@
 package client;
 
+import com.sun.javafx.css.StyleCache;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
@@ -16,7 +18,8 @@ public class Notepad{
         Character c = new Character();
         c.append( 0, 0 );
         text.add( c );
-        charBuffer = new ArrayList<>();
+        addedBuffer = new ArrayList<>();
+        deletedBuffer = new ArrayList<>();
         textArea.setOnKeyTyped( new EventHandler< KeyEvent >(){
             @Override
             public void handle( KeyEvent keyEvent ){
@@ -26,57 +29,41 @@ public class Notepad{
     }
 
     private void proceedKeyTyped( KeyEvent keyEvent ){
-        int caretPos = textArea.getCaretPosition() - 1;
-        String key = keyEvent.getCharacter();
-        Character c = getChar( key, caretPos );
-        text.add( caretPos + 1, c );
-        charBuffer.add( c );
-        System.out.print( "\n" + c.toString() );
+        int caretPos = textArea.getCaretPosition();
+        if( keyEvent.getCharacter().equals( String.valueOf( ( char )( 127 ) ) ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
+            if( caretPos < text.size() - 1 ){
+                int charPos = caretPos + 1;      // delete what was before caret so what is on position
+                Character c = text.remove( charPos );               // of actual caret ( +1 bc we star count signs from 1 )
+                deletedBuffer.add( c );
+                System.out.print( "\ndelete: " + c.toString() );
+            }
+        } else if( keyEvent.getCharacter().equals( "\b" ) ){   // when backspace
+            if( textArea.getText().length() < text.size() - 1 ){    // cannot delete from begin of string
+                int charPos = caretPos + 1;      // delete what was before caret so what is on position
+                Character c = text.remove( charPos );               // of actual caret ( +1 bc we star count signs from 1 )
+                deletedBuffer.add( c );
+                System.out.print( "\ndelete: " + c.toString() );
+            }
+        } else{
+            int charPos = caretPos - 1;      // append on previous caret pos, so on actPos - 1
+            String key = keyEvent.getCharacter();               // numerating from 1 is applied in getChar() algorithm
+            Character c = getChar( key, charPos );
+            text.add( charPos + 1, c );
+            addedBuffer.add( c );
+            System.out.print( "\n" + c.toString() );
+        }
     }
 
     @FXML private void displayChangesBuffer( ActionEvent event ){
-        for( Character c : charBuffer )
+        for( Character c : addedBuffer )
             System.out.print( c.toString() + "\n");
     }
 
-    // alg without deleting chars   // TODO can be deleted i think
-    // iter 0 when calling outside
-//    private Character getChar( String c, int index, int iter ){       // index - previous char, index + 1 - next char
-//        Character character = new Character();
-//        character.c = c.charAt( 0 );
-//        if( index < text.size() - 1 ){     // not on the end, bc there is no next char
-//            if( index != 0 ){       //inaczej sie wyjebie
-//                if( text.get( index ).position.size() > iter ){     // to avid nullptr
-//                    // CASE 1: 'iter' pos id is different
-//                    if( text.get( index ).position.get( iter ) != text.get( index + 1 ).position.get( iter ) ){
-//                        character.position.addAll( text.get( index ).position );    // takes previous's char position
-//                        character.append( character.pop() + 1, creatorId ); // changes last position id
-//                    }else{  // CASE 2: 'iter' pos id is equal
-//                        getChar( c, index, iter + 1 );
-//                    }
-//                }else{     // CASE 3: 'iter' pos id doesn't exist in previous char
-//                    character.position.addAll( text.get( index + 1 ).position );    // we take next pos and replace end with 0
-//                    character.pop();
-//                    character.append( 0, creatorId );
-//                    character.append( 1, creatorId );
-//                }
-//            }else{     // CASE 4: begin of string
-//                character.position.addAll( text.get( index + 1 ).position );    // we take next pos and replace end with 0
-//                character.pop();
-//                character.append( 0, creatorId );
-//                character.append( 1, creatorId );
-//            }
-//        } else{     //CASE 5: end of string
-//            character.position.addAll( text.get( index ).position );
-//            character.append( character.pop() + 1, creatorId );
-//        }
-//        return character;
-//    }
 
     // text[ 0 ] = 0, invisible, only for 'on begin insertions' case
     // text[ index ] is previous char
     // text[ index + 1 ] is next char
-    private Character getChar( String s, int index ){
+    private Character getChar( String s, int index ){       // TODO napisac dla roznych klientow ( porownywac id tworcy znaku )
         Character c = new Character();
         c.c = s.charAt( 0 );        // New character struct
         Character prev = text.get( index );
@@ -130,7 +117,7 @@ public class Notepad{
         // I would throw an exception but intelliJ has a problem because it's unreachable statement
         // that's pretty satisfying
     }
-
+    
     private Character toCharacter( String str ){
         Character c = new Character();
         c.c = str.charAt( 0 );
@@ -145,7 +132,9 @@ public class Notepad{
     @FXML TextArea textArea;
 
     private List< Character > text;
-    private List< Character > charBuffer;
+    private List< Character > addedBuffer;
+    private List< Character > deletedBuffer;
+    private int prevCaretPos = 0;
 
     private class Character{
         Character(){
