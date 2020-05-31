@@ -38,20 +38,20 @@ public class Connect{
     }
 
     private int createClient() throws IOException{
-        if( !connected ){
+//        if( !connected ){                 TODO uncomment if server working
             client = new Client( ip, port );
-            if( client.connect() != 0 ){
-                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
-                return -1;
-            }
-            connected = true;
-            System.out.print( "connect" );
-        }
-        client.setLoginData( loginField.getText(), passwordField.getText() );
-        if( client.login() != 0 ){
-            displayError( "Login or password incorrect." );
-            return -2;
-        }
+//            if( client.connect() != 0 ){
+//                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
+//                return -1;
+//            }
+//            connected = true;
+//            System.out.print( "connect" );
+//        }
+//        client.setLoginData( loginField.getText(), passwordField.getText() );
+//        if( client.login() != 0 ){
+//            displayError( "Login or password incorrect." );
+//            return -2;
+//        }
         client.createGUI();
         return 0;
     }

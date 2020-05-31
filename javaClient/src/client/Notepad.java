@@ -1,11 +1,9 @@
 package client;
 
-import com.sun.javafx.css.StyleCache;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
@@ -54,9 +52,22 @@ public class Notepad{
         }
     }
 
-    @FXML private void displayChangesBuffer( ActionEvent event ){
+    @FXML private void displayChangesBuffer( ActionEvent event ){       // TODO only for check, to remove from final version
+        System.out.print( getAddedCharacters() + "\ndeleted:\n" + getDeletedCharacters() );
+    }
+
+    public String getAddedCharacters(){
+        StringBuilder str = new StringBuilder();
         for( Character c : addedBuffer )
-            System.out.print( c.toString() + "\n");
+            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
+        return str.toString();
+    }
+
+    public String getDeletedCharacters(){
+        StringBuilder str = new StringBuilder();
+        for( Character c : deletedBuffer )
+            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
+        return str.toString();
     }
 
 
@@ -134,7 +145,7 @@ public class Notepad{
     private List< Character > text;
     private List< Character > addedBuffer;
     private List< Character > deletedBuffer;
-    private int prevCaretPos = 0;
+    private final int CHAR_SPLITTER_ASCII_CODE = 28;   // File separator ( to split characters in message )
 
     private class Character{
         Character(){
