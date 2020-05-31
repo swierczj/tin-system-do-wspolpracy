@@ -16,13 +16,23 @@
         <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </expand>
-    <select />
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:JavaGUI" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="GUI - ja pierdole">
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="GUI - main sie cofnal nie wiem czemu, naprawione">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Notepad$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Notepad$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Notepad$Character$pair.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Notepad$Character$pair.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Notepad$Character.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Notepad$Character.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Notepad.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Notepad.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/notepad.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +48,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="JavaGUI" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1cd5MhjUq2Yg4gofjxAvqsMAJXS" />
@@ -120,7 +135,63 @@
       <option name="project" value="LOCAL" />
       <updated>1590880948421</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590881481600</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1590881481600</updated>
+    </task>
+    <task id="LOCAL-00008" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590881962231</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1590881962231</updated>
+    </task>
+    <task id="LOCAL-00009" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590881970976</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1590881970976</updated>
+    </task>
+    <task id="LOCAL-00010" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590881995337</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1590881995337</updated>
+    </task>
+    <task id="LOCAL-00011" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590882177214</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1590882177214</updated>
+    </task>
+    <task id="LOCAL-00012" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590882424556</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1590882424556</updated>
+    </task>
+    <task id="LOCAL-00013" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590882521548</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1590882521548</updated>
+    </task>
+    <task id="LOCAL-00014" summary="GUI - main sie cofnal nie wiem czemu, naprawione">
+      <created>1590882524750</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1590882524750</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -128,7 +199,39 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="JavaGUI" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/java-client" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/JavaGUI" />
+                </option>
+              </RecentGroup>
+            </list>
           </value>
         </entry>
       </map>
@@ -140,7 +243,9 @@
     <MESSAGE value="Gui - dziala logowanie przynajmniej wysylanie" />
     <MESSAGE value="GUI - chowa okno logowania" />
     <MESSAGE value="GUI - ja pierdole" />
-    <option name="LAST_COMMIT_MESSAGE" value="GUI - ja pierdole" />
+    <MESSAGE value="GUI - no nie tu skomitowalem kurwa jego mac" />
+    <MESSAGE value="GUI - main sie cofnal nie wiem czemu, naprawione" />
+    <option name="LAST_COMMIT_MESSAGE" value="GUI - main sie cofnal nie wiem czemu, naprawione" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -155,42 +260,42 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590846701447" />
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom" timestamp="1590880971876">
+    <state width="1876" height="342" key="GridCell.Tab.0.bottom" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
-    <state width="1876" height="277" key="GridCell.Tab.0.center" timestamp="1590880971876">
+    <state width="1876" height="342" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state width="1876" height="342" key="GridCell.Tab.0.center" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
-    <state width="1876" height="277" key="GridCell.Tab.0.left" timestamp="1590880971876">
+    <state width="1876" height="342" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state width="1876" height="342" key="GridCell.Tab.0.left" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
-    <state width="1876" height="277" key="GridCell.Tab.0.right" timestamp="1590880971876">
+    <state width="1876" height="342" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state width="1876" height="342" key="GridCell.Tab.0.right" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="277" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880971876" />
-    <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1590869084629">
+    <state width="1876" height="342" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
-    <state width="1876" height="342" key="GridCell.Tab.1.center" timestamp="1590869084629">
+    <state width="1876" height="342" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state width="1876" height="342" key="GridCell.Tab.1.center" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
-    <state width="1876" height="342" key="GridCell.Tab.1.left" timestamp="1590869084629">
+    <state width="1876" height="342" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state width="1876" height="342" key="GridCell.Tab.1.left" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
-    <state width="1876" height="342" key="GridCell.Tab.1.right" timestamp="1590869084629">
+    <state width="1876" height="342" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state width="1876" height="342" key="GridCell.Tab.1.right" timestamp="1590885878162">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590869084629" />
-    <state x="267" y="85" width="1620" height="870" key="MergeDialog" timestamp="1590880667368">
+    <state width="1876" height="342" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590885878162" />
+    <state x="267" y="85" width="1620" height="870" key="MergeDialog" timestamp="1590882510846">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="267" y="85" width="1620" height="870" key="MergeDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880667368" />
+    <state x="267" y="85" width="1620" height="870" key="MergeDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590882510846" />
     <state x="848" y="386" width="389" height="268" key="MultipleFileMergeDialog" timestamp="1590880667373">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -199,21 +304,54 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="625" y="279" key="NewModule_or_Project.wizard/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590845685624" />
+    <state x="668" y="239" key="RollbackChangesDialog" timestamp="1590881616597">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="668" y="239" key="RollbackChangesDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590881616597" />
     <state x="440" y="93" key="SettingsEditor" timestamp="1590858728609">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="93" key="SettingsEditor/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590858728609" />
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1590880712343">
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1590882550643">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590880712343" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590882550643" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1590858764341">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590858764341" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1590881503507">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590881503507" />
     <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590860118560">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="769" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590860118560" />
+    <state x="687" y="232" key="git4idea.branch.GitSmartOperationDialog" timestamp="1590882470342">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="687" y="232" key="git4idea.branch.GitSmartOperationDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590882470342" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/client/Notepad.java</url>
+          <line>45</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/client/Notepad.java</url>
+          <line>31</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/client/Notepad.java</url>
+          <line>16</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
