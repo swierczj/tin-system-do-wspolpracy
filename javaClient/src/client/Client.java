@@ -1,9 +1,7 @@
 package client;
 
-import com.gluonhq.charm.glisten.visual.Theme;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -176,12 +174,11 @@ public class Client{
         startThreads();
     }
 
-    public int createThreads(){
+    public void createThreads(){
         //createWriter();
         //createReader();
         createNotepadThread();
         createKeepAlive();
-        return 0;
     }
 
     public void startThreads(){

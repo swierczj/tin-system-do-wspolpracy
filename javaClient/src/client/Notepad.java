@@ -31,7 +31,7 @@ public class Notepad{
         Character c = getChar( key, caretPos );
         text.add( caretPos + 1, c );
         charBuffer.add( c );
-        System.out.print( c.toString() );
+        System.out.print( "\n" + c.toString() );
     }
 
     @FXML private void displayChangesBuffer( ActionEvent event ){
@@ -80,7 +80,9 @@ public class Notepad{
         Character c = new Character();
         c.c = s.charAt( 0 );        // New character struct
         Character prev = text.get( index );
-        Character next = text.get( index + 1 );
+        Character next = new Character();
+        if( text.size() - 1 >= index + 1 )      // prevent index out of bounds
+            next = text.get( index + 1 );
 
         // Insertion between index and index+1
         // We compare next positions in loop
@@ -93,13 +95,14 @@ public class Notepad{
                 c.append( c.pop() - 1, creatorId );
                 if( c.position.get( c.position.size() - 1 ).pos < 1 )     // we have to add 1 on the end
                     c.append( 1, creatorId );
+                return c;
             }
             // CASE 2
             // text[ index + 1 ][ i ] doesn't exist
-            // Should be only when 'on begin insertion'
+            // Should be only when 'on end insertion'
             // New char's position will be head of previous incremented by 1
             else if( next.position.size() <= i && index >= text.size() - 1 ){
-                c.append( prev.position.get( 0 ).pos, creatorId );
+                c.append( prev.position.get( 0 ).pos + 1, creatorId );
                 return c;
             }
             // CASE 3
@@ -110,7 +113,7 @@ public class Notepad{
                 // Previous position has more elements than on i position
                 // New char's position will be previous char's position with last element incremented
                 if( prev.position.size() - 1 > i )
-                    c.append( c.pop() - 1, creatorId );
+                    c.append( c.pop() + 1, creatorId );
                 // CASE 3.2
                 // Previous position's 'i' element is last element
                 // We take previous element and append 1
