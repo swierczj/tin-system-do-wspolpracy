@@ -70,20 +70,10 @@ public class Notepad{
 
     private void proceedKeyTyped( KeyEvent keyEvent ){
         int caretPos = textArea.getCaretPosition();
-        if( keyEvent.getCharacter().equals( String.valueOf( ( char )( 127 ) ) ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
-            if( caretPos < text.size() - 1 ){
-                int charPos = caretPos + 1;      // delete what was before caret so what is on position
-                Character c = text.remove( charPos );               // of actual caret ( +1 bc we star count signs from 1 )
-                deletedBuffer.add( c );
-                System.out.print( "\ndelete: " + c.toString() );
-            }
-        } else if( keyEvent.getCharacter().equals( "\b" ) ){   // when backspace
-            if( textArea.getText().length() < text.size() - 1 ){    // cannot delete from begin of string
-                int charPos = caretPos + 1;      // delete what was before caret so what is on position
-                Character c = text.remove( charPos );               // of actual caret ( +1 bc we star count signs from 1 )
-                deletedBuffer.add( c );
-                System.out.print( "\ndelete: " + c.toString() );
-            }
+        if( keyEvent.getCharacter().equals( String.valueOf( ( char )( 127 ) ) ) || keyEvent.getCharacter().equals( "\b" ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
+            int diff = text.size() - textArea.getLength() - 1;      // How many chars deleted
+            int charPos = caretPos + 1;      // delete what was before caret so what is on position
+            removeMultipleChars( diff, charPos );
         } else{
             int charPos = caretPos - 1;      // append on previous caret pos, so on actPos - 1
             String key = keyEvent.getCharacter();               // numerating from 1 is applied in getChar() algorithm
@@ -91,6 +81,14 @@ public class Notepad{
             text.add( charPos + 1, c );
             addedBuffer.add( c );
             System.out.print( "\n" + c.toString() );
+        }
+    }
+
+    private void removeMultipleChars( int howMany, int position ){
+        for( int i = position; i < howMany + position; ++ i ){
+            Character c = text.remove( position );               // of actual caret ( +1 bc we star count signs from 1 )
+            deletedBuffer.add( c );
+            System.out.print( "\ndelete: " + c.toString() );
         }
     }
 

@@ -37,6 +37,7 @@ public class Client{
     private Scanner scanner;
     private static Thread reader, writer, keepAlive, notepadThread;
     private static volatile boolean isAlive = false, isRunning = false;
+    private static volatile boolean sending = false;  // to prevent sending header of keepAliver and then header of msg
     private static String serverPublicKey = "";
     private String login, password;
     private boolean logged = false,canLogIn = false;
@@ -146,8 +147,11 @@ public class Client{
 
     private void writeMsg( int type, String msg ){
         String header = makeHeader( type, msg.length() );
+        while( sending );       // Wait until other msg is send
+        sending = true;
         output.println( header );
         output.println( msg );
+        sending = false;
     }
 
     public int connect() throws IOException{
