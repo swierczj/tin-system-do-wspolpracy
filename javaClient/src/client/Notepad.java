@@ -1,7 +1,5 @@
 package client;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
@@ -18,12 +16,7 @@ public class Notepad{
         text.add( c );
         addedBuffer = new ArrayList<>();
         deletedBuffer = new ArrayList<>();
-        textArea.setOnKeyTyped( new EventHandler< KeyEvent >(){
-            @Override
-            public void handle( KeyEvent keyEvent ){
-                proceedKeyTyped( keyEvent );
-            }
-        } );
+        textArea.setOnKeyTyped( this::proceedKeyTyped );
     }
 
     public String getChanges(){
@@ -34,6 +27,32 @@ public class Notepad{
         for( Character c : deletedBuffer )
             str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
         return str.toString();
+    }
+
+    // Function applies incoming changes (from server)
+    public void applyChanges( String changes ){
+        String[] temp = changes.split( String.valueOf( ( char )BUFFER_SPLITTER_ASCII_CODE ), 0 );
+        String[] addedChars = temp[ 0 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
+        String[] deletedChars = temp[ 1 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
+        for( String c : addedChars )
+            addChar( toCharacter( c ) );
+        for( String c : deletedChars )
+            removeChar( toCharacter( c ) );
+    }
+
+    private void removeChar( Character c ){
+        text.remove( c );
+    }
+
+    private void addChar( Character c ){
+        for( int i = 1; i < text.size(); ++i ){     // first char is 0
+            int temp = compare( c, text.get( i ) );
+            if( temp == 1 );    // faster loop, it's almost always true
+            else if( temp == -1 ){
+                text.add( i, c );       // add before greater char
+                return;
+            } else return;      // compare returned 0 or -2
+        }
     }
 
     private void proceedKeyTyped( KeyEvent keyEvent ){
@@ -62,10 +81,11 @@ public class Notepad{
         }
     }
 
-    @FXML private void displayChangesBuffer( ActionEvent event ){       // TODO only for check, to remove from final version
+    @FXML private void displayChangesBuffer(){       // TODO only for check, to remove from final version
         System.out.print( getChanges() );
     }
 
+    // Dzial funkcji powalonych, lepiej do nich nie wracac
     // text[ 0 ] = 0, invisible, only for 'on begin insertions' case
     // text[ index ] is previous char
     // text[ index + 1 ] is next char
@@ -123,7 +143,31 @@ public class Notepad{
         // I would throw an exception but intelliJ has a problem because it's unreachable statement
         // that's pretty satisfying
     }
-    
+
+    private int compare( Character first, Character second ){    // 1<2 : -1, 1>2 : 1, 1=2: 0, same pos, diff chars : -2
+        for( int i = 0; ; ++i ){
+            if( first.position.size() <= i ){           // if some of pos( i ) don't exist
+                if( second.position.size() <= i ){       // whole positions are equal, check creators Id
+                    if( first.position.get( i - 1 ).creator > second.position.get( i - 1 ).creator )
+                        return 1;
+                    if(  first.position.get( i - 1 ).creator < second.position.get( i - 1 ).creator  )
+                        return -1;
+                    if( first.c == second.c ) return 0; // exactly equal
+                    return -2;          // equal positions, different chars, sth fucked, we have to reject char
+                }
+                return -1;                  // 1 position has ended
+            }
+            if( second.position.size() <= i )
+                return 1;                   // 2 position has ended
+            if( first.position.get( i ).pos > second.position.get( i ).pos )
+                return 1;                   // both pos( i ) exist, 1 is greater
+            if( second.position.get( i ).pos > first.position.get( i ).pos )
+                return -1;                  // both pos( i ) exist, 2 is greater
+        }           // both pos( i ) are equal, next loop
+        //if( first.c == second.c ) return 0;
+        //return -2;
+    }
+
     private Character toCharacter( String str ){
         Character c = new Character();
         c.c = str.charAt( 0 );
@@ -144,18 +188,14 @@ public class Notepad{
     private final int BUFFER_SPLITTER_ASCII_CODE = 28; // File sparator ( to split added chars from deleted )
 
     private class Character{
-        Character(){
+        public Character(){
             position = new ArrayList<>();
         }
-        char c;
-        List< pair > position;      // position CRDT
-        private class pair{
-            pair( int p, int c ){ pos = p; creator = c; }
-            public int pos;         // sign position
-            public int creator;     // Who created sign
-        }
         // Appends element on end of pos array
-        public void append( int p, int c ){ this.position.add( new pair( p, c ) ); }
+        public void append( int p, int c ){
+            this.position.add( new pair( p, c ) );
+        }
+
         public int pop(){
             int ret = this.position.get( this.position.size() - 1 ).pos;
             this.position.remove( this.position.size() - 1 );
@@ -170,6 +210,14 @@ public class Notepad{
             for( Character.pair pair : this.position )
                 str.append( pair.pos ).append( "," ).append( pair.creator ).append( "_" );
             return str.toString();
+        }
+
+        public char c;
+        public List< pair > position;      // position CRDT
+        private class pair{
+            pair( int p, int c ){ pos = p; creator = c; }
+            public int pos;         // sign position
+            public int creator;     // Who created sign
         }
     }
 

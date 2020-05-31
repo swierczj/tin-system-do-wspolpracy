@@ -1,6 +1,5 @@
 package client;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -12,7 +11,7 @@ import java.io.IOException;
 public class Connect{
     @FXML public void initialize(){}
 
-    @FXML protected void setDefault( ActionEvent event ){
+    @FXML protected void setDefault(){
         if( defaultCheckBox.isSelected() ){
             ipField.setText( defaultIp );
             ipField.setDisable( true );
@@ -26,7 +25,7 @@ public class Connect{
         }
     }
 
-    @FXML protected void setLoginData( ActionEvent event ) throws IOException{
+    @FXML protected void setLoginData() throws IOException{
         ip = ipField.getText();
         try{
             port = Integer.parseInt( portField.getText() );
