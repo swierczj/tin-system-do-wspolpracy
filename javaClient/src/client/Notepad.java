@@ -1,8 +1,13 @@
 package client;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -27,6 +32,14 @@ public class Notepad{
         for( Character c : deletedBuffer )
             str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
         return str.toString();
+    }
+
+
+    public void setTextFromCodedInMemory(){
+        StringBuilder str = new StringBuilder();
+        for( Character c : text )
+            str.append( c.c );
+        textArea.setText( str.toString() );
     }
 
     // Function applies incoming changes (from server)
@@ -70,19 +83,32 @@ public class Notepad{
 
     private void proceedKeyTyped( KeyEvent keyEvent ){
         int caretPos = textArea.getCaretPosition();
+        String event = keyEvent.getCharacter();
         int diff = text.size() - textArea.getLength() - 1;      // How many chars deleted
-        if( keyEvent.getCharacter().equals( String.valueOf( ( char )( 127 ) ) ) || keyEvent.getCharacter().equals( "\b" ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
+        if( event.equals( String.valueOf( ( char )( 127 ) ) ) || event.equals( "\b" ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
             int charPos = caretPos + 1;      // delete what was before caret so what is on position
             removeMultipleChars( diff, charPos );
-        } else{
-            int charPos = caretPos - 1;      // append on previous caret pos, so on actPos - 1
-            removeMultipleChars( diff + 1, caretPos );
-            String key = keyEvent.getCharacter();               // numerating from 1 is applied in getChar() algorithm
-            Character c = getChar( key, charPos );
+        } else if( ( int )event.charAt( 0 ) >= 32 || ( int )event.charAt( 0 ) == 9 || ( int )event.charAt( 0 ) == 13  ){             // only for printable chars
+            int charPos = caretPos - 1;                 // append on previous caret pos, so on actPos - 1
+            removeMultipleChars( diff + 1, caretPos );        // numerating from 1 is applied in getChar() algorithm
+            Character c = getChar( event, charPos );
             text.add( charPos + 1, c );
             addedBuffer.add( c );
             System.out.print( "\n" + c.toString() );
+        } else{
+            displayError( "Operation forbidden\nIt will be undone." );
+            setTextFromCodedInMemory();
         }
+    }
+
+    private void displayError( String errMsg ){
+        Stage stage = new Stage();
+        stage.setTitle( "Error" );
+        Label label = new Label( errMsg );
+        label.setAlignment( Pos.CENTER );
+        stage.setScene( new Scene( label, 300, 100 ) );
+        stage.initModality( Modality.APPLICATION_MODAL );
+        stage.showAndWait();
     }
 
     private void removeMultipleChars( int howMany, int position ){
