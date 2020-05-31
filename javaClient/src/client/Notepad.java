@@ -118,9 +118,6 @@ public class Notepad{
             System.out.print( "\ndelete: " + c.toString() );
         }
     }
-    private void addMultipleChars( String s, int position ){
-
-    }
 
     @FXML private void displayChangesBuffer(){       // TODO only for check, to remove from final version
         System.out.print( getChanges() );
@@ -145,6 +142,13 @@ public class Notepad{
             // text[ index ][ i ] doesn't exist
             // Position will be position of next char with decremented last element
             if( prev.position.size() <= i ){
+                // CASE 666
+                // Both whole positions are equal
+                if( next.position.size() <= i ){
+                    c.position.addAll( prev.position );
+                    c.append( 1, clientId );
+                    return c;
+                }
                 c.position.addAll( next.position );
                 c.append( c.pop() - 1, clientId );
                 if( c.position.get( c.position.size() - 1 ).pos < 1 )     // we have to add 1 on the end
