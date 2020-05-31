@@ -6,6 +6,7 @@ public class Protocol {
     private String password;
     private int statement;
     private int keyType;
+    private int clientId;
     private String key;
 
 
@@ -16,7 +17,7 @@ public class Protocol {
     public Protocol(String message, int type) {
         switch (type) {
             case 0:
-                if (loginAndPassword( message ) != 0) {
+                if (loginAndPassword() != 0) {
                     login = null;
                     password = null;
                 }
@@ -25,18 +26,17 @@ public class Protocol {
             case 2:
                 this.message = message;
             case 3:
-                if (keyAndType( message ) != 0) {
+                if (keyAndType() != 0) {
                     key = null;
                     keyType = -1;
                 }
-
+            case 4:
+                this.clientId = Integer.parseInt( message );
         }
     }
 
     public Protocol (int statement) {
-        Integer toString = statement;
-        message = toString.toString();
-
+        message = Integer.toString( statement );
         login = null;
         password = null;
     }
@@ -47,24 +47,25 @@ public class Protocol {
         password = null;
     }
 
-    public String getLogin() {
-
-        return login;
-    }
-
+    public String getLogin() { return login; }
     public String getMessage() {
         return message;
     }
-
-    public String getPassword() {
-        return password;
+    public String getPassword() { return password; }
+    public int getClientId() { return clientId; }
+    public int getStatement(){
+        return statement;
     }
+    public int getKeyType(){
+        return keyType;
+    }
+    public String getKey(){ return key; }
 
     private void setLoginAndPassword(String login, String password) {
         this.message = login + "\n" + password;
     }
 
-    private int loginAndPassword( String message ) {
+    private int loginAndPassword() {
         String[] splitted = this.message.split("\n");
         if (splitted.length != 2)
             return -1;
@@ -73,7 +74,7 @@ public class Protocol {
         return 0;
     }
 
-    private int keyAndType( String message ) {
+    private int keyAndType() {
         String[] splitted = this.message.split("\n");
         if (splitted.length != 2)
             return -1;
@@ -82,11 +83,4 @@ public class Protocol {
         return 0;
     }
 
-    public int getStatement(){
-        return statement;
-    }
-    public int getKeyType(){
-        return keyType;
-    }
-    public String getKey(){ return key; }
 }

@@ -105,9 +105,9 @@ public class Notepad{
             // Position will be position of next char with decremented last element
             if( prev.position.size() <= i ){
                 c.position.addAll( next.position );
-                c.append( c.pop() - 1, creatorId );
+                c.append( c.pop() - 1, clientId );
                 if( c.position.get( c.position.size() - 1 ).pos < 1 )     // we have to add 1 on the end
-                    c.append( 1, creatorId );
+                    c.append( 1, clientId );
                 return c;
             }
             // CASE 2
@@ -115,7 +115,7 @@ public class Notepad{
             // Should be only when 'on end insertion'
             // New char's position will be head of previous incremented by 1
             else if( next.position.size() <= i && index >= text.size() - 1 ){
-                c.append( prev.position.get( 0 ).pos + 1, creatorId );
+                c.append( prev.position.get( 0 ).pos + 1, clientId );
                 return c;
             }
             // CASE 3
@@ -126,12 +126,12 @@ public class Notepad{
                 // Previous position has more elements than on i position
                 // New char's position will be previous char's position with last element incremented
                 if( prev.position.size() - 1 > i )
-                    c.append( c.pop() + 1, creatorId );
+                    c.append( c.pop() + 1, clientId );
                 // CASE 3.2
                 // Previous position's 'i' element is last element
                 // We take previous element and append 1
                 else
-                    c.append( 1, creatorId );
+                    c.append( 1, clientId );
                 return c;
             }
             // CASE 4
@@ -180,7 +180,6 @@ public class Notepad{
     }
 
     @FXML TextArea textArea;
-
     private List< Character > text;
     private List< Character > addedBuffer;
     private List< Character > deletedBuffer;
@@ -221,5 +220,9 @@ public class Notepad{
         }
     }
 
-    private int creatorId = 0;      // TODO
+    private int clientId = 0;      // TODO
+
+    public void setClientId( int clientId ){
+        this.clientId = clientId;
+    }
 }

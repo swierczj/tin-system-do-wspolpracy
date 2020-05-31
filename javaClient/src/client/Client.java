@@ -18,12 +18,13 @@ public class Client{
     private static final int STATEMENT = 1;
     private static final int EDIT = 2;
     private static final int PUBLIC_KEY = 3;
+    private static final int CLIENT_ID = 4;
     private static final int KEEP_ALIVE = 0;
     private static final int REQUEST_LOGIN = 1;
     private static final int LOGIN_ACCEPTED = 2;
     private static final int LOGIN_REJECTED = 3;
-    private static final int LOG_OUT = 4;
-    private static final int WORK_END = 5;
+    //private static final int LOG_OUT = 4;
+    //private static final int WORK_END = 5;
     private static final int PUBLIC_KEY_REQUEST = 6;
 
     private Notepad notepad;
@@ -36,9 +37,10 @@ public class Client{
     private Scanner scanner;
     private static Thread reader, writer, keepAlive, notepadThread;
     private static volatile boolean isAlive = false, isRunning = false;
-    private static String messageIn = "", serverPublicKey = "";
+    private static String serverPublicKey = "";
     private String login, password;
     private boolean logged = false,canLogIn = false;
+    private int clientId = 777;
 
     public Client( String ip, int port ){
         Client.ip = ip;
@@ -73,6 +75,7 @@ public class Client{
             case STATEMENT -> getStatement( header[ 1 ] );
             case EDIT -> getEdit( header[ 1 ] );
             case PUBLIC_KEY -> getServerPublicKey( header[ 1 ] );
+            case CLIENT_ID -> getClientId( header[ 1 ] );
         }
         return 0;
     }
@@ -92,6 +95,11 @@ public class Client{
     private void getEdit( int msgLength ) throws IOException{
         Protocol edit = new Protocol( readLine( msgLength ), EDIT );
         System.out.print( edit.getMessage() );
+    }
+
+    private void getClientId( int msgLength ) throws IOException{
+        Protocol id = new Protocol( readLine( msgLength ), CLIENT_ID );
+        clientId = id.getClientId();
     }
 
     private void getStatement( int msgLength ) throws IOException{
@@ -117,12 +125,12 @@ public class Client{
     }
 
     public int login () throws IOException{
-        //getMsg();
-        //if( !canLogIn ) return -1;      TODO na razie wyłączone żebym mógł testować dalej
+        getMsg();
+        if( !canLogIn ) return -1;
         Protocol loginMsg = new Protocol( login, password );
         writeMsg( LOGIN, loginMsg.getMessage() );
         System.out.print( logged );
-        //if( !logged ) return -1;      TODO na razie wyłączone żebym mógł testować dalej
+        if( !logged ) return -1;
         return 0;
     }
 
@@ -170,6 +178,7 @@ public class Client{
         stage.setResizable( false );
         stage.show();
         notepad = fxmlLoader.getController();
+        notepad.setClientId( clientId );
         createThreads();
         startThreads();
     }
