@@ -1,11 +1,9 @@
 package client;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.net.Socket;
@@ -93,7 +91,7 @@ public class Client{
     private int[] getHeader() throws IOException{
         String header = readLine( 6 );
         int[] ret = { -1, -1 };
-        if( header != null ){
+        if( header.length() == 6 ){
             int type = Integer.parseInt( header.substring( 4, 8 ) );
             int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
             isAlive = true;
@@ -103,19 +101,19 @@ public class Client{
     }
 
     private void getEdit( int msgLength ) throws IOException{
-        Protocol edit = new Protocol( readLine( msgLength ), EDIT );
+        Message edit = new Message( readLine( msgLength ), EDIT );
         notepadTaken = true;
         notepad.applyChanges( edit.getMessage() );
         notepadTaken = false;
     }
 
     private void getClientId( int msgLength ) throws IOException{
-        Protocol id = new Protocol( readLine( msgLength ), CLIENT_ID );
+        Message id = new Message( readLine( msgLength ), CLIENT_ID );
         clientId = id.getClientId();
     }
 
     private void getStatement( int msgLength ) throws IOException{
-        Protocol statement = new Protocol( readLine( msgLength ), STATEMENT );
+        Message statement = new Message( readLine( msgLength ), STATEMENT );
         switch( statement.getStatement() ){
             case KEEP_ALIVE -> isAlive = true;
             case REQUEST_LOGIN -> canLogIn = true;
@@ -126,7 +124,7 @@ public class Client{
     }
 
     private void getServerPublicKey( int msgLength ) throws IOException{
-        Protocol key = new Protocol( readLine( msgLength ), PUBLIC_KEY );
+        Message key = new Message( readLine( msgLength ), PUBLIC_KEY );
         if( key.getKeyType() == 1 ){
             serverPublicKey = key.getKey();
             System.out.print( "Key received from server\n" );
@@ -137,7 +135,7 @@ public class Client{
     }
 
     private void getFileNames( int msgLength ) throws IOException{
-        Protocol names = new Protocol( readLine( msgLength ), FILES );
+        Message names = new Message( readLine( msgLength ), FILES );
         while( notepadTaken );
         notepadTaken = true;
         String selectedFile = notepad.fileSelect( names.getMessage().split( "\n", 0 ) );
@@ -149,7 +147,7 @@ public class Client{
     public int login() throws IOException{
         getMsg();
         if( !canLogIn ) return -1;
-        Protocol loginMsg = new Protocol( login, password );
+        Message loginMsg = new Message( login, password );
         writeMsg( LOGIN, loginMsg.getMessage() );
         System.out.print( logged );
         if( !logged ) return -1;
@@ -157,12 +155,12 @@ public class Client{
     }
 
     private void writeEdit( String msg ){
-        Protocol editMsg = new Protocol( msg );
+        Message editMsg = new Message( msg );
         writeMsg( EDIT, editMsg.getMessage() );
     }
 
     private void writeStatement( int statement ){
-        Protocol statMsg = new Protocol( statement );
+        Message statMsg = new Message( statement );
         writeMsg( STATEMENT, statMsg.getMessage() );
     }
 
@@ -256,7 +254,8 @@ public class Client{
                     notepadTaken = true;
                     changes = notepad.getChanges();
                     notepadTaken = false;
-                    writeEdit( changes );
+                    if( changes.length() > 1 )
+                        writeEdit( changes );
                 }
                 socket.close();
                 input.close();
@@ -271,15 +270,12 @@ public class Client{
         keepAlive = new Thread( () -> {
             try{
                 while( isAlive && isRunning ){
-                    Thread.sleep( 30000 );
+                    Thread.sleep( 10000 );
                     isAlive = false;
                     writeStatement( KEEP_ALIVE );
                     Thread.sleep( 1000 );
                 }
-                while( notepadTaken );
-                notepadTaken = true;
-                notepad.displayError( "Connection broken.\nYour changes are no longer updated.\nPlease restart connection." );
-                notepadTaken = false;
+                Platform.runLater( () -> notepad.displayError( "Connection broken.\nYour changes are no longer updated.\nPlease restart connection." ) );
                 isRunning = false;
                 scanner.close();
             }catch( InterruptedException iEx ){
