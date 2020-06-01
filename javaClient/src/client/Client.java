@@ -201,18 +201,22 @@ public class Client{
         stage.show();
         notepad = fxmlLoader.getController();
         notepad.setClientId( clientId );
+
+        String names = "Notatka.txt\ntiny.txt\nJanusz Granat.txt\n";        // TODO only for test without server
+        String selectedFile = notepad.fileSelect( names.split( "\n", 0 ) );
+
         createThreads();
         startThreads();
     }
 
     public void createThreads(){
-        //createWriter();
+        createWriter();
         createReader();
         createKeepAlive();
     }
 
     public void startThreads(){
-        //writer.start();
+        writer.start();
         reader.start();
         keepAlive.start();
     }

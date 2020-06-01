@@ -176,11 +176,8 @@ public class Notepad{
             }
         } );
         stage.showAndWait();
+        System.out.print( serverFile );
         return serverFile;
-    }
-
-    @FXML private void selectFromServer(){
-
     }
 
     // Dzial funkcji powalonych, lepiej do nich nie wracac
