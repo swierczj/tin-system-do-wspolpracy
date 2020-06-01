@@ -20,19 +20,12 @@
       <path>
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="BRANCH:JavaGui-net" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:java-client" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Poprawilem blad z keepAliverem oraz wysylaniem pustych zmian">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/notepad.fxml" afterDir="false" />
-    </list>
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodalem wstawianie litery w zaznaczenie (usuwanie znako z zaznaczenia)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,7 +42,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="JavaGUI" />
+        <entry key="$PROJECT_DIR$/.." value="JavaGui-net" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -344,7 +337,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="JavaGui-net" />
+                        <option value="java-client" />
                       </list>
                     </value>
                   </entry>
