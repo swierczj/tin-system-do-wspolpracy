@@ -91,7 +91,7 @@ public class Client{
     private int[] getHeader() throws IOException{
         String header = readLine( 6 );
         int[] ret = { -1, -1 };
-        if( header.length() == 6 ){
+        if( header != null && header.length() == 6 ){
             int type = Integer.parseInt( header.substring( 4, 8 ) );
             int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
             isAlive = true;
@@ -119,6 +119,7 @@ public class Client{
             case REQUEST_LOGIN -> canLogIn = true;
             case LOGIN_ACCEPTED -> logged = true;
             case LOGIN_REJECTED -> logged = false;
+            case WORK_END -> notepad.displayError( "503\nSerwajs anaweilebeilebeilebul.\nServer disconnected you." );
             default -> System.out.print( "No i co z tego???\n" );
         }
     }

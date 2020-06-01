@@ -16,9 +16,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -171,6 +176,19 @@ public class Notepad{
         client.quit();
         Platform.exit();
         System.exit( 0 );
+    }
+
+    @FXML private void reconnect() throws IOException{
+        if( client.connect() != 0 )
+            displayError( "Cannot connect.\nPlease try again or restart application." );
+    }
+
+    @FXML private void goToGitHub(){
+        try{
+            Desktop.getDesktop().browse( new URL( "https://github.com/swierczj/tin-system-do-wspolpracy" ).toURI() );
+        }catch( IOException | URISyntaxException e ){
+            displayError( "Cannot open your browser.\nPlease visit our GitHub repo from that URL:\nhttps://github.com/swierczj/tin-system-do-wspolpracy" );
+        }
     }
 
     public String fileSelect( String[] names ){
