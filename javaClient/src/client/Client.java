@@ -24,9 +24,11 @@ public class Client{
     private static final int REQUEST_LOGIN = 1;
     private static final int LOGIN_ACCEPTED = 2;
     private static final int LOGIN_REJECTED = 3;
-    //private static final int LOG_OUT = 4;
-    //private static final int WORK_END = 5;
+    private static final int LOG_OUT = 4;
+    private static final int WORK_END = 5;
     private static final int PUBLIC_KEY_REQUEST = 6;
+    private static final int FILE_LIST_REQUEST = 7;
+
     private static final int CHANGES_SEND_TIME = 20;
 
     private Notepad notepad;
@@ -170,6 +172,17 @@ public class Client{
         sending = false;
     }
 
+    public void fileListRequest(){ writeStatement( FILE_LIST_REQUEST ); }
+
+    public void quit(){
+        isRunning = false;
+//        keepAlive.interrupt();
+//        writer.interrupt();
+//        reader.interrupt();
+//        writeStatement( LOG_OUT );
+//        writeStatement( WORK_END );
+    }
+
     public int connect() throws IOException{
         try{
             socket = new Socket( ip, port );
@@ -199,12 +212,10 @@ public class Client{
         stage.show();
         notepad = fxmlLoader.getController();
         notepad.setClientId( clientId );
+        notepad.setClient( this );
 
-        String names = "Notatka.txt\ntiny.txt\nJanusz Granat.txt\n";        // TODO only for test without server
-        notepad.fileSelect( names.split( "\n", 0 ) );
-
-        createThreads();
-        startThreads();
+        //createThreads();      //TODO uncoment if server is running
+        //startThreads();
     }
 
     public void createThreads(){
@@ -247,7 +258,9 @@ public class Client{
                 socket.close();
                 input.close();
                 isRunning = false;
-            }catch( IOException | InterruptedException ex ){}
+            }catch( IOException | InterruptedException ex ){
+                System.out.print( "Writer thread ended." );
+            }
         } );
     }
 
@@ -266,7 +279,9 @@ public class Client{
                 notepadTaken = false;
                 isRunning = false;
                 scanner.close();
-            }catch( InterruptedException iEx ){}
+            }catch( InterruptedException iEx ){
+                System.out.print( "Keep-alive thread ended." );
+            }
         } );
     }
 }

@@ -1,5 +1,6 @@
 package client;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -32,6 +33,7 @@ public class Notepad{
         deletedBuffer = new ArrayList<>();
         textArea.setOnKeyTyped( this::proceedKeyTyped );
     }
+    public void setClient( Client client ){ this.client = client; }
 
     public String getChanges(){
         StringBuilder str = new StringBuilder();
@@ -159,6 +161,16 @@ public class Notepad{
         fileChooser.getExtensionFilters().add( extFilter );
         File file = fileChooser.showSaveDialog( textArea.getScene().getWindow() );
         if( file != null ) save( file );
+    }
+
+    @FXML private void openFromServer(){
+        client.fileListRequest();
+    }
+
+    @FXML private void quit(){
+        client.quit();
+        Platform.exit();
+        System.exit( 0 );
     }
 
     public String fileSelect( String[] names ){
@@ -326,6 +338,7 @@ public class Notepad{
     private String serverFile = "";                 // server file name
     private String fileName = "Untitled.txt";       // local name
     private int clientId = 7777;
+    private Client client;
 
     public void setClientId( int clientId ){
         this.clientId = clientId;
