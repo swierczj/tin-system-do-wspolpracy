@@ -26,6 +26,7 @@ public class Client{
     //private static final int LOG_OUT = 4;
     //private static final int WORK_END = 5;
     private static final int PUBLIC_KEY_REQUEST = 6;
+    private static final int CHANGES_SEND_TIME = 20;
 
     private Notepad notepad;
 
@@ -38,6 +39,7 @@ public class Client{
     private static Thread reader, writer, keepAlive, notepadThread;
     private static volatile boolean isAlive = false, isRunning = false;
     private static volatile boolean sending = false;  // to prevent sending header of keepAliver and then header of msg
+    private static volatile boolean notepadTaken = false;  // like mutex on notepad
     private static String serverPublicKey = "";
     private String login, password;
     private boolean logged = false,canLogIn = false;
@@ -95,7 +97,9 @@ public class Client{
 
     private void getEdit( int msgLength ) throws IOException{
         Protocol edit = new Protocol( readLine( msgLength ), EDIT );
-        System.out.print( edit.getMessage() );
+        notepadTaken = true;
+        notepad.applyChanges( edit.getMessage() );
+        notepadTaken = false;
     }
 
     private void getClientId( int msgLength ) throws IOException{
@@ -177,7 +181,7 @@ public class Client{
     public void createGUI() throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader( getClass().getResource( "notepad.fxml" ) );
         Stage stage = new Stage();
-        stage.setTitle( "Notepad" );
+        stage.setTitle( "Notepad - Untitled.txt" );
         stage.setScene( new Scene( fxmlLoader.load(), 1280, 720 ) );
         stage.setResizable( false );
         stage.show();
@@ -189,28 +193,17 @@ public class Client{
 
     public void createThreads(){
         //createWriter();
-        //createReader();
-        createNotepadThread();
+        createReader();
         createKeepAlive();
     }
 
     public void startThreads(){
         //writer.start();
-        //reader.start();
-        //notepadThread.start();
+        reader.start();
         keepAlive.start();
     }
 
-    private void createNotepadThread(){
-        notepadThread = new Thread( () -> {
-            while( true ){
-            }
-        } );
-    }
-
-
-    private int createReader(){
-        AtomicInteger toReturn = new AtomicInteger( 0 );
+    private void createReader(){
         reader = new Thread( () -> {
             while( true ){
                 try{
@@ -221,11 +214,9 @@ public class Client{
             System.out.print( "Server disconnected you\n" );
             isRunning = false;
         } );
-        return toReturn.intValue();
     }
 
-    private int createWriter(){
-        AtomicInteger toReturn = new AtomicInteger( 0 );
+    private void createWriter(){        //TODO
         writer = new Thread( () -> {
             try{
                 String messageOut = "connected";
@@ -236,30 +227,24 @@ public class Client{
                 socket.close();
                 input.close();
                 isRunning = false;
-            }catch( IOException ex ){
-                toReturn.set( -1 );
-            }
+            }catch( IOException ex ){}
         } );
-        return toReturn.intValue();
     }
 
-    private int createKeepAlive(){
-        AtomicInteger toReturn = new AtomicInteger( 0 );
+    private void createKeepAlive(){
         keepAlive = new Thread( () -> {
             try{
                 while( isAlive && isRunning ){
-                    Thread.sleep( 10000 );
+                    Thread.sleep( 30000 );
                     isAlive = false;
                     writeStatement( KEEP_ALIVE );
-                    Thread.sleep( 5000 );
+                    Thread.sleep( 1000 );
                 }
                 System.out.print( "Connection broken" );
                 isRunning = false;
                 scanner.close();
             }catch( InterruptedException iEx ){
-                toReturn.set( -1 );
             }
         } );
-        return toReturn.intValue();
     }
 }

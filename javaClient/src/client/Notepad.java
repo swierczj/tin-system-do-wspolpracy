@@ -6,9 +6,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,11 +40,12 @@ public class Notepad{
     }
 
 
-    public void setTextFromCodedInMemory(){
+
+    public String getTextFromCodedInMemory(){
         StringBuilder str = new StringBuilder();
-        for( Character c : text )
-            str.append( c.c );
-        textArea.setText( str.toString() );
+        for( int i = 1; i < text.size(); ++ i )
+            str.append( text.get( i ).c );
+        return str.toString();
     }
 
     // Function applies incoming changes (from server)
@@ -52,10 +58,7 @@ public class Notepad{
             addChar( toCharacter( c ), caretPos );
         for( String c : deletedChars )
             removeChar( toCharacter( c ), caretPos );
-        StringBuilder str = new StringBuilder();
-        for( Character c : text )
-            str.append( c.c );
-        textArea.setText( str.toString() );
+        textArea.setText( getTextFromCodedInMemory() );
     }
 
     private void removeChar( Character c, int caretPos ){
@@ -97,7 +100,7 @@ public class Notepad{
             System.out.print( "\n" + c.toString() );
         } else{
             displayError( "Operation forbidden\nIt will be undone." );
-            setTextFromCodedInMemory();
+            textArea.setText( getTextFromCodedInMemory() );
         }
     }
 
@@ -121,6 +124,35 @@ public class Notepad{
 
     @FXML private void displayChangesBuffer(){       // TODO only for check, to remove from final version
         System.out.print( getChanges() );
+    }
+
+    @FXML private void save() throws FileNotFoundException{
+        if( fileName.equals( "Untitled.txt" ) )
+            saveAs();
+        else{
+            File f = new File( fileName );
+            save( f );
+        }
+    }
+
+    private void save( File file ) throws FileNotFoundException{
+        fileName = file.getPath();
+        ( ( Stage )textArea.getScene().getWindow() ).setTitle( "Notepad - " + file.getName() );
+        PrintWriter pw = new PrintWriter( file );
+        pw.print( getTextFromCodedInMemory() );
+        pw.close();
+    }
+
+    @FXML private void saveAs() throws FileNotFoundException{
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle( "Save as" );
+        fileChooser.setInitialFileName( new File( fileName ).getName() );
+        if( new File( fileName ).exists() )
+            fileChooser.setInitialDirectory( new File( fileName ).getParentFile() );
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter( "Text files (*.txt)", "*.txt" );
+        fileChooser.getExtensionFilters().add( extFilter );
+        File file = fileChooser.showSaveDialog( textArea.getScene().getWindow() );
+        if( file != null ) save( file );
     }
 
     // Dzial funkcji powalonych, lepiej do nich nie wracac
@@ -265,7 +297,8 @@ public class Notepad{
         }
     }
 
-    private int clientId = 7777;      // TODO
+    private String fileName = "Untitled.txt";
+    private int clientId = 7777;
 
     public void setClientId( int clientId ){
         this.clientId = clientId;
