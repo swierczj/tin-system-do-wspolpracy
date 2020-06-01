@@ -167,7 +167,7 @@ public class Notepad{
         client.fileListRequest();
     }
 
-    @FXML private void quit(){
+    @FXML public void quit(){
         client.quit();
         Platform.exit();
         System.exit( 0 );

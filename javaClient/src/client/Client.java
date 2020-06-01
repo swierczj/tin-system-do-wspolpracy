@@ -1,8 +1,11 @@
 package client;
 
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.*;
 import java.net.Socket;
@@ -29,7 +32,7 @@ public class Client{
     private static final int PUBLIC_KEY_REQUEST = 6;
     private static final int FILE_LIST_REQUEST = 7;
 
-    private static final int CHANGES_SEND_TIME = 20;
+    private static final int CHANGES_SEND_TIME = 5;
 
     private Notepad notepad;
 
@@ -176,11 +179,11 @@ public class Client{
 
     public void quit(){
         isRunning = false;
-//        keepAlive.interrupt();
-//        writer.interrupt();
-//        reader.interrupt();
-//        writeStatement( LOG_OUT );
-//        writeStatement( WORK_END );
+        keepAlive.interrupt();
+        writer.interrupt();
+        reader.interrupt();
+        writeStatement( LOG_OUT );
+        writeStatement( WORK_END );
     }
 
     public int connect() throws IOException{
@@ -209,13 +212,14 @@ public class Client{
         stage.setTitle( "Notepad - Untitled.txt" );
         stage.setScene( new Scene( fxmlLoader.load(), 1280, 720 ) );
         stage.setResizable( false );
+        stage.setOnCloseRequest( e -> notepad.quit() );
         stage.show();
         notepad = fxmlLoader.getController();
         notepad.setClientId( clientId );
         notepad.setClient( this );
 
-        //createThreads();      //TODO uncoment if server is running
-        //startThreads();
+        createThreads();      //TODO uncoment if server is running
+        startThreads();
     }
 
     public void createThreads(){
@@ -238,7 +242,6 @@ public class Client{
                 }catch( IOException ignored ){}
             }
             scanner.close();
-            System.out.print( "Server disconnected you\n" );
             isRunning = false;
         } );
     }
@@ -259,7 +262,7 @@ public class Client{
                 input.close();
                 isRunning = false;
             }catch( IOException | InterruptedException ex ){
-                System.out.print( "Writer thread ended." );
+                System.out.print( "Writer thread ended.\n" );
             }
         } );
     }
@@ -280,7 +283,7 @@ public class Client{
                 isRunning = false;
                 scanner.close();
             }catch( InterruptedException iEx ){
-                System.out.print( "Keep-alive thread ended." );
+                System.out.print( "Keep-alive thread ended.\n" );
             }
         } );
     }

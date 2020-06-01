@@ -25,11 +25,19 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Jakos tam wszystko dziala, czekam az bedzie mozna testowac">
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodalem &quot;poprawne&quot; zamykanie aplikacji jak sie wcisnie quit">
+      <change afterPath="$PROJECT_DIR$/../.idea/JavaClient.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../JavaClient.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/JavaClient/.idea/JavaClient.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/JavaClient/JavaClient.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../out/production/JavaClient/javaClient/javaClient.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/notepad.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -307,7 +315,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591023023776</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Dodalem &quot;poprawne&quot; zamykanie aplikacji jak sie wcisnie quit">
+      <created>1591039832192</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1591039832192</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -378,7 +393,8 @@
     <MESSAGE value="Problem z komunikacja Notepad -&gt; client" />
     <MESSAGE value="Dziala wybieranie pliku z serwera" />
     <MESSAGE value="Jakos tam wszystko dziala, czekam az bedzie mozna testowac" />
-    <option name="LAST_COMMIT_MESSAGE" value="Jakos tam wszystko dziala, czekam az bedzie mozna testowac" />
+    <MESSAGE value="Dodalem &quot;poprawne&quot; zamykanie aplikacji jak sie wcisnie quit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dodalem &quot;poprawne&quot; zamykanie aplikacji jak sie wcisnie quit" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -393,22 +409,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590846701447" />
-    <state width="1876" height="342" key="GridCell.Tab.0.bottom" timestamp="1591023029531">
+    <state width="1876" height="207" key="GridCell.Tab.0.bottom" timestamp="1591040790940">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
-    <state width="1876" height="342" key="GridCell.Tab.0.center" timestamp="1591023029531">
+    <state width="1876" height="207" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591040790940" />
+    <state width="1876" height="207" key="GridCell.Tab.0.center" timestamp="1591040790940">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
-    <state width="1876" height="342" key="GridCell.Tab.0.left" timestamp="1591023029531">
+    <state width="1876" height="207" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591040790940" />
+    <state width="1876" height="207" key="GridCell.Tab.0.left" timestamp="1591040790940">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
-    <state width="1876" height="342" key="GridCell.Tab.0.right" timestamp="1591023029531">
+    <state width="1876" height="207" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591040790940" />
+    <state width="1876" height="207" key="GridCell.Tab.0.right" timestamp="1591040790940">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
+    <state width="1876" height="207" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591040790940" />
     <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1591023029531">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -445,10 +461,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="93" key="SettingsEditor/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590858728609" />
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1591023025243">
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1591039835569">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023025243" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591039835569" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1590858764341">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

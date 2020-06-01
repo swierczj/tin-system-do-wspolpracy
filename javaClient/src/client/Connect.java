@@ -38,16 +38,16 @@ public class Connect{
     }
 
     private int createClient() throws IOException{
-//        if( !connected ){                 TODO uncomment if server is working
+        if( !connected ){                 //TODO uncomment if server is working
             client = new Client( ip, port );
-//            if( client.connect() != 0 ){
-//                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
-//                return -1;
-//            }
-//            connected = true;
-//            System.out.print( "connect" );
-//        }
-//        client.setLoginData( loginField.getText(), passwordField.getText() );
+            if( client.connect() != 0 ){
+                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
+                return -1;
+            }
+            connected = true;
+            System.out.print( "Connected\n" );
+        }
+        client.setLoginData( loginField.getText(), passwordField.getText() );
 //        if( client.login() != 0 ){
 //            displayError( "Login or password incorrect." );
 //            return -2;
@@ -72,7 +72,7 @@ public class Connect{
     @FXML private PasswordField passwordField;
     @FXML private CheckBox defaultCheckBox;
     @FXML private Button loginButton;
-    private String defaultIp = "185.20.175.81";
+    private String defaultIp = "localhost";
     private String defaultPort = "54000";
     private String ip;
     private int port;
