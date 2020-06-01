@@ -14,11 +14,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Client{
     private static final int HEADER_STATEMENT_LENGTH = 2;
     private static final int HEADER_LENGTH_LENGTH = 4;
+    // msg types
     private static final int LOGIN = 0;
     private static final int STATEMENT = 1;
     private static final int EDIT = 2;
     private static final int PUBLIC_KEY = 3;
     private static final int CLIENT_ID = 4;
+    private static final int FILES = 5;
+    // Statements
     private static final int KEEP_ALIVE = 0;
     private static final int REQUEST_LOGIN = 1;
     private static final int LOGIN_ACCEPTED = 2;
@@ -36,7 +39,7 @@ public class Client{
     private BufferedReader input;
     private PrintWriter output;
     private Scanner scanner;
-    private static Thread reader, writer, keepAlive, notepadThread;
+    private static Thread reader, writer, keepAlive;
     private static volatile boolean isAlive = false, isRunning = false;
     private static volatile boolean sending = false;  // to prevent sending header of keepAliver and then header of msg
     private static volatile boolean notepadTaken = false;  // like mutex on notepad
@@ -79,6 +82,7 @@ public class Client{
             case EDIT -> getEdit( header[ 1 ] );
             case PUBLIC_KEY -> getServerPublicKey( header[ 1 ] );
             case CLIENT_ID -> getClientId( header[ 1 ] );
+            case FILES -> getFileNames( header[ 1 ] );
         }
         return 0;
     }
@@ -127,6 +131,16 @@ public class Client{
             writeStatement( PUBLIC_KEY_REQUEST );
             System.out.print( "It's not public key. I will try again\n" );
         }
+    }
+
+    private void getFileNames( int msgLength ) throws IOException{
+        Protocol names = new Protocol( readLine( msgLength ), FILES );
+        while( notepadTaken );
+        notepadTaken = true;
+        String selectedFile = notepad.fileSelect( names.getMessage().split( "\n", 0 ) );
+        notepadTaken = false;
+        if( !selectedFile.equals( "" ) )
+            writeMsg( FILES, selectedFile );
     }
 
     public int login () throws IOException{
@@ -219,15 +233,19 @@ public class Client{
     private void createWriter(){        //TODO
         writer = new Thread( () -> {
             try{
-                String messageOut = "connected";
-                while( !messageOut.equals( "q" ) && !messageOut.equals( "quit" ) && isRunning ){
-                    writeEdit( messageOut );
-                    messageOut = scanner.nextLine();
+                String changes;
+                while( isRunning ){
+                    Thread.sleep( CHANGES_SEND_TIME * 1000 );
+                    while( notepadTaken );
+                    notepadTaken = true;
+                    changes = notepad.getChanges();
+                    notepadTaken = false;
+                    writeMsg( EDIT, changes );
                 }
                 socket.close();
                 input.close();
                 isRunning = false;
-            }catch( IOException ex ){}
+            }catch( IOException | InterruptedException ex ){}
         } );
     }
 

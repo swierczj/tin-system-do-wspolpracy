@@ -14,8 +14,8 @@
             <Menu mnemonicParsing="false" text="Open Recent" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem mnemonicParsing="false" onAction="#save" text="Save" />
+            <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Save As…" />
             <MenuItem mnemonicParsing="false" text="Revert" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Preferences…" />
@@ -46,7 +46,7 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <TextArea fx:id="textArea" prefHeight="695.0" prefWidth="1280.0" wrapText="true" />
+            <TextArea fx:id="textArea" onMouseClicked="#setPrevCaretPos" prefHeight="695.0" prefWidth="1280.0" wrapText="true" />
          </children>
     </AnchorPane>
   </children>

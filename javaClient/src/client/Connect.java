@@ -1,6 +1,7 @@
 package client;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
@@ -37,7 +38,7 @@ public class Connect{
     }
 
     private int createClient() throws IOException{
-//        if( !connected ){                 TODO uncomment if server working
+//        if( !connected ){                 TODO uncomment if server is working
             client = new Client( ip, port );
 //            if( client.connect() != 0 ){
 //                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
@@ -58,7 +59,9 @@ public class Connect{
     private void displayError( String errMsg ){
         Stage stage = new Stage();
         stage.setTitle( "Error" );
-        stage.setScene( new Scene( new Label( errMsg ), 300, 100 ) );
+        Label l = new Label( errMsg );
+        l.setAlignment( Pos.CENTER );
+        stage.setScene( new Scene( l, 300, 100 ) );
         stage.initModality( Modality.APPLICATION_MODAL );
         stage.showAndWait();
     }

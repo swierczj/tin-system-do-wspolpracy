@@ -32,6 +32,8 @@ public class Protocol {
                 }
             case 4:
                 this.clientId = Integer.parseInt( message );
+            case 5:
+                this.message = message;
         }
     }
 

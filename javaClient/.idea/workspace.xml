@@ -25,11 +25,14 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodano przypadek takich samych znakow z innym clientId">
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodana pełna obsługa zapisywania pliku lokalnie ( z ładnym okienkiem )">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Protocol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Protocol.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/notepad.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -273,7 +276,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590966876864</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Dodana pełna obsługa zapisywania pliku lokalnie ( z ładnym okienkiem )">
+      <created>1590971446985</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1590971446985</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -339,7 +349,8 @@
     <MESSAGE value="Dodalem wstawianie litery w zaznaczenie (usuwanie znako z zaznaczenia)" />
     <MESSAGE value="Dodałem ignorowanie ctrl+x ctrl+c i innych co wszystko psuja" />
     <MESSAGE value="Dodano przypadek takich samych znakow z innym clientId" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dodano przypadek takich samych znakow z innym clientId" />
+    <MESSAGE value="Dodana pełna obsługa zapisywania pliku lokalnie ( z ładnym okienkiem )" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dodana pełna obsługa zapisywania pliku lokalnie ( z ładnym okienkiem )" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -354,22 +365,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590846701447" />
-    <state width="1876" height="207" key="GridCell.Tab.0.bottom" timestamp="1590971348835">
+    <state width="1876" height="207" key="GridCell.Tab.0.bottom" timestamp="1590971520764">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971348835" />
-    <state width="1876" height="207" key="GridCell.Tab.0.center" timestamp="1590971348835">
+    <state width="1876" height="207" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971520764" />
+    <state width="1876" height="207" key="GridCell.Tab.0.center" timestamp="1590971520764">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971348835" />
-    <state width="1876" height="207" key="GridCell.Tab.0.left" timestamp="1590971348835">
+    <state width="1876" height="207" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971520764" />
+    <state width="1876" height="207" key="GridCell.Tab.0.left" timestamp="1590971520764">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971348835" />
-    <state width="1876" height="207" key="GridCell.Tab.0.right" timestamp="1590971348835">
+    <state width="1876" height="207" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971520764" />
+    <state width="1876" height="207" key="GridCell.Tab.0.right" timestamp="1590971520764">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971348835" />
+    <state width="1876" height="207" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971520764" />
     <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1590943293349">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -406,10 +417,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="93" key="SettingsEditor/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590858728609" />
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1590966878457">
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1590971448578">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590966878457" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971448578" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1590858764341">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

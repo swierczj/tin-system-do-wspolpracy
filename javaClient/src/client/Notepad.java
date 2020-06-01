@@ -1,9 +1,14 @@
 package client;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
@@ -13,7 +18,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +42,6 @@ public class Notepad{
             str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
         return str.toString();
     }
-
-
 
     public String getTextFromCodedInMemory(){
         StringBuilder str = new StringBuilder();
@@ -101,7 +103,9 @@ public class Notepad{
         } else{
             displayError( "Operation forbidden\nIt will be undone." );
             textArea.setText( getTextFromCodedInMemory() );
+            textArea.positionCaret( prevCaretPos );
         }
+        prevCaretPos = caretPos;
     }
 
     private void displayError( String errMsg ){
@@ -125,6 +129,8 @@ public class Notepad{
     @FXML private void displayChangesBuffer(){       // TODO only for check, to remove from final version
         System.out.print( getChanges() );
     }
+
+    @FXML private void setPrevCaretPos() { prevCaretPos = textArea.getCaretPosition(); }
 
     @FXML private void save() throws FileNotFoundException{
         if( fileName.equals( "Untitled.txt" ) )
@@ -153,6 +159,24 @@ public class Notepad{
         fileChooser.getExtensionFilters().add( extFilter );
         File file = fileChooser.showSaveDialog( textArea.getScene().getWindow() );
         if( file != null ) save( file );
+    }
+
+    public String fileSelect( String[] names ){
+        Stage stage = new Stage();
+        stage.setTitle( "Select file to edit" );
+        ListView< String > list = new ListView< String >( FXCollections.observableArrayList( names ) );
+        list.setPrefSize( 640, 480 );
+        list.setEditable( false );
+        stage.setScene( new Scene( list, 640, 480 ) );
+        stage.initModality( Modality.APPLICATION_MODAL );
+        list.getSelectionModel().selectedItemProperty().addListener( new ChangeListener< String >(){
+            @Override
+            public void changed( ObservableValue< ? extends String > observableValue, String s, String t1 ){
+                serverFile = t1;
+            }
+        } );
+        stage.showAndWait();
+        return serverFile;
     }
 
     // Dzial funkcji powalonych, lepiej do nich nie wracac
@@ -262,6 +286,7 @@ public class Notepad{
     private List< Character > deletedBuffer;
     private final int CHAR_SPLITTER_ASCII_CODE = 29;   // Group separator ( to split characters in message )
     private final int BUFFER_SPLITTER_ASCII_CODE = 28; // File sparator ( to split added chars from deleted )
+    private int prevCaretPos = 0;
 
     private class Character{
         public Character(){
@@ -297,7 +322,8 @@ public class Notepad{
         }
     }
 
-    private String fileName = "Untitled.txt";
+    private String serverFile = "";                 // server file name
+    private String fileName = "Untitled.txt";       // local name
     private int clientId = 7777;
 
     public void setClientId( int clientId ){
