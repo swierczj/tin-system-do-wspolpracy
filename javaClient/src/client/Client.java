@@ -8,8 +8,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 public class Client{
     private static final int HEADER_STATEMENT_LENGTH = 2;
@@ -68,7 +66,7 @@ public class Client{
     private String intToString( int value, int length ){    // returns string of length "length", fulfill with zeros
         int intLength = String.valueOf( value ).length();
         if( intLength > length ) return "";
-        return "0".repeat( length - intLength ) + String.valueOf( value );
+        return "0".repeat( length - intLength ) + value;
     }
 
     private String makeHeader( int type, int length ){
@@ -143,7 +141,7 @@ public class Client{
             writeMsg( FILES, selectedFile );
     }
 
-    public int login () throws IOException{
+    public int login() throws IOException{
         getMsg();
         if( !canLogIn ) return -1;
         Protocol loginMsg = new Protocol( login, password );
@@ -203,7 +201,7 @@ public class Client{
         notepad.setClientId( clientId );
 
         String names = "Notatka.txt\ntiny.txt\nJanusz Granat.txt\n";        // TODO only for test without server
-        String selectedFile = notepad.fileSelect( names.split( "\n", 0 ) );
+        notepad.fileSelect( names.split( "\n", 0 ) );
 
         createThreads();
         startThreads();
@@ -244,7 +242,7 @@ public class Client{
                     notepadTaken = true;
                     changes = notepad.getChanges();
                     notepadTaken = false;
-                    writeMsg( EDIT, changes );
+                    writeEdit( changes );
                 }
                 socket.close();
                 input.close();
@@ -262,11 +260,13 @@ public class Client{
                     writeStatement( KEEP_ALIVE );
                     Thread.sleep( 1000 );
                 }
-                System.out.print( "Connection broken" );
+                while( notepadTaken );
+                notepadTaken = true;
+                notepad.displayError( "Connection broken.\nYour changes are no longer updated.\nPlease restart connection." );
+                notepadTaken = false;
                 isRunning = false;
                 scanner.close();
-            }catch( InterruptedException iEx ){
-            }
+            }catch( InterruptedException iEx ){}
         } );
     }
 }

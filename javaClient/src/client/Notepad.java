@@ -108,7 +108,7 @@ public class Notepad{
         prevCaretPos = caretPos;
     }
 
-    private void displayError( String errMsg ){
+    public void displayError( String errMsg ){
         Stage stage = new Stage();
         stage.setTitle( "Error" );
         Label label = new Label( errMsg );
