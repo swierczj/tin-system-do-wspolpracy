@@ -179,6 +179,10 @@ public class Notepad{
         return serverFile;
     }
 
+    @FXML private void selectFromServer(){
+
+    }
+
     // Dzial funkcji powalonych, lepiej do nich nie wracac
     // text[ 0 ] = 0, invisible, only for 'on begin insertions' case
     // text[ index ] is previous char

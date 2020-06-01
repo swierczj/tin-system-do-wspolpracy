@@ -25,14 +25,9 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodana pełna obsługa zapisywania pliku lokalnie ( z ładnym okienkiem )">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodalem wybor pliku z serwera do edycji">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/notepad.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Protocol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Protocol.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/notepad.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/notepad.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -283,7 +278,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590971446985</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Dodalem wybor pliku z serwera do edycji">
+      <created>1591019741706</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1591019741706</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -350,7 +352,8 @@
     <MESSAGE value="Dodałem ignorowanie ctrl+x ctrl+c i innych co wszystko psuja" />
     <MESSAGE value="Dodano przypadek takich samych znakow z innym clientId" />
     <MESSAGE value="Dodana pełna obsługa zapisywania pliku lokalnie ( z ładnym okienkiem )" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dodana pełna obsługa zapisywania pliku lokalnie ( z ładnym okienkiem )" />
+    <MESSAGE value="Dodalem wybor pliku z serwera do edycji" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dodalem wybor pliku z serwera do edycji" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -417,10 +420,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="440" y="93" key="SettingsEditor/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590858728609" />
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1590971448578">
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1591019744948">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590971448578" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591019744948" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1590858764341">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -437,9 +440,9 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="687" y="232" key="git4idea.branch.GitSmartOperationDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590882470342" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1590950971806">
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1591020616343">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590950971806" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591020616343" />
   </component>
 </project>
