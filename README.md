@@ -22,7 +22,7 @@ Argumenty wywołania:
 2. Port (opcjonalny - domyślnie 54000)
 
 #### Klient webowy 
-
+NIe został ukończony
 #### Klient administratorski
 Jest to prosty skrypt w Pythonie uruchamiany poleceniem:
 ```
