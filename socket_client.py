@@ -4,6 +4,7 @@ import selectors
 import threading
 import sys
 import time
+import enum
 import logging as log
 import my_errors
 import utilities as util
@@ -18,9 +19,13 @@ HOST1 = "25.139.176.21"
 HOST = "127.0.0.1"
 PORT = 54000
 
+CONN_WAITING_TIME = 1
+
 HEADER_LENGTH = protowrap.HEADER_LENGTH
 
 CONNECTION_ATTEMPTS = 3
+
+
 
 
 class Client(threading.Thread):
@@ -38,12 +43,14 @@ class Client(threading.Thread):
         self.receive_buffer = ReceiveBuffer()
 
 
-
     def run(self) -> None:
         try:
             self.send_receive_loop()
-        except my_errors.ConnectionBrokenReceive:
-            sys.exit() #####################1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HOW TO HANDLE RUN IF IT EXCEPTS
+        except (my_errors.ConnectionBrokenReceive,my_errors.ConnectionBrokenSend,my_errors.ConnectionClosedByServer):
+            log.debug("Ending Socket Client")
+            self.stop_running()
+            self.close_socket()
+            self.client_controller.signal_on_lost_connection()
 
 
     def create_socket(self): # replace with 'with'
@@ -59,7 +66,7 @@ class Client(threading.Thread):
     def connect(self,no_attempts):
         for it in range(no_attempts):
             try:
-
+                self.client_socket.setblocking(1)
                 self.client_socket.connect((self.host,self.port))
                 self.client_socket.setblocking(0)
                 log.debug(f"Connection to {self.host}:{self.port} succesful")
@@ -89,23 +96,28 @@ class Client(threading.Thread):
                     raise my_errors.ConnectionBrokenReceive
 
             if self.client_socket in write_socket:
-                self.send()
+                try:
+                    self.send()
+                except my_errors.ConnectionBrokenSend:
+                    raise my_errors.ConnectionBrokenSend
 
             if self.client_socket in exception_socket:
                 """what do we handle here?"""
                 log.critical("Error on socket or smth")
                 self.client_socket.close()
-                sys.exit()
+                raise my_errors.SocketError
 
     def send(self):
         try:
             message = self.send_buffer.get_message()
+
             if message is not None:
+
                 sent = self.client_socket.send(message.encode('utf-8'))
                 self.send_buffer.update_on_total_sent(sent)
 
         except socket.error as e:
-            log.error("Connection broken")
+            log.error("Connection broken send")
             log.error(e)
             raise my_errors.ConnectionBrokenSend
 
@@ -113,7 +125,7 @@ class Client(threading.Thread):
 
         try:
             message_len = self.receive_buffer.get_length_of_incoming_message()
-            log.debug(f"{self.receive_buffer.bytes_to_receive}")
+            log.debug(f"Expecting{self.receive_buffer.bytes_to_receive} bytes")
             r_data = self.client_socket.recv(message_len)
             log.debug(f"[{len(r_data)}] bytes received : {r_data} ")
 
@@ -125,7 +137,7 @@ class Client(threading.Thread):
             self.receive_buffer.collect_message(r_data.decode('utf-8'))
 
         except socket.error as e:#ConnectionResetError
-            log.error("Connection broken")
+            log.error("Connection broken receive")
             log.error(e)
             raise my_errors.ConnectionBrokenReceive
 
@@ -154,6 +166,9 @@ class Client(threading.Thread):
     def pass_message_to_send_buffer(self,message):
         self.send_buffer.write_to_buffer(message)
 
+    def shut_down_socket_client(self):
+        pass
+
 class SendBuffer(util.BufferControl):
 
     def __init__(self):
@@ -168,9 +183,15 @@ class SendBuffer(util.BufferControl):
 
     def get_message(self):
         if self.completed_sending:
-            self.current_message = self.get_one_message_from_buffer()
-            if self.current_message is not None:
+            raw_message = self.get_one_message_from_buffer()
+            if raw_message is not None:#type + message
+                type,data = raw_message
+                data_len = len(data)
+                header = protowrap.Header(msgtype=type,msglength=data_len).get_message()
+
+                self.current_message = header + data
                 self.bytes_to_send = len(self.current_message)
+
                 self.completed_sending = False
                 return self.current_message
 
@@ -195,6 +216,7 @@ class ReceiveBuffer(util.BufferControl):
         self.status = 0
         self.message = ""
         self.type_of_incoming_message = None
+        self.status = State.waiting_for_header
 
     def read_from_buffer(self):
         return self.pop_one_message_from_buffer()
@@ -208,28 +230,29 @@ class ReceiveBuffer(util.BufferControl):
 
         if self.total_received == self.bytes_to_receive:
 
-            if self.status == 0:
-                self.status = 1
-                log.debug(f"received header: {self.message}")
+            if self.status == State.waiting_for_header:
+                self.status = State.waiting_for_message
 
-                header = protowrap.Header(message=self.message)#.decode('utf-8')
-                self.type_of_incoming_message = header.get_msg_type()
-                self.bytes_to_receive = header.get_msg_length()
+
+                try:
+                    header = protowrap.Header(message=self.message)#.decode('utf-8')
+                    self.type_of_incoming_message = header.get_msg_type()
+                    self.bytes_to_receive = header.get_msg_length()
+                except my_errors.CorruptedHeader:
+                    self.bytes_to_receive = 0
+                    log.error("Corrupted header")
+                    #notify about erroe
+
+
 
                 if self.bytes_to_receive == 0:
-                    self.status =0
+                    self.status = State.waiting_for_header
                     self.bytes_to_receive = HEADER_LENGTH # it caouses erreo 0!!!!!!!!!!!! tu poprawić jak excepty bd robić
 
-                log.debug(f" Header: msgType {self.type_of_incoming_message} msgLength {self.bytes_to_receive}")
+                log.debug(f" Header: msgType: {self.type_of_incoming_message} msgLength: {self.bytes_to_receive}")
 
-
-                """dummy code"""
-               # self.bytes_to_receive = 40
-                #self.received_whole_message()
-                #self.type_of_incoming_message = 0
-
-            elif self.status == 1:
-                self.status =0
+            elif self.status == State.waiting_for_message:
+                self.status =State.waiting_for_header
                 self.received_whole_message()
                 self.bytes_to_receive = HEADER_LENGTH
 
@@ -247,8 +270,9 @@ class ReceiveBuffer(util.BufferControl):
         #notify the controller somehow
 
 
-
-
+class State(enum.Enum):
+    waiting_for_header = 0
+    waiting_for_message = 1
 
 
 

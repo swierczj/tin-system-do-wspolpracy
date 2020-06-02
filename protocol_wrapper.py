@@ -1,16 +1,34 @@
-
-"""module responsible for translating protocol"""
 import my_errors
+"""module responsible for translating protocol"""
+
 HEADER_LENGTH = 6
+
 """ Message types in header"""
 LOGIN = 0
 STATEMENT = 1
 EDIT = 2
 PUBLIC_KEY = 3
+CLIENT_ID = 4
+FILES = 5
+
+CREATE_ACCOUNT = 6
+EDIT_ACCOUNT = 7
+DELETE_ACCOUNT = 8
 
 
-class Message:
-    pass
+"STATEMENTS TYPES"
+LOGIN_REQUEST = 1
+LOGIN_ACCEPTED = 2
+LOGIN_REJECTED = 3
+LOG_OUT = 4
+WORK_END = 5
+PUBLIC_KEY_REQUEST = 6
+FILE_LIST_REQUEST = 7
+
+ACCOUNT_LIST_REQUEST = 8
+
+
+
 
 
 class Header:
@@ -40,11 +58,12 @@ class Header:
         return self.message
 
 
-class LoginMessage(Message):
+class LoginMessage:
 
     def __init__(self,**kwargs):
 
         if 'Message' in kwargs:
+            self.message = kwargs.get('Message')
             self.login,self.password = kwargs.get('Message').split()
 
         elif 'login' and 'password' in kwargs:
@@ -65,10 +84,51 @@ class LoginMessage(Message):
         return self.message
 
 
-class Statement(Message):
+class Statement:
+
+    def __init__(self,**kwargs):
+
+        if "message" in kwargs:
+            try:
+                self.type = int(kwargs.get("message"))
+            except ValueError:
+                raise ValueError
+
+        elif "statementType" in kwargs:
+            self.message = str(kwargs.get("statementType"))
+
+    def get_statement_type(self):
+        return self.type
+
+    def get_message(self):
+        return self.message
+
+
+class ClientId:
+    def __init__(self,ID):
+        try:
+            self.id = int(ID)
+        except ValueError:
+            raise ValueError
+
+    def get_id(self):
+        return self.id
+
+
+class CreateAccount:
+    def __init__(self,login,password):
+        self.login = login
+        self.password = password
+
+    def get_message(self):
+        message = self.login + "\n" + self.password
+        return message
+
+class EditAccount:
     pass
 
-
+class DeleteAccount:
+    pass
 
 
 

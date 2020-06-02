@@ -1,12 +1,22 @@
 import client_controller
+import GUI
 
 
 c_ct = client_controller.ClientController()
+gui_client = GUI.GuiAdminApp()
+c_ct.add_gui_client(gui_client)
+gui_client.add_client_controller(c_ct)
 
-c_ct.connect()
+c_ct.start()
+gui_client.mainloop()
+c_ct.close_client_and_end_work()
 
-c_ct.start_send_receive_client()
-c_ct.main_loop()
+
+
+
+
+
+
 
 
 

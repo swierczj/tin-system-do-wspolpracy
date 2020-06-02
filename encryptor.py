@@ -8,7 +8,7 @@ import base64
 key = 'Sixteen byte key'.encode('utf-8')
 BLOCKSIZE = AES.block_size
 
-
+#TODO sprawidzić poprawność działania Z Prugarem i spoółką
 
 
 
@@ -32,6 +32,7 @@ def decrypt(key,encrypted_data):
     data_encrypted_decoded = base64.b64decode(encrypted_data)
     data_decrypted = cipher.decrypt(data_encrypted_decoded)
     data = Padding.unpad(data_decrypted,BLOCKSIZE)
+    data = data.decode('utf-8')
     return data
 
 
