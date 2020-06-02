@@ -33,3 +33,10 @@ bool LoginHandler::LoginInfo::is_lexically_correct() const
 //    return (login.find(' ') == std::string::npos && login.find('\n') == std::string::npos && login.find('\t') == std::string::npos
 //         && passwd.find(' ') == std::string::npos && passwd.find('\n') == std::string::npos && passwd.find('\t') == std::string::npos)
 }
+
+bool LoginHandler::user_exists(std::string const &login)
+{
+    if (!users_info.get_size())
+        return false;
+
+}
