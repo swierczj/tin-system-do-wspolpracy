@@ -40,9 +40,9 @@ public class Connect{
 
     @FXML protected void setDefault(){
         if( defaultCheckBox.isSelected() ){
-            ipField.setText( defaultIp );
+            ipField.setText( "localhost" );
             ipField.setDisable( true );
-            portField.setText( defaultPort );
+            portField.setText( "54000" );
             portField.setDisable( true );
         } else{
             ipField.setText( "" );
@@ -100,8 +100,6 @@ public class Connect{
     @FXML private CheckBox defaultCheckBox;
     @FXML private Button loginButton;
     @FXML private GridPane dragField;
-    private String defaultIp = "localhost";
-    private String defaultPort = "54000";
     private String ip;
     private int port;
     private boolean connected = false;

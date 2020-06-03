@@ -93,7 +93,7 @@ public class Client{
         String header = readLine( 6 );
         int[] ret = { -1, -1 };
         if( header != null && header.length() == 6 ){
-            int type = Integer.parseInt( header.substring( 4, 8 ) );
+            int type = Integer.parseInt( header.substring( 4, 6 ) );
             int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
             isAlive = true;
             ret = new int[]{ type, msgLength };
@@ -139,7 +139,7 @@ public class Client{
 
     private void getFileNames( int msgLength ) throws IOException{
         Message names = new Message( readLine( msgLength ), FILES );
-        while( notepadTaken );
+        while( notepadTaken ) Thread.onSpinWait();
         notepadTaken = true;
         String selectedFile = notepad.fileSelect( names.getMessage().split( "\n", 0 ) );
         notepadTaken = false;
@@ -169,7 +169,7 @@ public class Client{
 
     private void writeMsg( int type, String msg ){
         String header = makeHeader( type, msg.length() );
-        while( sending );       // Wait until other msg is send
+        while( sending ) Thread.onSpinWait();
         sending = true;
         output.println( header );
         output.println( msg );
@@ -252,7 +252,7 @@ public class Client{
                 String changes;
                 while( isRunning ){
                     Thread.sleep( CHANGES_SEND_TIME * 1000 );
-                    while( notepadTaken );
+                    while( notepadTaken ) Thread.onSpinWait();
                     notepadTaken = true;
                     changes = notepad.getChanges();
                     notepadTaken = false;
