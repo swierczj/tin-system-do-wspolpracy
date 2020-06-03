@@ -480,7 +480,12 @@ int Server::client_login(int sockfd)
             std::cout << "success recvd " << res << " bytes in header" << std::endl;
             /* parse msg */
             //parse_login_info_from_string(std::string(recv_buffers[sockfd].begin(), recv_buffers[sockfd].end()));
-            parse_login_info_from_string(recv_buffers.get_string_from_bytes(sockfd));
+            //parse_login_info_from_string(recv_buffers.get_string_from_bytes(sockfd));
+            /*TODO put somewhere else*/
+            int login_success = login_handler.check_login(recv_buffers.get_string_from_bytes(sockfd));
+            std::cout << "login: " << login_success << std::endl;
+            if (login_success)
+                clients.add_logged_client(sockfd);
 
             //Header header = parse_from_string(std::string(recv_buffers[sockfd].begin(), recv_buffers[sockfd].end()));
             clients.set_socket_read_state(sockfd, MSG_RECVD);

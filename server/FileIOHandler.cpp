@@ -8,10 +8,10 @@ void FileIOHandler::create_file(const std::string &path, const std::string &name
     std::ofstream file {full};
 }
 
-void FileIOHandler::find(const std::string &str)
-{
-
-}
+//void FileIOHandler::find(const std::string &str)
+//{
+//
+//}
 
 std::string FileIOHandler::read_to_buffer(const std::string &fn)
 {
@@ -23,4 +23,10 @@ std::string FileIOHandler::read_to_buffer(const std::string &fn)
     from.seekg(0);
     from.read(buffer.data(), buffer.size());
     return buffer;
+}
+
+void FileIOHandler::write_from_buffer(const std::string &fn, const std::string &buff)
+{
+    std::ofstream f(fn);
+    f.write(buff.data(), buff.size());
 }

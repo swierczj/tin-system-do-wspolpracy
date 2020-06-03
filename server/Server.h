@@ -19,6 +19,7 @@
 #include "Header.h"
 #include "ClientsMonitor.h"
 #include "RecvBuffers.h"
+#include "LoginHandler.h"
 
 Header parse_from_string(std::string const &str);
 
@@ -46,6 +47,7 @@ private:
     //std::map<int, std::vector<char>> recv_buffers;
     RecvBuffers recv_buffers;
     ClientsMonitor clients;
+    LoginHandler login_handler;
 
     
     int set_listening();

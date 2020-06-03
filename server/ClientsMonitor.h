@@ -34,7 +34,7 @@ public:
     bool is_logged(int sockfd);
     int get_existing_conns();
     std::vector<int> get_write_descriptors();
-
+    void add_logged_client(int sockfd);
 };
 
 

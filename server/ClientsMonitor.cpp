@@ -86,3 +86,8 @@ std::vector<int> ClientsMonitor::get_write_descriptors()
     }
     return res;
 }
+
+void ClientsMonitor::add_logged_client(int sockfd)
+{
+    logged_clients.insert(sockfd);
+}

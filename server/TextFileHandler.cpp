@@ -33,3 +33,8 @@ int TextFileHandler::get_size()
 {
     return filenames.size();
 }
+
+std::string TextFileHandler::get_filename_at_pos(int index)
+{
+    return filenames[index];
+}
