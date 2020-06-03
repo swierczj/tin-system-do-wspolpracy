@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.*;
 import java.net.Socket;
@@ -210,12 +211,11 @@ public class Client{
     }
 
     public void createGUI() throws IOException{
-        FXMLLoader fxmlLoader = new FXMLLoader( getClass().getResource( "notepad.fxml" ) );
+        FXMLLoader fxmlLoader = new FXMLLoader( getClass().getResource( "notepad20.fxml" ) );
         Stage stage = new Stage();
         stage.setTitle( "Notepad - Untitled.txt" );
         stage.setScene( new Scene( fxmlLoader.load(), 1280, 720 ) );
-        stage.setResizable( false );
-        stage.setOnCloseRequest( e -> notepad.quit() );
+        stage.initStyle( StageStyle.TRANSPARENT );
         stage.show();
         notepad = fxmlLoader.getController();
         notepad.setClientId( clientId );

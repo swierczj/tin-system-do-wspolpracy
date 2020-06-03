@@ -4,14 +4,16 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -21,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,9 +37,26 @@ public class Notepad{
         text.add( c );
         addedBuffer = new ArrayList<>();
         deletedBuffer = new ArrayList<>();
+        setOnDrag();
         textArea.setOnKeyTyped( this::proceedKeyTyped );
     }
     public void setClient( Client client ){ this.client = client; }
+
+    private void setOnDrag(){
+        dragPane.setOnMousePressed( mouseEvent -> {
+            x = mouseEvent.getSceneX();
+            y = mouseEvent.getSceneY();
+        } );
+
+        dragPane.setOnMouseDragged( mouseEvent -> {
+            Stage stage = ( Stage ) dragPane.getScene().getWindow();
+            stage.setX( mouseEvent.getScreenX() - x );
+            stage.setY( mouseEvent.getScreenY() - y );
+            stage.setOpacity( 0.9 );
+        } );
+
+        dragPane.setOnMouseReleased( mouseEvent -> dragPane.getScene().getWindow().setOpacity( 1.0 ) );
+    }
 
     public String getChanges(){
         StringBuilder str = new StringBuilder();
@@ -175,6 +193,7 @@ public class Notepad{
     }
 
     @FXML public void quit(){
+        textArea.getScene().getWindow().hide();
         client.quit();
         Platform.exit();
         System.exit( 0 );
@@ -314,6 +333,8 @@ public class Notepad{
     }
 
     @FXML TextArea textArea;
+    @FXML private MenuBar dragPane;
+    private double x = 0, y = 0;
     private List< Character > text;
     private List< Character > addedBuffer;
     private List< Character > deletedBuffer;

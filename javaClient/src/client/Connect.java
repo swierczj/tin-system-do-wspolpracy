@@ -29,10 +29,11 @@ public class Connect{
             stage.setOpacity( 0.9 );
         } );
 
-        dragField.setOnMouseReleased( mouseEvent -> ( ( Stage )dragField.getScene().getWindow() ).setOpacity( 1.0 ) );
+        dragField.setOnMouseReleased( mouseEvent -> dragField.getScene().getWindow().setOpacity( 1.0 ) );
     }
 
     @FXML private void quit(){
+        dragField.getScene().getWindow().hide();
         Platform.exit();
         System.exit( 0 );
     }
@@ -72,12 +73,12 @@ public class Connect{
             connected = true;
             System.out.print( "Connected\n" );
         }
-        client.setLoginData( loginField.getText(), passwordField.getText() );
-        if( client.login() != 0 ){
-            client.quit();
-            displayError( "Login or password incorrect." );
-            return -2;
-        }
+//        client.setLoginData( loginField.getText(), passwordField.getText() );
+//        if( client.login() != 0 ){
+//            client.quit();
+//            displayError( "Login or password incorrect." );
+//            return -2;
+//        }
         client.createGUI();
         return 0;
     }
