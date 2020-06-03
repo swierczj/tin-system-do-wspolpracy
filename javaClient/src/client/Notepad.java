@@ -116,7 +116,7 @@ public class Notepad{
         if( event.equals( String.valueOf( ( char )( 127 ) ) ) || event.equals( "\b" ) ){          // Cannot delete from end of string ( still remember of 1 additional element )
             int charPos = caretPos + 1;      // delete what was before caret so what is on position
             removeMultipleChars( diff, charPos );
-        } else if( ( int )event.charAt( 0 ) >= 32 || ( int )event.charAt( 0 ) == 9 || ( int )event.charAt( 0 ) == 13  ){             // only for printable chars
+        } else if( ( int )event.charAt( 0 ) >= 32 || event.equals( "\t" ) || event.equals( "\r" ) ||  event.equals( "\n" ) ){             // only for printable chars
             int charPos = caretPos - 1;                 // append on previous caret pos, so on actPos - 1
             removeMultipleChars( diff + 1, caretPos );        // numerating from 1 is applied in getChar() algorithm
             if( event.equals( "\r" ) ) event = "\n";
