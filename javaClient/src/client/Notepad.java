@@ -119,6 +119,7 @@ public class Notepad{
         } else if( ( int )event.charAt( 0 ) >= 32 || ( int )event.charAt( 0 ) == 9 || ( int )event.charAt( 0 ) == 13  ){             // only for printable chars
             int charPos = caretPos - 1;                 // append on previous caret pos, so on actPos - 1
             removeMultipleChars( diff + 1, caretPos );        // numerating from 1 is applied in getChar() algorithm
+            if( event.equals( "\r" ) ) event = "\n";
             Character c = getChar( event, charPos );
             text.add( charPos + 1, c );
             addedBuffer.add( c );
