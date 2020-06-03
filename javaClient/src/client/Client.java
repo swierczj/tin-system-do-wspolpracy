@@ -110,6 +110,7 @@ public class Client{
     private void getClientId( int msgLength ) throws IOException{
         Message id = new Message( readLine( msgLength ), CLIENT_ID );
         clientId = id.getClientId();
+        logged = true;
     }
 
     private void getStatement( int msgLength ) throws IOException{
@@ -150,7 +151,7 @@ public class Client{
         if( !canLogIn ) return -1;
         Message loginMsg = new Message( login, password );
         writeMsg( LOGIN, loginMsg.getMessage() );
-        System.out.print( logged );
+        System.out.print( logged + "\n" );
         if( !logged ) return -1;
         return 0;
     }
@@ -202,6 +203,9 @@ public class Client{
         output = new PrintWriter( socket.getOutputStream(), true );
         scanner = new Scanner( System.in );
 
+        createThreads();      //TODO uncoment if server is running
+        startThreads();
+
         return 0;
     }
 
@@ -216,9 +220,6 @@ public class Client{
         notepad = fxmlLoader.getController();
         notepad.setClientId( clientId );
         notepad.setClient( this );
-
-        createThreads();      //TODO uncoment if server is running
-        startThreads();
     }
 
     public void createThreads(){
@@ -271,7 +272,7 @@ public class Client{
         keepAlive = new Thread( () -> {
             try{
                 while( isAlive && isRunning ){
-                    Thread.sleep( 10000 );
+                    Thread.sleep( 100000 );
                     isAlive = false;
                     writeStatement( KEEP_ALIVE );
                     Thread.sleep( 1000 );

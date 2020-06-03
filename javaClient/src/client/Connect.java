@@ -1,16 +1,41 @@
 package client;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class Connect{
-    @FXML public void initialize(){}
+    @FXML public void initialize(){
+        setOnDrag();
+    }
+
+    private void setOnDrag(){
+        dragField.setOnMousePressed( mouseEvent -> {
+            x = mouseEvent.getSceneX();
+            y = mouseEvent.getSceneY();
+        } );
+
+        dragField.setOnMouseDragged( mouseEvent -> {
+            Stage stage = ( Stage ) dragField.getScene().getWindow();
+            stage.setX( mouseEvent.getScreenX() - x );
+            stage.setY( mouseEvent.getScreenY() - y );
+            stage.setOpacity( 0.9 );
+        } );
+
+        dragField.setOnMouseReleased( mouseEvent -> ( ( Stage )dragField.getScene().getWindow() ).setOpacity( 1.0 ) );
+    }
+
+    @FXML private void quit(){
+        Platform.exit();
+        System.exit( 0 );
+    }
 
     @FXML protected void setDefault(){
         if( defaultCheckBox.isSelected() ){
@@ -48,10 +73,11 @@ public class Connect{
             System.out.print( "Connected\n" );
         }
         client.setLoginData( loginField.getText(), passwordField.getText() );
-//        if( client.login() != 0 ){
-//            displayError( "Login or password incorrect." );
-//            return -2;
-//        }
+        if( client.login() != 0 ){
+            client.quit();
+            displayError( "Login or password incorrect." );
+            return -2;
+        }
         client.createGUI();
         return 0;
     }
@@ -72,11 +98,13 @@ public class Connect{
     @FXML private PasswordField passwordField;
     @FXML private CheckBox defaultCheckBox;
     @FXML private Button loginButton;
+    @FXML private GridPane dragField;
     private String defaultIp = "localhost";
     private String defaultPort = "54000";
     private String ip;
     private int port;
     private boolean connected = false;
+    private double x = 0, y = 0;
 
     private Client client;
 }

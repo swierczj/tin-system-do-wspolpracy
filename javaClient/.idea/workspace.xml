@@ -20,12 +20,22 @@
       <path>
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="BRANCH:java-client" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:javaGUI-encryption" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Dodalem wstawianie litery w zaznaczenie (usuwanie znako z zaznaczenia)" />
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Smiga sieciowo mniej wiecej">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Coder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Coder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Encryption.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,7 +52,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="JavaGui-net" />
+        <entry key="$PROJECT_DIR$/.." value="JavaGUI" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -323,8 +333,25 @@
       <option name="project" value="LOCAL" />
       <updated>1591041715102</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Smiga sieciowo mniej wiecej">
+      <created>1591043448860</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1591043448860</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -337,7 +364,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="java-client" />
+                        <option value="javaGUI-encryption" />
                       </list>
                     </value>
                   </entry>
@@ -371,7 +398,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Gui - dziala logowanie przynajmniej wysylanie" />
     <MESSAGE value="GUI - chowa okno logowania" />
     <MESSAGE value="GUI - ja pierdole" />
     <MESSAGE value="GUI - no nie tu skomitowalem kurwa jego mac" />
@@ -396,7 +422,8 @@
     <MESSAGE value="Dodalem &quot;poprawne&quot; zamykanie aplikacji jak sie wcisnie quit" />
     <MESSAGE value="Dodalem &quot;poprawne&quot; zamykanie aplikacji jak sie wcisnie iksa" />
     <MESSAGE value="Poprawilem blad z keepAliverem oraz wysylaniem pustych zmian" />
-    <option name="LAST_COMMIT_MESSAGE" value="Poprawilem blad z keepAliverem oraz wysylaniem pustych zmian" />
+    <MESSAGE value="Smiga sieciowo mniej wiecej" />
+    <option name="LAST_COMMIT_MESSAGE" value="Smiga sieciowo mniej wiecej" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -407,42 +434,46 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="689" y="309" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590845750694" />
-    <state x="740" y="236" key="FileChooserDialogImpl" timestamp="1590846701447">
+    <state x="100" y="100" width="1340" height="840" key="DiffContextDialog" timestamp="1591103547672">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1590846701447" />
-    <state width="1876" height="207" key="GridCell.Tab.0.bottom" timestamp="1591043065497">
+    <state x="100" y="100" width="1340" height="840" key="DiffContextDialog/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591103547672" />
+    <state x="740" y="236" key="FileChooserDialogImpl" timestamp="1591043979718">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043065497" />
-    <state width="1876" height="207" key="GridCell.Tab.0.center" timestamp="1591043065497">
+    <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043979718" />
+    <state width="1876" height="206" key="GridCell.Tab.0.bottom" timestamp="1591142885094">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043065497" />
-    <state width="1876" height="207" key="GridCell.Tab.0.left" timestamp="1591043065497">
+    <state width="1876" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142885094" />
+    <state width="1876" height="206" key="GridCell.Tab.0.center" timestamp="1591142885094">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043065497" />
-    <state width="1876" height="207" key="GridCell.Tab.0.right" timestamp="1591043065497">
+    <state width="1876" height="206" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142885094" />
+    <state width="1876" height="206" key="GridCell.Tab.0.left" timestamp="1591142885093">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="207" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043065497" />
-    <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1591023029531">
+    <state width="1876" height="206" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142885093" />
+    <state width="1876" height="206" key="GridCell.Tab.0.right" timestamp="1591142885094">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
-    <state width="1876" height="342" key="GridCell.Tab.1.center" timestamp="1591023029531">
+    <state width="1876" height="206" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142885094" />
+    <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1591142133705">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
-    <state width="1876" height="342" key="GridCell.Tab.1.left" timestamp="1591023029531">
+    <state width="1876" height="342" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142133705" />
+    <state width="1876" height="342" key="GridCell.Tab.1.center" timestamp="1591142133704">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
-    <state width="1876" height="342" key="GridCell.Tab.1.right" timestamp="1591023029531">
+    <state width="1876" height="342" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142133704" />
+    <state width="1876" height="342" key="GridCell.Tab.1.left" timestamp="1591142133704">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="342" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591023029531" />
+    <state width="1876" height="342" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142133704" />
+    <state width="1876" height="342" key="GridCell.Tab.1.right" timestamp="1591142133705">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1876" height="342" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591142133705" />
     <state x="267" y="85" width="1620" height="870" key="MergeDialog" timestamp="1590882510846">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -467,10 +498,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="731" y="432" key="VCS.ChangelistChooser/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591041127103" />
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1591041723006">
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1591043628572">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591041723006" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043628572" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1590858764341">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

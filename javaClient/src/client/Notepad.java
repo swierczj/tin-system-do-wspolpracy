@@ -42,11 +42,13 @@ public class Notepad{
 
     public String getChanges(){
         StringBuilder str = new StringBuilder();
-        for( Character c : addedBuffer )
-            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
-        str.append( ( char )BUFFER_SPLITTER_ASCII_CODE );
         for( Character c : deletedBuffer )
             str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
+        str.append( ( char )BUFFER_SPLITTER_ASCII_CODE );
+        for( Character c : addedBuffer )
+            str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
+        addedBuffer.clear();
+        deletedBuffer.clear();
         return str.toString();
     }
 
@@ -61,12 +63,12 @@ public class Notepad{
     public void applyChanges( String changes ){
         int caretPos = textArea.getCaretPosition();
         String[] temp = changes.split( String.valueOf( ( char )BUFFER_SPLITTER_ASCII_CODE ), 0 );
-        String[] addedChars = temp[ 0 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
-        String[] deletedChars = temp[ 1 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
-        for( String c : addedChars )
-            addChar( toCharacter( c ), caretPos );
+        String[] deletedChars = temp[ 0 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
+        String[] addedChars = temp[ 1 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
         for( String c : deletedChars )
             removeChar( toCharacter( c ), caretPos );
+        for( String c : addedChars )
+            addChar( toCharacter( c ), caretPos );
         textArea.setText( getTextFromCodedInMemory() );
     }
 
@@ -108,7 +110,7 @@ public class Notepad{
             addedBuffer.add( c );
             System.out.print( "\n" + c.toString() );
         } else{
-            displayError( "Operation forbidden\nIt will be undone." );
+            //displayError( "Operation forbidden\nIt will be undone." );
             textArea.setText( getTextFromCodedInMemory() );
             textArea.positionCaret( prevCaretPos );
         }
