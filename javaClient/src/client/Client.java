@@ -157,7 +157,7 @@ public class Client{
         return 0;
     }
 
-    private void writeEdit( String msg ){
+    public void writeEdit( String msg ){
         Message editMsg = new Message( msg );
         writeMsg( EDIT, editMsg.getMessage() );
     }

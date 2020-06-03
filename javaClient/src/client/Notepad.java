@@ -1,8 +1,6 @@
 package client;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -12,8 +10,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -153,10 +149,6 @@ public class Notepad{
         }
     }
 
-    @FXML private void displayChangesBuffer(){       // TODO only for check, to remove from final version
-        System.out.print( getChanges() );
-    }
-
     @FXML private void setPrevCaretPos() { prevCaretPos = textArea.getCaretPosition(); }
 
     @FXML private void save() throws FileNotFoundException{
@@ -212,22 +204,29 @@ public class Notepad{
         }
     }
 
+    public void clearFile(){
+        String changes = getChanges();
+        if( changes.length() > 1 )
+            client.writeEdit( changes );
+        addedBuffer.clear();
+        deletedBuffer.clear();
+        text.clear();
+        Character c = new Character();
+        c.append( 0, 0 );
+        text.add( c );
+    }
+
     public String fileSelect( String[] names ){
         Stage stage = new Stage();
         stage.setTitle( "Select file to edit" );
-        ListView< String > list = new ListView< String >( FXCollections.observableArrayList( names ) );
+        ListView< String > list = new ListView<>( FXCollections.observableArrayList( names ) );
         list.setPrefSize( 640, 480 );
         list.setEditable( false );
         stage.setScene( new Scene( list, 640, 480 ) );
         stage.initModality( Modality.APPLICATION_MODAL );
-        list.getSelectionModel().selectedItemProperty().addListener( new ChangeListener< String >(){
-            @Override
-            public void changed( ObservableValue< ? extends String > observableValue, String s, String t1 ){
-                serverFile = t1;
-            }
-        } );
+        list.getSelectionModel().selectedItemProperty().addListener( ( observableValue, s, t1 ) -> serverFile = t1 );
         stage.showAndWait();
-        System.out.print( serverFile );
+        clearFile();
         return serverFile;
     }
 
