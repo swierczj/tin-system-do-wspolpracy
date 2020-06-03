@@ -62,7 +62,7 @@
       </GridPane>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <TextArea fx:id="textArea" onMouseClicked="#setPrevCaretPos" prefHeight="688.0" prefWidth="1280.0" wrapText="true" />
+            <TextArea fx:id="textArea" onMouseClicked="#setPrevCaretPos" prefHeight="688.0" prefWidth="1280.0" stylesheets="@css/textArea.css" wrapText="true" />
          </children>
     </AnchorPane>
   </children>

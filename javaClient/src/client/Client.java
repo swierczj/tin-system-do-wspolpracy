@@ -215,7 +215,7 @@ public class Client{
         Stage stage = new Stage();
         stage.setTitle( "Notepad - Untitled.txt" );
         stage.setScene( new Scene( fxmlLoader.load(), 1280, 720 ) );
-        stage.initStyle( StageStyle.TRANSPARENT );
+        stage.initStyle( StageStyle.TRANSPARENT);
         stage.show();
         notepad = fxmlLoader.getController();
         notepad.setClientId( clientId );
