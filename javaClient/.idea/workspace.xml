@@ -25,15 +25,7 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Tak mi sie nudzi ze dodalem fajne okieneczko">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
-    </list>
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Ladne okienka - wszystko dziala" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -345,7 +337,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591143747866</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Ladne okienka - wszystko dziala">
+      <created>1591147975799</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1591147975799</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -403,7 +402,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="GUI - ja pierdole" />
     <MESSAGE value="GUI - no nie tu skomitowalem kurwa jego mac" />
     <MESSAGE value="GUI - main sie cofnal nie wiem czemu, naprawione" />
     <MESSAGE value="Napisalem 2 alg tworzenia pozycji znaku, boje sie przetestowac" />
@@ -428,7 +426,8 @@
     <MESSAGE value="Poprawilem blad z keepAliverem oraz wysylaniem pustych zmian" />
     <MESSAGE value="Smiga sieciowo mniej wiecej" />
     <MESSAGE value="Tak mi sie nudzi ze dodalem fajne okieneczko" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tak mi sie nudzi ze dodalem fajne okieneczko" />
+    <MESSAGE value="Ladne okienka - wszystko dziala" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ladne okienka - wszystko dziala" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -447,22 +446,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043979718" />
-    <state width="1876" height="206" key="GridCell.Tab.0.bottom" timestamp="1591147706770">
+    <state width="1876" height="206" key="GridCell.Tab.0.bottom" timestamp="1591148086483">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591147706770" />
-    <state width="1876" height="206" key="GridCell.Tab.0.center" timestamp="1591147706770">
+    <state width="1876" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591148086483" />
+    <state width="1876" height="206" key="GridCell.Tab.0.center" timestamp="1591148086483">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="206" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591147706770" />
-    <state width="1876" height="206" key="GridCell.Tab.0.left" timestamp="1591147706770">
+    <state width="1876" height="206" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591148086483" />
+    <state width="1876" height="206" key="GridCell.Tab.0.left" timestamp="1591148086483">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="206" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591147706770" />
-    <state width="1876" height="206" key="GridCell.Tab.0.right" timestamp="1591147706770">
+    <state width="1876" height="206" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591148086483" />
+    <state width="1876" height="206" key="GridCell.Tab.0.right" timestamp="1591148086483">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="206" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591147706770" />
+    <state width="1876" height="206" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591148086483" />
     <state width="1876" height="342" key="GridCell.Tab.1.bottom" timestamp="1591147312778">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
