@@ -10,7 +10,19 @@ import utilities as util
 from GUI import gui
 
 
+"""SYSTEM MESSAGES"""
 
+CREATE_ACCOUNT = "create account"
+CREATE_ACCOUNT_DATA = "create account data"
+DISCONNECTED = "disconnected"
+
+GET_ACCOUNT_LIST = "get account list"
+DELETE_ACCOUNT = "delete account"
+
+"""SYSTEM VARIABLES"""
+
+LOGIN = "login"
+PASSWORD = "password"
 
 log.basicConfig(stream=sys.stdout, level=log.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s')
 """ supreme module controlling socket-thread and gui """
@@ -71,8 +83,6 @@ class ClientController(threading.Thread):
             self.internetClient.connect(1)
             self.connected.set_locked_bool(True)
 
-
-
             #self.update_on_successful_login()
 
         except my_errors.UnableToConnect:
@@ -82,9 +92,11 @@ class ClientController(threading.Thread):
     def reconnect(self):
         self.create_internetClient()
         self.connect()
+
         if self.connected.get_locked_bool():
             self.start_send_receive_client()
             self.update_on_connection()
+
 
 
     def start_send_receive_client(self):
@@ -95,13 +107,13 @@ class ClientController(threading.Thread):
 
         if self.connected.get_locked_bool() ==True:
             self.update_on_connection()
-            self.update_on_login_request()
+            #self.update_on_login_request()
 
 
             self.start_send_receive_client()
         else:
             self.update_on_no_server_connection()
-            self.update_on_successful_login()
+            #self.update_on_successful_login()  # TODO
         self.main_loop()
 
 
@@ -118,8 +130,7 @@ class ClientController(threading.Thread):
             if self.systemMessages.is_in_buffer("login") and (self.systemVariables.is_in_dictionary("login") and self.systemVariables.is_in_dictionary("password")):
                 log.debug(self.systemVariables.get_dictionary())
 
-
-                if not self.systemVariables.is_in_dictionary("waiting for login answer") and not self.systemVariables.is_in_dictionary("authorized"):
+                if not self.systemVariables.is_in_dictionary("waiting for login answer") and not self.systemVariables.is_in_dictionary("authenticated"):
                     login = self.systemVariables.get_element("login")
                     password = self.systemVariables.get_element("password")
                     self.send_login_info(login,password)
@@ -127,12 +138,14 @@ class ClientController(threading.Thread):
 
                 self.remove_system_message("login")
 
+            if self.systemMessages.is_in_buffer(CREATE_ACCOUNT):
+                self.send_create_account()
 
-            if(self.connected.get_locked_bool() ):
+
+            if self.connected.get_locked_bool():
                 self.read_incoming_message_and_process()
 
-                if self.systemMessages.is_in_buffer("send login"):
-                    pass
+
 
 
     def handle_reconnect_request(self):
@@ -142,8 +155,8 @@ class ClientController(threading.Thread):
 
     def handle_disconnected(self):
         self.update_on_no_server_connection()
+        self.remove_system_message(DISCONNECTED)
 
-        self.remove_system_message("disconnected")
 
     def read_incoming_message_and_process(self):
         data = self.get_message()
@@ -154,16 +167,19 @@ class ClientController(threading.Thread):
                 statement = protowrap.Statement(message=mess).get_statement_type()
 
                 if statement == protowrap.LOGIN_REQUEST:
-                    print("login request")
+                    log.debug("login request")
                     self.update_on_login_request()
 
                 elif statement == protowrap.LOGIN_REJECTED:
                     self.update_on_failed_login()
 
-            if type == protowrap.CLIENT_ID:
+            elif type == protowrap.CLIENT_ID:
                 given_id = protowrap.ClientId(mess)
                 self.systemVariables.add_element("id",given_id)
                 self.update_on_successful_login()
+
+            elif type == protowrap.ACCOUNT_LIST:
+                print("got list")
 
 
 
@@ -178,7 +194,7 @@ class ClientController(threading.Thread):
 
         type = protowrap.LOGIN
         full_message =  (type,login_mes)
-        log.debug(f"full login Message  {full_message}")
+        log.debug(f"full login Message  {full_message} len = {len(full_message)}")
         self.internetClient.pass_message_to_send_buffer(full_message)
 
     def handle_failed_socket_creation(self):
@@ -200,14 +216,27 @@ class ClientController(threading.Thread):
 
 
     def update_on_successful_login(self):
-        print("zalogowany")
-        self.write_system_variable("authorized", True)
+        log.debug("login successful")
+        self.write_system_variable("authenticated", True)
         self.gui_client.update_on_successful_login()
         self.systemVariables.pop_element("waiting for login answer")
 
 
+    def send_create_account(self):
+        print(self.systemVariables.get_dictionary())
+        username,password = self.systemVariables.pop_element(CREATE_ACCOUNT_DATA)
+        create_account_message = protowrap.CreateAccount(username,password).get_message()
+        full_message = (protowrap.CREATE_ACCOUNT,create_account_message)
+        print("full account:" , full_message ,len(full_message))
+        self.send_message(full_message)
+
+
+
+        self.remove_system_message(CREATE_ACCOUNT)
+
+
     def update_on_failed_login(self):
-        print("niezalogowany")
+        log.debug("login failed")
         self.gui_client.update_on_failed_login()
         self.systemVariables.pop_element("waiting for login answer")
 
@@ -217,7 +246,12 @@ class ClientController(threading.Thread):
         log.debug("Closing clients")
 
     def log_out(self):
-        self.systemVariables.pop_element("authorized")
+        self.systemVariables.pop_element("authenticated")
+        self.systemVariables.pop_element(LOGIN)
+        self.systemVariables.pop_element(PASSWORD)
+        logout_message = protowrap.Statement(statementType=protowrap.LOG_OUT).get_message()
+        self.send_message(protowrap.STATEMENT,logout_message)
+
         print("no co ty tato")
         #send logout
 

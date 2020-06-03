@@ -1,5 +1,6 @@
 import tkinter as tk
 import time
+import client_controller as ct
 
 APP_NAME = 'Admin App'
 SCREEN_SIZE = "600x500+500+150" # width_height right down
@@ -78,10 +79,12 @@ class GuiAdminApp(tk.Tk):
     def signal_client_controller_message(self,message):
         self.client_controller.write_system_message(message)
 
+    def put_client_controller_variable(self,key,value):
+       self.client_controller.write_system_variable(key,value)
+
     def update_on_log_out(self):
         self.client_controller.log_out()
         self.show_frame(LoginPage)
-
 
 
 
@@ -172,7 +175,7 @@ class StartPage(tk.Frame):
 
     def update_on_no_server_connection(self):
         self.clear()
-        label = tk.Label(self, text=f"Lost connection to server: server was taken down")
+        label = tk.Label(self, text=f"Lost connection to server ")
         label.grid(row=2, column=2)
         self.labels.append(label)
 
@@ -204,6 +207,7 @@ class Administration(tk.Frame):
         self.account_display_list = tk.Listbox(self)
 
         self.show_list()
+        self.display_client_accounts_list()
 
         self.create_new_account_button = tk.Button(self,text="Create new account ", command=self.create_new_account_window)
         self.create_new_account_button.grid(row=1, column=3)
@@ -233,21 +237,26 @@ class Administration(tk.Frame):
     def edit_selected_account(self):
         item_clicked = self.account_display_list.curselection()
         if item_clicked != ():
-                print(self.account_display_list.get(item_clicked))
+                account_username = self.account_display_list.get(item_clicked)
+                self.create_new_edit_account_window(account_username)
 
 
     def refresh(self):
         self.display_client_accounts_list()
         pass
 
+    def delete(self):
+        pass
+
 
     def show_list(self):
-
         self.account_display_list.grid(row=3, column=4, columnspan=3)
-        self.account_display_list.insert(tk.END, "lulo")
 
     def create_new_account_window(self):
-        PopUpAccount()
+        PopUpAccount(self.controller)
+
+    def create_new_edit_account_window(self,account_username):
+        PopUpEditAccount(self.controller,account_username)
 
     def display_client_accounts_list(self):
         self.clear_list()
@@ -288,7 +297,8 @@ class MenuBar:
 
 class PopUpAccount():
 
-    def __init__(self):
+    def __init__(self,controller):
+        self.controller = controller
         self.labels = []
         self.popup = tk.Tk()
         self.popup.geometry(POPUP_SCREEN_SIZE)
@@ -303,22 +313,23 @@ class PopUpAccount():
 
     def setup_popup(self):
 
-        name_label = tk.Label(self.popup, text='Name').grid(row=2, column=0)
-        name = tk.Entry(self.popup).grid(row=2, column=1)
+        #name_label = tk.Label(self.popup, text='Name').grid(row=2, column=0)
+        #name = tk.Entry(self.popup).grid(row=2, column=1)
 
         username_label = tk.Label(self.popup, text='Username').grid(row=3, column=0)
-        self.username = tk.Entry(self.popup).grid(row=3, column=1)
+        self.username = tk.Entry(self.popup)
+        self.username.grid(row=3, column=1)
 
-        password_label =  tk.Label(self.popup, text='Password').grid(row=5, column=0)
-        self.password = tk.Entry(self.popup)
-        self.password.grid(row=5, column=1)
+        password_label =  tk.Label(self.popup, text='Password').grid(row=4, column=0)
+        self.password = tk.Entry(self.popup,)
+        self.password.grid(row=4, column=1)
 
-        repeat_password_label = tk.Label(self.popup, text='Repeat password').grid(row=6, column=0)
-        self.repeat_password = tk.Entry(self.popup)
-        self.repeat_password.grid(row=6, column=1)
+        repeat_password_label = tk.Label(self.popup, text='Repeat password').grid(row=5, column=0)
+        self.repeat_password = tk.Entry(self.popup,show='*')
+        self.repeat_password.grid(row=5, column=1)
 
-        email_label = tk.Label(self.popup, text='Email').grid(row=4, column=0)
-        email = tk.Entry(self.popup).grid(row=4, column=1)
+        #email_label = tk.Label(self.popup, text='Email').grid(row=4, column=0)
+        #email = tk.Entry(self.popup).grid(row=4, column=1)
 
         account_button = tk.Button(self.popup, text="Create account ", command=self.create_account_button_action)
         account_button.grid(row=7, column=0)
@@ -327,26 +338,112 @@ class PopUpAccount():
 
 
     def create_account_button_action(self):
+        self.clear_labels()
+        if len(self.username.get())<1:
+            self.empty_field_warning(3,1)
+        if len(self.password.get()) < 1:
+            self.empty_field_warning(4, 1)
+        if len(self.repeat_password.get()) < 1:
+            self.empty_field_warning(5, 1)
 
-        if(self.password.get() != self.repeat_password.get()):
+        elif(self.password.get() != self.repeat_password.get()):
             self.passwords_does_not_match()
         else:
             self.data_ok_send_create_new_account()
             self.popup.destroy()
 
     def passwords_does_not_match(self):
-        self.clear_labels()
-        warning_label = tk.Label(self.popup,text="Password does not match")
-        warning_label.grid(row=6, column=2)
+
+        warning_label = tk.Label(self.popup,text="Passwords don't not match")
+        warning_label.grid(row=5, column=2)
         self.labels.append(warning_label)
 
+    def empty_field_warning(self,row,column):
+        warning_label = tk.Label(self.popup, text="Field can't be left empty")
+        warning_label.grid(row=row, column=column+1)
+        self.labels.append(warning_label)
 
     def data_ok_send_create_new_account(self):
-        pass
+
+        key = ct.CREATE_ACCOUNT_DATA
+        value = (self.username.get(), self.password.get())
+
+        self.controller.put_client_controller_variable(key,value)
+        self.controller.signal_client_controller_message("create account")
 
     def clear_labels(self):
         for widget in self.labels:
             widget.destroy()
 
-def clear_entry(entry_widget):
-    entry_widget.delete(0,'end')
+
+class PopUpEditAccount():
+    def __init__(self,controller,account_name):
+        self.controller = controller
+        self.labels = []
+        self.popup = tk.Tk()
+        self.old_account_name = account_name
+        self.popup.geometry(POPUP_SCREEN_SIZE)
+        self.popup.wm_title("Edit account")
+        label = tk.Label(self.popup, text="Edit account")
+        label.grid(row=0, column=0)
+
+        self.setup_popup()
+
+        self.popup.mainloop()
+
+    def setup_popup(self):
+        old_name_label = tk.Label(self.popup, text='Old username').grid(row=2, column=0)
+        old_name_label = tk.Label(self.popup, text=self.old_account_name).grid(row=2, column=1)
+
+
+        username_label = tk.Label(self.popup, text='New Username').grid(row=3, column=0)
+        self.username = tk.Entry(self.popup)
+        self.username.grid(row=3, column=1)
+
+        password_label = tk.Label(self.popup, text='New Password').grid(row=5, column=0)
+        self.password = tk.Entry(self.popup)
+        self.password.grid(row=5, column=1)
+
+        repeat_password_label = tk.Label(self.popup, text='Repeat password').grid(row=6, column=0)
+        self.repeat_password = tk.Entry(self.popup)
+        self.repeat_password.grid(row=6, column=1)
+
+        account_edit_button = tk.Button(self.popup, text="Edit account ", command=self.edit_account_button_action)
+        account_edit_button.grid(row=7, column=0)
+
+        disclaimer = tk.Label(self.popup, text='If you wish to only change username or password \n leave the other field blank').grid(row=8, column=1,columnspan=6)
+
+
+    def edit_account_button_action(self):
+        self.clear_labels()
+        if len(self.username.get()) < 1 and  len(self.password.get())<1 and  len(self.repeat_password.get())<1:
+            warning_label = tk.Label(self.popup, text="Fill in username field or password fields")
+            warning_label.grid(row=7, column=1,columnspan = 9)
+            self.labels.append(warning_label)
+
+        elif len(self.password.get())<1  and len(self.repeat_password.get())>0 :
+            self.empty_field_warning(5,1)
+        elif len(self.password.get())>0 and len(self.repeat_password.get())<1:
+            self.empty_field_warning(6,1)
+        elif self.password.get() != self.repeat_password.get():
+            self.passwords_does_not_match()
+
+        else:
+            print("edit")
+            #self.popup.destroy()
+
+    def passwords_does_not_match(self):
+
+        warning_label = tk.Label(self.popup, text="Password does not match")
+        warning_label.grid(row=6, column=2)
+        self.labels.append(warning_label)
+
+
+    def empty_field_warning(self,row,column):
+        warning_label = tk.Label(self.popup, text="Field can't be left empty")
+        warning_label.grid(row=row, column=column+1)
+        self.labels.append(warning_label)
+
+    def clear_labels(self):
+        for widget in self.labels:
+            widget.destroy()

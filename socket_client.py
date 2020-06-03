@@ -25,6 +25,8 @@ HEADER_LENGTH = protowrap.HEADER_LENGTH
 
 CONNECTION_ATTEMPTS = 3
 
+KEEP_ALIVE_TIME = 10
+
 
 
 
@@ -41,6 +43,8 @@ class Client(threading.Thread):
         self.running = util.LockedBool(True)
         self.send_buffer = SendBuffer()
         self.receive_buffer = ReceiveBuffer()
+
+        self.keep_alive_last_time = 0
 
 
     def run(self) -> None:
@@ -85,7 +89,12 @@ class Client(threading.Thread):
     def send_receive_loop(self):
         sl = [self.client_socket]
 
+        self.keep_alive_last_time = time.time()
         while self.is_running():
+            """ handling keep alive"""
+            if time.time() - self.keep_alive_last_time > KEEP_ALIVE_TIME:#TODO
+                self.singal_on_timed_out_connection()
+                self.keep_alive_last_time = time.time()
 
             read_socket,write_socket,exception_socket = select.select(sl,sl,sl)
 
@@ -136,6 +145,8 @@ class Client(threading.Thread):
 
             self.receive_buffer.collect_message(r_data.decode('utf-8'))
 
+            self.keep_alive_last_time = time.time()
+
         except socket.error as e:#ConnectionResetError
             log.error("Connection broken receive")
             log.error(e)
@@ -169,6 +180,9 @@ class Client(threading.Thread):
     def shut_down_socket_client(self):
         pass
 
+    def singal_on_timed_out_connection(self):
+        pass
+
 class SendBuffer(util.BufferControl):
 
     def __init__(self):
@@ -185,6 +199,8 @@ class SendBuffer(util.BufferControl):
         if self.completed_sending:
             raw_message = self.get_one_message_from_buffer()
             if raw_message is not None:#type + message
+                print(f"Sending message raw{raw_message}")
+
                 type,data = raw_message
                 data_len = len(data)
                 header = protowrap.Header(msgtype=type,msglength=data_len).get_message()
@@ -273,10 +289,5 @@ class ReceiveBuffer(util.BufferControl):
 class State(enum.Enum):
     waiting_for_header = 0
     waiting_for_message = 1
-
-
-
-
-
 
 log.debug("Client imported succesfully")

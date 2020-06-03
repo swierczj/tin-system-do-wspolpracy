@@ -73,11 +73,13 @@ class DictionaryControl:
     def pop_element(self,key):
         with self.dictionary_lock:
             if key in self.dictionary:
-                self.dictionary.pop(key)
+                return self.dictionary.pop(key)
+            else:
+                return None
 
     def get_element(self,key):
         with self.dictionary_lock:
-            return  self.dictionary[key]
+            return self.dictionary[key]
 
 
 
