@@ -2,6 +2,11 @@
 
 int LoginHandler::check_login(const std::string &bytes)
 {
+    std::cout << "in login check" << std::endl;
+    std::string users_info_fn = get_users_info_filename();
+    if (!FileIOHandler().file_exists(users_info_fn))
+        FileIOHandler().create_file(users_info_fn);
+    std::cout << "file created" << std::endl;
     auto login_info = parse_login_info_from_string(bytes);
     auto res = is_login_info_correct(login_info);
     if (res == NON_EXISTENT)
@@ -10,7 +15,7 @@ int LoginHandler::check_login(const std::string &bytes)
         res = CORRECT;
     }
     FileIOHandler file_handler;
-    file_handler.write_from_buffer(get_users_info_filename(), users_info_buff);
+    file_handler.write_from_buffer(users_info_fn, users_info_buff);
     close_buff();
     return res;
 }
@@ -28,7 +33,9 @@ void LoginHandler::add_new_client(const LoginInfo &login_inf)
 
 LoginHandler::LoginInfo LoginHandler::parse_login_info_from_string(const std::string &data)
 {
+    std::cout << "data: " << data << std::endl;
     int split_pos = data.find('\n');
+    std::cout << "pos: " << split_pos << std::endl;
     std::string login = data.substr(0, split_pos);
     std::string passwd = data.substr(split_pos + 1, data.size());
     return LoginInfo(login, passwd);
@@ -36,11 +43,12 @@ LoginHandler::LoginInfo LoginHandler::parse_login_info_from_string(const std::st
 
 int LoginHandler::is_login_info_correct(const LoginInfo &login_inf)
 {
+    std::cout << "in login info check" << std::endl;
     if (!login_inf.is_lexically_correct())
         return false;
     std::string login = login_inf.login;
-    int login_pos = user_exists(login);
-    if (login_pos != std::string::npos)
+    auto login_pos = user_exists(login);
+    if (login_pos != -1)
     {
         // pseudocode below!!!
         // version with encryption below
@@ -63,14 +71,17 @@ bool LoginHandler::LoginInfo::is_lexically_correct() const
 int LoginHandler::user_exists(std::string const &login)
 {
     // if users info file does not exist
+    std::cout << "in user_exists" << std::endl;
     if (!users_info.get_size())
         return false;
+        //return std::string::npos;
     // else
     //FileIOHandler file_handler;
     if (is_buff_empty())
     {
         FileIOHandler file_handler;
         users_info_buff = file_handler.read_to_buffer(get_users_info_filename());
+        std::cout << "after reading to buffer" << std::endl;
     }
     return (find_user(login));
 }
@@ -83,11 +94,13 @@ std::string LoginHandler::get_users_info_filename()
 
 int LoginHandler::find_user(const std::string &login)
 {
-    if (is_buff_empty())
+    if (is_buff_empty() && !FileIOHandler().is_empty(get_users_info_filename()))
         throw std::runtime_error("nothing to read");
     // in order to find login, blank space must be appended at the end, it's a delimiter between login and passwd and also prevents from returning logins where parameter is a substring
     std::string to_find = login + ' ';
     auto pos = users_info_buff.find(to_find);
+    if (pos == std::string::npos)
+        pos = -1;
     return pos;
 }
 

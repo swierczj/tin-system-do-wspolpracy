@@ -10,6 +10,7 @@ void Server::run()
     bool run_server = true;
     while (run_server)
     {
+        //FileIOHandler().create_file("./", "test");
         fd_set read_set = master;
         fd_set write_set;
         int socket_count;

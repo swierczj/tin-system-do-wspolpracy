@@ -1,6 +1,7 @@
 #ifndef TIN_LOGINHANDLER_H
 #define TIN_LOGINHANDLER_H
 
+#include <iostream>
 #include <string>
 #include "TextFileHandler.h"
 #include "FileIOHandler.h"
@@ -29,7 +30,20 @@ private:
     void add_new_client(LoginInfo const &login_inf);
     void close_buff();
 public:
-    LoginHandler() { users_info.add_filename("./user_data/users.txt"); }
+    LoginHandler()
+    {
+        /*ctor with files handler not working well, mess with sockets*/
+        std::string fn = "./user_data/users.txt";
+        //FileIOHandler file_handler;
+
+        //if (!file_handler.file_exists(fn)/*FileIOHandler().file_exists(fn)*/)
+        //{
+            //std::cout << "file doesn't exist" << std::endl;
+            //file_handler.create_file("./user_data/", "users.txt");
+            //FileIOHandler().create_file("./user_data/", "users.txt"); // ugly af
+        //}
+        users_info.add_filename(fn);
+    }
     enum login_consts {NON_EXISTENT = -1, INCORRECT = 0, CORRECT = 1};
     int check_login(std::string const &bytes);
 

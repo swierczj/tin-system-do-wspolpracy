@@ -1,13 +1,24 @@
 #include "FileIOHandler.h"
 
-void FileIOHandler::create_file(const std::string &path, const std::string &name)
+void FileIOHandler::create_file(std::string const &fn)
 {
-    if (path.size() + name.size() == 0)
+    if (fn.empty())
         throw std::runtime_error("creating file error");
-    std::string full = path + name;
-    std::ofstream file {full};
+    //std::string full = path + name;
+    //std::cout << "full: " << full << std::endl;
+    std::ofstream file(fn);
+    file.close();
 }
 
+bool FileIOHandler::file_exists(const std::string &fn)
+{
+    std::fstream f;
+    f.open(fn);
+    auto res = !f.fail();
+    //f.close();
+    return res;
+    //return !f.fail();
+}
 //void FileIOHandler::find(const std::string &str)
 //{
 //
@@ -29,4 +40,10 @@ void FileIOHandler::write_from_buffer(const std::string &fn, const std::string &
 {
     std::ofstream f(fn);
     f.write(buff.data(), buff.size());
+}
+
+bool FileIOHandler::is_empty(const std::string &fn)
+{
+    std::ifstream f(fn);
+    return f.peek() == std::ifstream::traits_type::eof();
 }
