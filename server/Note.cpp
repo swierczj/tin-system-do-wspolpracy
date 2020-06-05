@@ -110,4 +110,14 @@ public:
 		}
 		return changes;
 	}
+
+	// Function returns sting with coded file during work
+	std::string getFileChanges(){
+		std::string changes( 1, BUFFER_SPLITTER_ASCII );
+		for( auto i = addedChars.begin(); i < addedChars.end(); ++i ){
+			if( std::find( deletedChars.begin(), deletedChars.end(), *i ) == deletedChars.end() )
+				changes += *i + std::string( 1, CHAR_SPLITTER_ASCII );
+		}
+		return changes;
+	}
 };
