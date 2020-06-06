@@ -3,8 +3,8 @@ CXXFLAGS=-c -g -std=gnu++17 -std=c++17
 
 all: server
 
-server: main.o Server.o RecvBuffers.o ClientsMonitor.o LoginHandler.o TextFileHandler.o Statement.o Header.o Message.o FileIOHandler.o serv_func.o
-	$(CXX) main.o Server.o RecvBuffers.o ClientsMonitor.o LoginHandler.o TextFileHandler.o Statement.o Header.o Message.o FileIOHandler.o serv_func.o -o server
+server: main.o Server.o RecvBuffers.o ClientsMonitor.o LoginHandler.o TextFileHandler.o ClientID.o Statement.o Header.o Message.o FileIOHandler.o serv_func.o
+	$(CXX) main.o Server.o RecvBuffers.o ClientsMonitor.o LoginHandler.o TextFileHandler.o ClientID.o Statement.o Header.o Message.o FileIOHandler.o serv_func.o -o server
 
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) main.cpp
@@ -23,6 +23,9 @@ LoginHandler.o: LoginHandler.h LoginHandler.cpp
 
 TextFileHandler.o: TextFileHandler.h TextFileHandler.cpp
 	$(CXX) $(CXXFLAGS) TextFileHandler.h TextFileHandler.cpp
+
+ClientID.o: ClientID.h ClientID.cpp
+	$(CXX) $(CXXFLAGS) ClientID.h ClientID.cpp
 
 Statement.o: Statement.h Statement.cpp
 	$(CXX) $(CXXFLAGS) Statement.h Statement.cpp

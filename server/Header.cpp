@@ -1,6 +1,6 @@
 #include "Header.h"
 
-std::string Header::get_string_rep()
+std::string Header::get_string_rep() const
 {
     std::string result;
     if (msg_type < 10)
@@ -23,6 +23,12 @@ std::string Header::get_string_rep()
 int Header::get_msg_len() { return msg_len; }
 
 int Header::get_msg_type() { return msg_type; }
+
+int Header::get_message_type() const
+{
+    // -1 for Header
+    return -1;
+}
 
 Header parse_from_string(std::string const &str)
 {

@@ -17,6 +17,7 @@
 #include <vector>
 #include "serv_func.h"
 #include "Header.h"
+#include "Statement.h"
 #include "ClientsMonitor.h"
 #include "RecvBuffers.h"
 #include "LoginHandler.h"
@@ -34,10 +35,10 @@ private:
     typedef char* recv_buffer;
 
     uint16_t port_number;
-    enum server_consts { IDLE = -1, HEADER = -1, HEADER_TO_SEND = 0, HEADER_SENT = 1, MSG_SENT = 2, HEADER_TO_RECV = 0
+    enum server_consts { IDLE = -1, HEADER_TO_SEND = 0, HEADER_SENT = 1, MSG_SENT = 2, HEADER_TO_RECV = 0
                        , HEADER_RECVD = 1, MSG_RECVD = 2, LOGIN_SUCCESSFUL = 0, LOGIN_INCOMPLETE = 1, msg_type_len = 2
                        , header_size = 6, default_port = 54000 };
-    enum header_msg_type {LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3};
+    enum msg_types {HEADER = -1, LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3, CLIENT_ID = 4};
     enum statement_info {KEEP_ALIVE = 0, LOGIN_REQ = 1, LOGIN_ACC = 2, LOGIN_REJ = 3, LOG_OUT = 4, WORK_END = 5, PUB_KEY_REQ = 6};
     int max_sd;
     int listening;
@@ -69,17 +70,21 @@ private:
     std::string make_header(int msg_type, int msg_len);
     int send_header(int msg_type, int msg_len, int sockfd);
     int nonblock_send(int sockfd, const char* buff, int nbytes);
-    int send_statement(int sockfd, int info, int nbytes);
+    int send_nbytes(int sockfd, Message const &msg, int nbytes);
     int get_byte_width(int num);
     void handle_existing_outbound_connection(int sockfd);
     int nonblock_recv(int sockfd, char* buff, int nbytes);
-    int receive_message(int sockfd);
+    int recv_nbytes(int sockfd, int to_recv);
     //void cpy_to_recv_buff(char* buff, int len, int sockfd);
     void parse_login_info_from_string(std::string const &msg); /* TODO: class handling password */
 
     fd_set init_set_with_fds(std::vector<int> const &fds);
+    int send_msg(int sockfd, ClientsMonitor& cm, Message const &msg);
+    int recv_msg(int sockfd, ClientsMonitor &cm, int msg_type);
+
+    bool login_ended; // for tests
 public:
-    Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1) {}
+    Server(int port = default_port) : port_number(htons(port)), max_sd(-1), listening(-1), login_ended(false) {}
     void run();
 };
 
