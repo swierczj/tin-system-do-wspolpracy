@@ -60,11 +60,18 @@ public class Client{
         this.password = password;
     }
 
-    private String readLine( int len ) throws IOException{
-        char[] msg = new char[ len ];
-        int readChars = input.read( msg, 0, len );
-        if( readChars != 6 ) return null;        // Message is null - end of story
-        return new String( msg );
+    private String readLine( int len ){
+        try{
+            char[] msg;
+            int readChars;
+            msg = new char[ len ];
+            readChars = input.read( msg, 0, len );
+            if( readChars != len ) return null;        // Message is null - end of story
+            return new String( msg );
+        }catch( IOException | NegativeArraySizeException e ){
+            connectionBroken();
+        }
+        return null;
     }
 
     private String intToString( int value, int length ){    // returns string of length "length", fulfill with zeros
@@ -77,45 +84,57 @@ public class Client{
             return intToString( type, HEADER_STATEMENT_LENGTH ) + intToString( length, HEADER_LENGTH_LENGTH );
     }
 
-    private int getMsg() throws IOException{
+    private int getMsg(){
         int[] header = getHeader();
+        Message msg = new Message( readLine( header[ 1 ] ), header[ 0 ] );
+        if( !msg.isCorrect() ){
+            connectionBroken();
+            return -1;
+        }
         switch( header[ 0 ] ){
-            case STATEMENT -> getStatement( header[ 1 ] );
-            case EDIT -> getEdit( header[ 1 ] );
-            case PUBLIC_KEY -> getServerPublicKey( header[ 1 ] );
-            case CLIENT_ID -> getClientId( header[ 1 ] );
-            case FILES -> getFileNames( header[ 1 ] );
+            case STATEMENT -> getStatement( msg );
+            case EDIT -> getEdit( msg );
+            case PUBLIC_KEY -> getServerPublicKey( msg );
+            case CLIENT_ID -> getClientId( msg );
+            case FILES -> getFileNames( msg );
+            default -> { return -1; }
         }
         return 0;
     }
 
-    private int[] getHeader() throws IOException{
+    private int[] getHeader(){
         String header = readLine( 6 );
         int[] ret = { -1, -1 };
-        if( header != null && header.length() == 6 ){
-            int type = Integer.parseInt( header.substring( 4, 6 ) );
-            int msgLength = Integer.parseInt( header.substring( 0, 4 ) );
+        if( header == null ){
+            connectionBroken();
+            return ret;
+        }
+        if( header.length() == 6 ){
+            System.out.print( "Incoming header: " + header + "\n" );
+            int type = Integer.parseInt( header.substring( 0, 2 ) );
+            int msgLength = Integer.parseInt( header.substring( 2, 6 ) );
             isAlive = true;
             ret = new int[]{ type, msgLength };
         }
+        else System.out.print( "Incoming header incorrect\n" );
         return ret;
     }
 
-    private void getEdit( int msgLength ) throws IOException{
-        Message edit = new Message( readLine( msgLength ), EDIT );
+    private void getEdit( Message edit ){
+        System.out.print( "Incoming edit: " + edit.getMessage() + "\n" );
         notepadTaken = true;
         notepad.applyChanges( edit.getMessage() );
         notepadTaken = false;
     }
 
-    private void getClientId( int msgLength ) throws IOException{
-        Message id = new Message( readLine( msgLength ), CLIENT_ID );
+    private void getClientId( Message id ){
+        System.out.print( "Incoming client ID: " + id.getClientId() + "\n" );
         clientId = id.getClientId();
         logged = true;
     }
 
-    private void getStatement( int msgLength ) throws IOException{
-        Message statement = new Message( readLine( msgLength ), STATEMENT );
+    private void getStatement( Message statement){
+        System.out.print( "Incoming statemet: " + statement.getStatement() + "\n" );
         switch( statement.getStatement() ){
             case KEEP_ALIVE -> isAlive = true;
             case REQUEST_LOGIN -> canLogIn = true;
@@ -126,8 +145,7 @@ public class Client{
         }
     }
 
-    private void getServerPublicKey( int msgLength ) throws IOException{
-        Message key = new Message( readLine( msgLength ), PUBLIC_KEY );
+    private void getServerPublicKey( Message key ){
         if( key.getKeyType() == 1 ){
             serverPublicKey = key.getKey();
             System.out.print( "Key received from server\n" );
@@ -137,8 +155,8 @@ public class Client{
         }
     }
 
-    private void getFileNames( int msgLength ) throws IOException{
-        Message names = new Message( readLine( msgLength ), FILES );
+    private void getFileNames( Message names ){
+        System.out.print( "Incoming file names: " + names + "\n" );
         while( notepadTaken ) Thread.onSpinWait();
         notepadTaken = true;
         String selectedFile = notepad.fileSelect( names.getMessage().split( "\n", 0 ) );
@@ -147,13 +165,15 @@ public class Client{
             writeMsg( FILES, selectedFile );
     }
 
-    public int login() throws IOException{
-        getMsg();
+    public int login(){
+        if( !canLogIn ) getMsg();
         if( !canLogIn ) return -1;
         Message loginMsg = new Message( login, password );
         writeMsg( LOGIN, loginMsg.getMessage() );
-        System.out.print( logged + "\n" );
+        getMsg();
+        if( !isAlive ) return -2;
         if( !logged ) return -1;
+        canLogIn = false;
         return 0;
     }
 
@@ -169,25 +189,34 @@ public class Client{
 
     private void writeMsg( int type, String msg ){
         String header = makeHeader( type, msg.length() );
+        System.out.print( "Outcoming header: " + header + "\n" );
+        System.out.print( "Outcoming message: " + msg + "\n" );
         while( sending ) Thread.onSpinWait();
         sending = true;
-        output.println( header );
-        output.println( msg );
+        output.printf( header );
+        output.printf( msg );
         sending = false;
     }
 
     public void fileListRequest(){ writeStatement( FILE_LIST_REQUEST ); }
 
+    private void connectionBroken(){
+        isAlive = false;
+    }
+
     public void quit(){
-        isRunning = false;
-        keepAlive.interrupt();
-        writer.interrupt();
-        reader.interrupt();
+        if( isRunning ){
+            isRunning = false;
+            keepAlive.interrupt();
+            writer.interrupt();
+            reader.interrupt();
+        }
         writeStatement( LOG_OUT );
         writeStatement( WORK_END );
     }
 
     public int connect() throws IOException{
+        if( socket != null ) socket.close();
         try{
             socket = new Socket( ip, port );
         }catch( UnknownHostException e ){
@@ -197,15 +226,10 @@ public class Client{
             System.out.println( "IO Exception" );
             return -2;
         }
-        isAlive = true;
-        isRunning = true;
 
         input = new BufferedReader( new InputStreamReader( socket.getInputStream() ) );
         output = new PrintWriter( socket.getOutputStream(), true );
         scanner = new Scanner( System.in );
-
-        createThreads();      //TODO uncoment if server is running
-        startThreads();
 
         return 0;
     }
@@ -220,9 +244,14 @@ public class Client{
         notepad = fxmlLoader.getController();
         notepad.setClientId( clientId );
         notepad.setClient( this );
+
+        createThreads();      //TODO uncoment if server is running
+        startThreads();
     }
 
     public void createThreads(){
+        isAlive = true;
+        isRunning = true;
         createWriter();
         createReader();
         createKeepAlive();
@@ -236,10 +265,9 @@ public class Client{
 
     private void createReader(){
         reader = new Thread( () -> {
-            while( true ){
-                try{
-                    if( !( isRunning && getMsg() == 0 ) ) break;
-                }catch( IOException ignored ){}
+            while( isRunning ){
+                if( !isAlive ) continue;
+                if( getMsg() != 0 ) break;
             }
             scanner.close();
             isRunning = false;
@@ -249,12 +277,14 @@ public class Client{
     private void createWriter(){        //TODO
         writer = new Thread( () -> {
             try{
-                String changes;
+                String changes = "";
                 while( isRunning ){
                     Thread.sleep( CHANGES_SEND_TIME * 1000 );
+                    if( !isAlive ) continue;
                     while( notepadTaken ) Thread.onSpinWait();
                     notepadTaken = true;
-                    changes = notepad.getChanges();
+                    if( notepad != null )
+                        changes = notepad.getChanges();
                     notepadTaken = false;
                     if( changes.length() > 1 )
                         writeEdit( changes );

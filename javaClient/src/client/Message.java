@@ -8,6 +8,7 @@ public class Message{
     private int keyType;
     private int clientId;
     private String key;
+    private boolean correct = true;
 
 
     public Message( String login, String password){
@@ -15,25 +16,33 @@ public class Message{
     }
 
     public Message( String message, int type) {
+        if( message == null ){
+            correct = false;
+            return;
+        }
         switch (type) {
             case 0:
                 if (loginAndPassword() != 0) {
                     login = null;
                     password = null;
                 }
+                break;
             case 1:
-                statement = Integer.parseInt( message );
+                statement = Integer.parseInt( message.trim() );
+                break;
             case 2:
+            case 5:
                 this.message = message;
+                break;
             case 3:
                 if (keyAndType() != 0) {
                     key = null;
                     keyType = -1;
                 }
+                break;
             case 4:
-                this.clientId = Integer.parseInt( message );
-            case 5:
-                this.message = message;
+                this.clientId = Integer.parseInt( message.trim() );
+                break;
         }
     }
 
@@ -50,18 +59,13 @@ public class Message{
     }
 
     public String getLogin() { return login; }
-    public String getMessage() {
-        return message;
-    }
+    public String getMessage() { return message; }
     public String getPassword() { return password; }
     public int getClientId() { return clientId; }
-    public int getStatement(){
-        return statement;
-    }
-    public int getKeyType(){
-        return keyType;
-    }
+    public int getStatement(){ return statement; }
+    public int getKeyType(){ return keyType; }
     public String getKey(){ return key; }
+    public boolean isCorrect(){ return correct; }
 
     private void setLoginAndPassword(String login, String password) {
         this.message = login + "\n" + password;
@@ -84,5 +88,6 @@ public class Message{
         key = splitted[1];
         return 0;
     }
+
 
 }

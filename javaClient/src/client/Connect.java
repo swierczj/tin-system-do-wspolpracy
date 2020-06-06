@@ -40,7 +40,7 @@ public class Connect{
 
     @FXML protected void setDefault(){
         if( defaultCheckBox.isSelected() ){
-            ipField.setText( "localhost" );
+            ipField.setText( "185.20.175.81" );
             ipField.setDisable( true );
             portField.setText( "54000" );
             portField.setDisable( true );
@@ -73,12 +73,18 @@ public class Connect{
             connected = true;
             System.out.print( "Connected\n" );
         }
-//        client.setLoginData( loginField.getText(), passwordField.getText() );
-//        if( client.login() != 0 ){
-//            client.quit();
-//            displayError( "Login or password incorrect." );
-//            return -2;
-//        }
+        client.setLoginData( loginField.getText(), passwordField.getText() );
+        int isLogged = client.login();
+        if( isLogged == -1 ){
+            //client.quit();
+            displayError( "Login or password incorrect." );
+            return -2;
+        }
+        if( isLogged == -2 ){
+            displayError( "Server is dead." );
+            connected = false;
+            return -3;
+        }
         client.createGUI();
         return 0;
     }

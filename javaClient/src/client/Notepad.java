@@ -63,6 +63,7 @@ public class Notepad{
             str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
         addedBuffer.clear();
         deletedBuffer.clear();
+        System.out.print( "\n" + str.toString() + "\n\n" );
         return str.toString();
     }
 
@@ -138,7 +139,7 @@ public class Notepad{
         Label label = new Label( errMsg );
         label.setAlignment( Pos.CENTER );
         stage.setScene( new Scene( label, 300, 100 ) );
-        stage.initModality( Modality.APPLICATION_MODAL );
+        stage.initModality( Modality.APPLICATION_MODAL ); 
         stage.showAndWait();
     }
 
@@ -195,6 +196,8 @@ public class Notepad{
     @FXML private void reconnect() throws IOException{
         if( client.connect() != 0 )
             displayError( "Cannot connect.\nPlease try again or restart application." );
+        if( client.login() != 0 )
+            displayError( "Cannot log-in.\nPlease try again or restart application." );
     }
 
     @FXML private void goToGitHub(){
