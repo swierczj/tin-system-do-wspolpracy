@@ -27,7 +27,7 @@ int Header::get_msg_type() { return msg_type; }
 int Header::get_message_type() const
 {
     // -1 for Header
-    return -1;
+    return Message::HEADER;
 }
 
 Header parse_from_string(std::string const &str)

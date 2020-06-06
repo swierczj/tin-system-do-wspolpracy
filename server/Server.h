@@ -23,6 +23,7 @@
 #include "LoginHandler.h"
 
 Header parse_from_string(std::string const &str);
+//auto ClientsMonitor::get_login_state(int sockfd);
 
 class Server
 {
@@ -38,8 +39,8 @@ private:
     enum server_consts { IDLE = -1, HEADER_TO_SEND = 0, HEADER_SENT = 1, MSG_SENT = 2, HEADER_TO_RECV = 0
                        , HEADER_RECVD = 1, MSG_RECVD = 2, LOGIN_SUCCESSFUL = 0, LOGIN_INCOMPLETE = 1, msg_type_len = 2
                        , header_size = 6, default_port = 54000 };
-    enum msg_types {HEADER = -1, LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3, CLIENT_ID = 4};
-    enum statement_info {KEEP_ALIVE = 0, LOGIN_REQ = 1, LOGIN_ACC = 2, LOGIN_REJ = 3, LOG_OUT = 4, WORK_END = 5, PUB_KEY_REQ = 6};
+    //enum msg_types {HEADER = -1, LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3, CLIENT_ID = 4};
+    //enum statement_info {KEEP_ALIVE = 0, LOGIN_REQ = 1, LOGIN_ACC = 2, LOGIN_REJ = 3, LOG_OUT = 4, WORK_END = 5, PUB_KEY_REQ = 6};
     int max_sd;
     int listening;
     fd_set master;

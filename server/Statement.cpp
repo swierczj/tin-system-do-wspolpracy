@@ -7,5 +7,5 @@ std::string Statement::get_string_rep() const
 
 int Statement::get_message_type() const
 {
-    return 1;
+    return Message::STATEMENT;
 }

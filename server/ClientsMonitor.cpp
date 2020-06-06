@@ -89,5 +89,70 @@ std::vector<int> ClientsMonitor::get_write_descriptors()
 
 void ClientsMonitor::add_logged_client(int sockfd)
 {
-    logged_clients.insert(sockfd);
+    logged_clients.insert(std::make_pair(sockfd, false));
+}
+
+void ClientsMonitor::add_rejected_login(int sockfd)
+{
+    rejected_logins.insert(sockfd);
+}
+
+void ClientsMonitor::remove_rejected(int sockfd)
+{
+    rejected_logins.erase(sockfd);
+}
+
+bool ClientsMonitor::is_rejected(int sockfd)
+{
+    return rejected_logins.find(sockfd) != rejected_logins.end();
+}
+
+void ClientsMonitor::update_logged(int sockfd)
+{
+    auto it = logged_clients.find(sockfd);
+    if (it != logged_clients.end())
+        it->second = true;
+}
+
+bool ClientsMonitor::login_ended(int sockfd)
+{
+    auto it = logged_clients.find(sockfd);
+    return it != logged_clients.end() && it->second == true;
+}
+
+ClientsMonitor::LoginState ClientsMonitor::get_login_state(int sockfd)
+{
+    int msg_type = -2;
+    int msg_len = -1;
+    int info = -1;
+    if (get_socket_read_state(sockfd) == IDLE)
+    {
+        msg_type = Message::STATEMENT;
+        msg_len = get_byte_width(Statement::LOGIN_REQ);
+        info = Statement::LOGIN_REQ;
+    }
+    else if (is_logged(sockfd) && !login_ended(sockfd))
+    {
+        std::cout << "preparing client id" << std::endl;
+        msg_type = Message::CLIENT_ID;
+        msg_len = get_byte_width(sockfd);
+        info = sockfd;
+    }
+    else if (is_rejected(sockfd))
+    {
+        msg_type = Message::STATEMENT;
+        msg_len = get_byte_width(Statement::LOGIN_REJ);
+        info = Statement::LOGIN_REJ;
+    }
+    return {msg_type, msg_len, info};
+}
+
+void ClientsMonitor::remove_socket(int sockfd)
+{
+    if (clients_state.find(sockfd) != clients_state.end())
+        clients_state.erase(sockfd);
+    if (logged_clients.find(sockfd) != logged_clients.end())
+        logged_clients.erase(sockfd);
+    if (rejected_logins.find(sockfd) != rejected_logins.end())
+        rejected_logins.erase(sockfd);
 }

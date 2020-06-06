@@ -5,8 +5,10 @@ int LoginHandler::check_login(const std::string &bytes)
     std::cout << "in login check" << std::endl;
     std::string users_info_fn = get_users_info_filename();
     if (!FileIOHandler().file_exists(users_info_fn))
+    {
         FileIOHandler().create_file(users_info_fn);
-    std::cout << "file created" << std::endl;
+        std::cout << "file created" << std::endl;
+    }
     auto login_info = parse_login_info_from_string(bytes);
     auto res = is_login_info_correct(login_info);
     if (res == NON_EXISTENT)

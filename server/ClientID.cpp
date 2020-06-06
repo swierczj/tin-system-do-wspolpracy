@@ -7,5 +7,5 @@ std::string ClientID::get_string_rep() const
 
 int ClientID::get_message_type() const
 {
-    return 4;
+    return Message::CLIENT_ID;
 }
