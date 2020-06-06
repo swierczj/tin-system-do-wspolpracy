@@ -22,6 +22,9 @@ class Note{
 	int _serverId;
 	
 public:
+	unsigned int editors;
+	std::string fileName;
+	
 	Note( int serverId ) : _serverId( serverId ){};
 	~Note(){};
 
