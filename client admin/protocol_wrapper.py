@@ -2,6 +2,9 @@ import my_errors
 """module responsible for translating protocol"""
 
 HEADER_LENGTH = 6
+"""SPECIAL"""
+KEEP_ALIVE =66
+
 
 """ Message types in header"""
 LOGIN = 0
@@ -17,11 +20,12 @@ DELETE_ACCOUNT = 8
 ACCOUNT_LIST = 9
 
 "STATEMENTS TYPES"
+KEEP_ALIVE_2 = 0
 LOGIN_REQUEST = 1
 LOGIN_ACCEPTED = 2
 LOGIN_REJECTED = 3
 LOG_OUT = 4
-WORK_END = 5
+END_OF_WORK = 5
 PUBLIC_KEY_REQUEST = 6
 FILE_LIST_REQUEST = 7
 
@@ -89,6 +93,25 @@ class LoginMessage:
         return self.message
 
 
+class BasicMessage:
+    def __init__(self):
+        self.message = None
+
+    def convert_to_string_message(self,attribute_list):
+        if len(attribute_list) <=1:
+            self.message = str(attribute_list[0])
+        else:
+            self.message = str(attribute_list[0])
+            for i in range(1,len(attribute_list)):
+                self.message += "\n" + str(attribute_list[i])
+
+    def get_message(self):
+        return self.message
+
+    def get_message_header_type(self):
+        pass
+
+
 class Statement:
 
     def __init__(self,**kwargs):
@@ -120,21 +143,33 @@ class ClientId:
         return self.id
 
 
-class CreateAccount:
+class CreateAccount(BasicMessage):
     def __init__(self,login,password):
-        self.login = login
-        self.password = password
+        BasicMessage.__init__(self)
+        attributes = [login,password]
+        self.convert_to_string_message(attributes)
 
-    def get_message(self):
-        message = self.login + "\n" + self.password
-        return message
 
-class EditAccount:
-    pass
+class EditAccount(BasicMessage):
+    def __init__(self,old_login,new_login,new_password):
+        BasicMessage.__init__(self)
+        attributes = [old_login,new_login, new_password]
+        self.convert_to_string_message(attributes)
 
-class DeleteAccount:
-    pass
 
+class DeleteAccount(BasicMessage):
+    def __init__(self,login):
+        BasicMessage.__init__(self)
+        attributes = [login]
+        self.convert_to_string_message(attributes)
+
+
+class AccountList:
+    def __init__(self,account_list_message):
+        self.account_list = account_list_message.split()
+
+    def get_account_list(self):
+        return self.account_list
 
 
 

@@ -8,10 +8,6 @@ import base64
 key = 'Sixteen byte key'.encode('utf-8')
 BLOCKSIZE = AES.block_size
 
-#TODO sprawidzić poprawność działania Z Prugarem i spoółką
-
-
-
 def create_random_key(key_length):
     return get_random_bytes(key_length)
 

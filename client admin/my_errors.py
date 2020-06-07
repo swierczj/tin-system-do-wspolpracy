@@ -27,5 +27,10 @@ class InvalidLoginData(Exception):
 class CorruptedHeader(Exception):
     pass
 
+
 class SocketError(Exception):
+    pass
+
+
+class TimeoutError(Exception):
     pass

@@ -4,12 +4,7 @@ import client_controller as ct
 
 APP_NAME = 'Admin App'
 SCREEN_SIZE = "600x500+500+150" # width_height right down
-POPUP_SCREEN_SIZE = "400x200+600+175"
-
-#TODO OBSŁUŻENIE POWRACANIA DO LOGOWANIA
-# ZROBIENIE DODAWANIA KLIENTÓW
-# TODO KONTO STWÓRZ NOWE /ZMIEŃ HASŁO
-
+POPUP_SCREEN_SIZE = "420x200+600+175"
 
 
 
@@ -26,6 +21,7 @@ class GuiAdminApp(tk.Tk):
         #container.grid_columnconfigure(0,weight=1)
 
         self.menubar = MenuBar(self)
+        self.menubar.hide_menu()
 
 
 
@@ -56,11 +52,11 @@ class GuiAdminApp(tk.Tk):
         self.show_frame(StartPage)
         self.frames[StartPage].update_on_connected_to_server()
 
-
     def update_on_login_request(self):
         self.show_frame(LoginPage)
 
     def update_on_successful_login(self):
+        self.menubar.show_menu()
         self.show_frame(Administration)
 
     def update_on_failed_login(self):
@@ -69,12 +65,12 @@ class GuiAdminApp(tk.Tk):
 
     def update_on_no_server_connection(self):
         self.show_frame(StartPage)
+        self.menubar.hide_menu()
         self.frames[StartPage].update_on_no_server_connection()
 
     def pass_login_password(self,login,password):
         self.client_controller.write_system_variable("login",login)
         self.client_controller.write_system_variable("password",password)
-
 
     def signal_client_controller_message(self,message):
         self.client_controller.write_system_message(message)
@@ -83,10 +79,16 @@ class GuiAdminApp(tk.Tk):
        self.client_controller.write_system_variable(key,value)
 
     def update_on_log_out(self):
+        self.menubar.hide_menu()
         self.client_controller.log_out()
         self.show_frame(LoginPage)
 
 
+    def update_on_refresh(self,account_list):
+        self.frames[Administration].refresh(account_list)
+
+    def update_on_account_change_answer(self,account_change_answer):
+        AnswerPopup(account_change_answer)
 
 class LoginPage(tk.Frame):
     def __init__(self,parent,controller):
@@ -189,11 +191,7 @@ class StartPage(tk.Frame):
             widget.destroy()
 
     def singal_reconnect(self):
-        self.controller.signal_client_controller_message("reconnect")
-
-
-
-
+        self.controller.signal_client_controller_message(ct.RECONNECT)
 
 
 
@@ -218,7 +216,7 @@ class Administration(tk.Frame):
         self.delete_account_button = tk.Button(self, text="Delete ",command=self.delete_selected_account)
         self.delete_account_button.grid(row=1,column=5)
 
-        self.refresh_button = tk.Button(self, text="Refresh",command=self.refresh)
+        self.refresh_button = tk.Button(self, text="Refresh",command=self.send_refresh_signal)
         self.refresh_button.grid(row=1,column=7)
 
 
@@ -232,7 +230,9 @@ class Administration(tk.Frame):
     def delete_selected_account(self):
         item_clicked = self.account_display_list.curselection()
         if item_clicked != ():
-            pass
+            account_username = self.account_display_list.get(item_clicked)
+            self.controller.signal_client_controller_message(ct.DELETE_ACCOUNT)
+            self.controller.put_client_controller_variable(ct.DELETE_ACCOUNT,account_username)
 
     def edit_selected_account(self):
         item_clicked = self.account_display_list.curselection()
@@ -241,13 +241,13 @@ class Administration(tk.Frame):
                 self.create_new_edit_account_window(account_username)
 
 
-    def refresh(self):
+    def refresh(self,account_list):
+        self.account_list = account_list
         self.display_client_accounts_list()
-        pass
 
-    def delete(self):
-        pass
 
+    def send_refresh_signal(self):
+        self.controller.signal_client_controller_message(ct.REFRESH)
 
     def show_list(self):
         self.account_display_list.grid(row=3, column=4, columnspan=3)
@@ -369,12 +369,26 @@ class PopUpAccount():
         value = (self.username.get(), self.password.get())
 
         self.controller.put_client_controller_variable(key,value)
-        self.controller.signal_client_controller_message("create account")
+        self.controller.signal_client_controller_message(ct.CREATE_ACCOUNT)
 
     def clear_labels(self):
         for widget in self.labels:
             widget.destroy()
 
+class AnswerPopup():
+    def __init__(self,account_change_answer):
+        self.popup = tk.Tk()
+        self.popup.geometry("100x200+600+175")
+        self.popup.wm_title("Answer")
+        text = "Transaction accepted"
+        if account_change_answer == 10:
+            text ="Transaction declined"
+        label = tk.Label(self.popup, text=text)
+        label.grid(row=0, column=0)
+
+        okay_button = tk.Button(self.popup, text="Okay", command=self.popup.destroy)
+        okay_button.grid(row=1, column=0)
+        self.popup.mainloop()
 
 class PopUpEditAccount():
     def __init__(self,controller,account_name):
@@ -429,8 +443,21 @@ class PopUpEditAccount():
             self.passwords_does_not_match()
 
         else:
-            print("edit")
-            #self.popup.destroy()
+            key = ct.EDIT_ACCOUNT
+            username = self.username.get()
+            password = self.password.get()
+            if len(username) <1 :
+                username = self.old_account_name
+            if len(password) <1 :
+                password = '*'
+            value = (self.old_account_name,username,password)
+            self.controller.signal_client_controller_message(ct.EDIT_ACCOUNT)
+            self.controller.put_client_controller_variable(key=key,value=value)
+            self.popup.destroy()
+            print(f"{username,password}")
+
+
+
 
     def passwords_does_not_match(self):
 

@@ -25,7 +25,8 @@ HEADER_LENGTH = protowrap.HEADER_LENGTH
 
 CONNECTION_ATTEMPTS = 3
 
-KEEP_ALIVE_TIME = 10
+KEEP_ALIVE_TIME = 40
+KEEP_ALIVE_HALF_TIME = 20
 
 
 
@@ -41,6 +42,7 @@ class Client(threading.Thread):
         self.create_socket()
 
         self.running = util.LockedBool(True)
+        self.work_end_flag = util.LockedBool(False)
         self.send_buffer = SendBuffer()
         self.receive_buffer = ReceiveBuffer()
 
@@ -52,6 +54,11 @@ class Client(threading.Thread):
             self.send_receive_loop()
         except (my_errors.ConnectionBrokenReceive,my_errors.ConnectionBrokenSend,my_errors.ConnectionClosedByServer):
             log.debug("Ending Socket Client")
+            self.stop_running()
+            self.close_socket()
+            self.client_controller.signal_on_lost_connection()
+        except my_errors.TimeoutError:
+            log.debug("SERVER TIMEOUT - no response from server")
             self.stop_running()
             self.close_socket()
             self.client_controller.signal_on_lost_connection()
@@ -89,18 +96,16 @@ class Client(threading.Thread):
     def send_receive_loop(self):
         sl = [self.client_socket]
 
-        self.keep_alive_last_time = time.time()
+        self.keep_aliver = KeepAlive(self)
         while self.is_running():
-            """ handling keep alive"""
-            if time.time() - self.keep_alive_last_time > KEEP_ALIVE_TIME:#TODO
-                self.singal_on_timed_out_connection()
-                self.keep_alive_last_time = time.time()
 
+            self.keep_aliver.update()
             read_socket,write_socket,exception_socket = select.select(sl,sl,sl)
 
             if self.client_socket in read_socket:
                 try:
                     self.receive()
+                    self.keep_aliver.update_on_received_anything() #TODO
                 except my_errors.ConnectionBrokenReceive:
                     raise my_errors.ConnectionBrokenReceive
 
@@ -115,6 +120,10 @@ class Client(threading.Thread):
                 log.critical("Error on socket or smth")
                 self.client_socket.close()
                 raise my_errors.SocketError
+
+            if self.work_end_flag.get_locked_bool():
+                if self.send_buffer.get_message() is None:
+                    self.stop_running()
 
     def send(self):
         try:
@@ -134,7 +143,7 @@ class Client(threading.Thread):
 
         try:
             message_len = self.receive_buffer.get_length_of_incoming_message()
-            log.debug(f"Expecting{self.receive_buffer.bytes_to_receive} bytes")
+            log.debug(f"Expecting  {self.receive_buffer.bytes_to_receive} bytes")
             r_data = self.client_socket.recv(message_len)
             log.debug(f"[{len(r_data)}] bytes received : {r_data} ")
 
@@ -177,11 +186,15 @@ class Client(threading.Thread):
     def pass_message_to_send_buffer(self,message):
         self.send_buffer.write_to_buffer(message)
 
-    def shut_down_socket_client(self):
-        pass
+    def end_work(self):
+        if self.is_alive():
+            end_of_work_message = protowrap.Statement(statementType=protowrap.END_OF_WORK).get_message()
+            full_message = (protowrap.STATEMENT,end_of_work_message)
+            self.send_buffer.write_to_buffer(full_message)
+            log.debug(f"sending end of work")
+        self.work_end_flag.set_locked_bool(True)
 
-    def singal_on_timed_out_connection(self):
-        pass
+
 
 class SendBuffer(util.BufferControl):
 
@@ -202,6 +215,14 @@ class SendBuffer(util.BufferControl):
                 print(f"Sending message raw{raw_message}")
 
                 type,data = raw_message
+                """HANDLING KEEPALIVE"""
+                if type == protowrap.KEEP_ALIVE:
+                    log.debug("SENDING KEEP ALIVE")
+                    self.bytes_to_send = HEADER_LENGTH
+                    self.current_message = protowrap.keep_alive()
+                    return self.current_message
+                """//HANDLING KEEPALIVE"""
+
                 data_len = len(data)
                 header = protowrap.Header(msgtype=type,msglength=data_len).get_message()
 
@@ -249,7 +270,6 @@ class ReceiveBuffer(util.BufferControl):
             if self.status == State.waiting_for_header:
                 self.status = State.waiting_for_message
 
-
                 try:
                     header = protowrap.Header(message=self.message)#.decode('utf-8')
                     self.type_of_incoming_message = header.get_msg_type()
@@ -291,3 +311,27 @@ class State(enum.Enum):
     waiting_for_message = 1
 
 log.debug("Client imported succesfully")
+
+
+class KeepAlive:
+    def __init__(self,socket_client):
+        self.socket_client = socket_client
+        self.keep_alive_last_time = time.time()
+        self.half_timeout_time = KEEP_ALIVE_HALF_TIME
+        self.timeout_time = KEEP_ALIVE_TIME
+        self.sent_keepalive = False
+
+    def update(self):
+        if self.sent_keepalive == False:
+            if time.time() - self.keep_alive_last_time > self.half_timeout_time:
+                keep_alive_message = (protowrap.KEEP_ALIVE,protowrap.keep_alive())
+                self.socket_client.send_buffer.add_to_buffer(keep_alive_message)
+                self.sent_keepalive = True
+        else:
+            if (time.time() - self.keep_alive_last_time > self.timeout_time) and self.sent_keepalive == True:
+                raise my_errors.TimeoutError
+
+    def update_on_received_anything(self):
+        self.keep_alive_last_time = time.time()
+        self.sent_keepalive = False
+
