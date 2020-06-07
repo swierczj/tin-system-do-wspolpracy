@@ -1,7 +1,7 @@
 #ifndef TIN_FILEIOHANDLER_H
 #define TIN_FILEIOHANDLER_H
 
-
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -19,6 +19,7 @@ public:
     //std::string get_from_pos_to_endline(int pos, std::string const &fn);
     void write_from_buffer(std::string const &fn, std::string const &buff);
     bool is_empty(std::string const &fn);
+    int get_files_number(std::string const &path);
 };
 
 

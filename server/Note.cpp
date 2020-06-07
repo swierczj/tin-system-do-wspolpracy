@@ -55,10 +55,10 @@ private:
 		return c;
 	}
 
-	bool compare( Character first, Character second ){
+	static bool compare( Character first, Character second ){
 		for( int i = 0; ; ++i ){
-			if( first.position.size <= i ){
-				if( second.position.size <= i ){
+			if( first.position.size() <= i ){
+				if( second.position.size() <= i ){
 					if( first.creator < second.creator )
 						return false;
 					if( first.creator > second.creator )
@@ -69,7 +69,7 @@ private:
 				}
 				return true;
 			}
-			if( second.position.size <= i )
+			if( second.position.size() <= i )
 				return false;
 			if( first.position[ i ] > second.position[ i ] )
 				return false;
@@ -107,7 +107,7 @@ public:
 	// which can be directly send to clients
 	std::string setBuffers( std::string text ){
 		std::string changes( 1, BUFFER_SPLITTER_ASCII );
-		for( int i = 0; i < text.length; ++i ){
+		for( int i = 0; i < text.length(); ++i ){
 			addedChars.push_back( text[ i ] + std::to_string( i ) + ",_" + std::to_string( _serverId ) );
 			changes += addedChars[ i ] + std::string( 1, CHAR_SPLITTER_ASCII );
 		}

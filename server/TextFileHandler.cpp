@@ -10,12 +10,12 @@ void TextFileHandler::delete_filename(const std::string &fn)
     filenames.erase(std::remove(filenames.begin(), filenames.end(), fn), filenames.end());
 }
 
-std::string TextFileHandler::get_filenames_in_str(char delimeter)
+std::string TextFileHandler::get_filenames_in_str(char delimiter)
 {
     std::string res;
     for (auto const &fn : filenames)
     {
-        std::string tmp = parse_name(fn) + '\n';
+        std::string tmp = parse_name(fn) + delimiter;
         res += tmp;
     }
     return res;

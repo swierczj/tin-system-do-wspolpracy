@@ -21,6 +21,8 @@
 #include "ClientsMonitor.h"
 #include "RecvBuffers.h"
 #include "LoginHandler.h"
+#include "Networking.h"
+#include "NotepadHandler.h"
 
 Header parse_from_string(std::string const &str);
 //auto ClientsMonitor::get_login_state(int sockfd);
@@ -44,12 +46,11 @@ private:
     int max_sd;
     int listening;
     fd_set master;
-    //std::map<int, socket_state> clients_state;
-    std::map<int, bytes_pair> desc_to_login;
-    //std::map<int, std::vector<char>> recv_buffers;
     RecvBuffers recv_buffers;
     ClientsMonitor clients;
     LoginHandler login_handler;
+    Networking networking;
+    NotepadHandler notepad;
 
     
     int set_listening();
@@ -65,19 +66,14 @@ private:
     void handle_existing_incoming_connection(int sockfd);
     bool forward_message(int sockfd, char* bytes);
     void remove_socket(int sockfd, int max_desc, fd_set* set);
-    void cleanup(int max_desc, fd_set* set); /*TODO: update clients and recv_buffers*/
+    void cleanup(int max_desc, fd_set* set);
 
     int client_login(int sockfd);
-    std::string make_header(int msg_type, int msg_len);
-    int send_header(int msg_type, int msg_len, int sockfd);
     int nonblock_send(int sockfd, const char* buff, int nbytes);
     int send_nbytes(int sockfd, Message const &msg, int nbytes);
-    int get_byte_width(int num);
     void handle_existing_outbound_connection(int sockfd);
     int nonblock_recv(int sockfd, char* buff, int nbytes);
     int recv_nbytes(int sockfd, int to_recv);
-    //void cpy_to_recv_buff(char* buff, int len, int sockfd);
-    void parse_login_info_from_string(std::string const &msg); /* TODO: class handling password */
 
     fd_set init_set_with_fds(std::vector<int> const &fds);
     int send_msg(int sockfd, ClientsMonitor& cm, Message const &msg);

@@ -39,6 +39,6 @@ Header parse_from_string(std::string const &str)
     std::string msg_len_part = str.substr(Header::msg_type_len, Header::header_size);
     int msg_type = std::stoi(msg_type_part);
     int msg_len = std::stoi(msg_len_part);
-    std::cout << "msg type: " << msg_type << std::endl << "msg len: " << msg_len << std::endl;
+    //std::cout << "msg type: " << msg_type << std::endl << "msg len: " << msg_len << std::endl;
     return Header(msg_type, msg_len);
 }

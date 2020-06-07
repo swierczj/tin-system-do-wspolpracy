@@ -1,5 +1,6 @@
 #include "Server.h"
 #include "ClientID.h"
+#include "Edit.h"
 
 void Server::run()
 {
@@ -36,18 +37,18 @@ void Server::run()
                 desc_ready -= 1;
                 if (current_desc == listening)
                     run_server = handle_new_connection(listening);
-                else if (!clients.is_logged(current_desc) || /*(!is_logged(current_desc) &&*/ clients.get_socket_read_state(current_desc) != IDLE)
+                else if (!clients.is_logged(current_desc) || clients.get_socket_read_state(current_desc) != IDLE)
                     handle_existing_incoming_connection(current_desc);
 
             }
             // handle situation when server must be the one to initialize communication
             //std::cout << "for loop, before get_socket_write check cli state.size: " << clients_state.size() << std::endl;
-            if ((clients.get_socket_write_state(current_desc) == HEADER_TO_SEND || clients.get_socket_write_state(current_desc) == HEADER_SENT) /*get_to_write_connections_number() > 0*/ && FD_ISSET(current_desc, &write_set))
+            if ((clients.get_socket_write_state(current_desc) == HEADER_TO_SEND || clients.get_socket_write_state(current_desc) == HEADER_SENT) && FD_ISSET(current_desc, &write_set))
             {
                 desc_ready -= 1;
                 handle_existing_outbound_connection(current_desc);
             }
-            else if (!(clients.get_socket_write_state(current_desc) == HEADER_TO_SEND || clients.get_socket_write_state(current_desc) == HEADER_SENT) /*get_to_write_connections_number() > 0*/ && FD_ISSET(current_desc, &write_set))
+            else if (!(clients.get_socket_write_state(current_desc) == HEADER_TO_SEND || clients.get_socket_write_state(current_desc) == HEADER_SENT) && FD_ISSET(current_desc, &write_set))
                 desc_ready -= 1;
             //std::cout << "for loop, after get_socket_write check cli state.size: " << clients_state.size() << std::endl;
         }
@@ -218,10 +219,6 @@ bool Server::handle_new_connection(int accept_sd)
         }
         // connection established
 
-        //std::string welcome_msg = "Hello from server!\n";
-        //send(new_cli, welcome_msg.c_str(), welcome_msg.size() + 1, 0);
-        //client_login(sockfd);
-
         print_host(client);
         if (new_cli > max_sd)
             max_sd = new_cli;
@@ -237,12 +234,6 @@ void Server::handle_existing_incoming_connection(int sockfd)
     char buffer[buff_size];
     bool close_conn = false;
     bool change_cli = false;
-    // receive all incoming data on this socket before looping back and calling select()
-//    while (!close_conn && !change_cli)
-//    {
-//        if (!is_logged(sockfd) /*&& get_socket_read_state(sockfd) == HEADER_TO_RECV*/)
-//            client_login(sockfd);
-//    }
 
     while (!close_conn && !change_cli)
     {
@@ -250,7 +241,8 @@ void Server::handle_existing_incoming_connection(int sockfd)
         // setting socket to be nonblocking
         //if (make_nonblocking(sockfd) < 0)
         //    close_conn = true;
-        if (!clients.login_ended(sockfd)/*!is_logged(sockfd)*/)
+        int res = 0;
+        if (!clients.login_ended(sockfd))
         {
             int login_state = client_login(sockfd);
             if (login_state < 0)
@@ -261,7 +253,7 @@ void Server::handle_existing_incoming_connection(int sockfd)
                         std::cout << "client disconnected" << std::endl;
                     close_conn = true;
                 }
-                // EWOULDBLOCK
+                // EWOULDBLOCK or change socket type
                 change_cli = true;
             }
             else if (login_state == LOGIN_SUCCESSFUL)
@@ -274,9 +266,86 @@ void Server::handle_existing_incoming_connection(int sockfd)
             else
                 std::cout << "login in progress" << std::endl;
         }
+        // logged user
         else
         {
-            std::cout << "blocked on recv()" << std::endl;
+            if (networking.is_waiting_for_header(sockfd, clients))
+            {
+                std::cout << "receiving header from logged user" << std::endl;
+                res = recv_msg(sockfd, clients, Message::HEADER);
+                // EWOULDBLOCK
+                if (res < 0)
+                {
+                    if (res < -1)
+                        close_conn = true;
+                    else
+                        change_cli = true;
+                }
+                else if (res == 1)
+                {
+                    Header header = parse_from_string(recv_buffers.get_string_from_bytes(sockfd));
+                    if (header.get_msg_type() == Message::EDIT && !notepad.is_active(sockfd))
+                        notepad.add_client(sockfd);
+                    networking.set_msg_type(sockfd, header.get_msg_type());
+                    networking.set_msg_len(sockfd, header.get_msg_len());
+                    recv_buffers.clear_buff(sockfd);
+                    std::cout << "msg type from header: " << networking.get_msg_type(sockfd) << std::endl << "msg len: " << networking.get_msg_len(sockfd) << std::endl;
+
+                }
+            }
+            if (networking.is_waiting_for_msg(sockfd, clients))
+            {
+                auto msg_type = networking.get_msg_type(sockfd);
+                res = recv_msg(sockfd, clients, msg_type);
+                if (res < 0)
+                {
+                    if (res < -1)
+                    {
+                        if (res == -2)
+                            std::cout << "closed conn by client" << std::endl;
+                        close_conn = true;
+                    }
+                    else
+                        change_cli = true;
+                }
+                else if (res == 1)
+                {
+                    if (msg_type == Message::EDIT)
+                    {
+                        auto edit_text = recv_buffers.get_string_from_bytes(sockfd);
+                        std::cout << "received EDIT msg: " << edit_text << std::endl;
+                        //notepad.edit_contents(recv_buffers.get_string_from_bytes(sockfd));
+                        notepad.store_changes(sockfd, edit_text);
+//                        if (notepad.is_to_fetch_changes(sockfd))
+//                        {
+//                            notepad.store_changes(sockfd, edit_text);
+//                            // prepare header to fetch changes, and send to others
+//                            // length could change, so it will be decide jus before header sending
+//                        }
+
+                        // if client sending EDIT is using system
+                        if (!notepad.is_to_fetch_changes(sockfd))
+                        {
+                            notepad.edit_contents(edit_text);
+                            // prepare header to send other clients info
+                            //networking.set_msg_len(sockfd, edit_text.size());
+                            auto multicast_clients = notepad.get_contributors();
+                            multicast_clients.erase(sockfd);
+                            networking.set_multicast(multicast_clients, clients, Message::EDIT, edit_text.size());
+                        }
+                        else
+                        {
+                            networking.set_msg_type(sockfd, Message::EDIT);
+                            networking.add_to_send(sockfd, Message::EDIT, -1);
+                        }
+                        recv_buffers.clear_buff(sockfd);
+                    }
+                }
+            }
+
+
+
+            std::cout << "blocked on recv() OUTSIDE THE MAIN PROGRAM" << std::endl;
             int bytes_recv = recv(sockfd, buffer, buff_size, 0);
             if (bytes_recv < 0)
             {
@@ -313,6 +382,105 @@ void Server::handle_existing_incoming_connection(int sockfd)
         clients.remove_socket(sockfd);
         recv_buffers.delete_buff(sockfd);
         remove_socket(sockfd, max_sd, &master);
+    }
+}
+
+void Server::handle_existing_outbound_connection(int sockfd)
+{
+    bool change_client = false;
+    int res = 0;
+    // send as much data as it's possible otherwise change the client
+    while (!change_client)
+    {
+        std::cout << "handle outbound conn, desc: " << sockfd << std::endl << "login ended: " << clients.login_ended(sockfd) << std::endl;
+        if (!clients.login_ended(sockfd))
+        {
+            res = client_login(sockfd);
+            if (res < 0)
+            {
+                if (res != -1)
+                    std::cerr << "error" << std::endl;
+                //EWOULDBLOCK
+                std::cout << "sending sockets, change to receiving" << std::endl;
+                change_client = true;
+            }
+//            else if (res == LOGIN_SUCCESSFUL)
+//            {
+//                std::cout << "now recv some, conns to write: " << clients.get_to_write_connections_number() << std::endl;
+//                change_client = true;
+//                //conn_to_write -= 1;
+//            }
+        }
+        else
+        {
+            std::cout << "logged user may edit the document, some writing from server here" << std::endl;
+
+            if (networking.to_send_header(sockfd, clients))
+            {
+                int msg_type = networking.get_msg_type(sockfd);
+                int msg_len = networking.get_msg_len(sockfd);
+                if (msg_type == Message::EDIT)
+                {
+                    if (notepad.is_to_fetch_changes(sockfd))
+                    {
+                        // prepare to send whole file contents
+                        msg_len = notepad.get_notepad_current_size();
+                        networking.set_msg_len(sockfd, msg_len);
+                    }
+                    /*TODO else multicast client*/
+                }
+                res = send_msg(sockfd, clients, Header(msg_type, msg_len));
+                if (res == -1)
+                {
+                    std::cout << "blocking operation in send, return to select" << std::endl;
+                    change_client = true;
+                }
+                else if (res < -1)
+                {
+                    std::cout << "other error: " << res;
+                    //return res;
+                }
+            }
+            if (networking.to_send_msg(sockfd, clients))
+            {
+                auto msg_type = networking.get_msg_type(sockfd);
+                auto msg_len = networking.get_msg_len(sockfd);
+                if (msg_type == Message::EDIT)
+                {
+                    std::string edit_msg;
+                    if (notepad.is_to_fetch_changes(sockfd))
+                        edit_msg = notepad.get_file_as_str();
+                    else
+                        edit_msg = notepad.get_changes(sockfd);
+                    res = send_msg(sockfd, clients, Edit(edit_msg));
+                    if (res == -1)
+                    {
+                        std::cout << "blocking operation in send, return to select" << std::endl;
+                        change_client = true;
+                    }
+                    else if (res == 1)
+                    {
+                        if (notepad.is_to_fetch_changes(sockfd))
+                        // message with file sent so data fetched, now apply changes stored
+                        {
+                            std::string edit_text = notepad.get_stored_changes(sockfd); // may not work properly
+                            notepad.get_stored_changes(sockfd);
+                            notepad.edit_contents(edit_text);
+                            // prepare header to send other clients info
+                            auto multicast_clients = notepad.get_contributors();
+                            multicast_clients.erase(sockfd);
+                            networking.set_multicast(multicast_clients, clients, Message::EDIT, edit_text.size());
+                        }
+                        else
+                            /*TODO multicast, received edits*/
+                        change_client = true; // now recv some
+                        //return Server::LOGIN_SUCCESSFUL;
+                    }
+                }
+
+            }
+            //change_client = true;
+        }
     }
 }
 
@@ -367,9 +535,9 @@ int Server::client_login(int sockfd)
 //    int to_send = clients.get_socket_write_bytes_number(sockfd);
 //    int to_recv = clients.get_socket_read_bytes_number(sockfd);
     bool switch_client = false;
-    int msg_type;
-    int msg_len;
-    int info;
+//    int msg_type;
+//    int msg_len;
+//    int info;
     std::cout << "in login func sockfd: " << sockfd << ", to SEND: " << clients.get_socket_write_bytes_number(sockfd) << " to RECV: " << clients.get_socket_read_bytes_number(sockfd) << std::endl; // << " and req_len: " << req_len << std::endl;
 
     while (!switch_client)
@@ -379,6 +547,7 @@ int Server::client_login(int sockfd)
         // if header or its part has to be sent
         if (clients.get_socket_write_state(sockfd) == HEADER_TO_SEND)
         {
+
             res = send_msg(sockfd, clients, Header(msg_type, msg_len));
 
             //res = send_msg(sockfd, Header(msg_type, msg_len), to_send);
@@ -401,7 +570,7 @@ int Server::client_login(int sockfd)
             }
         }
 
-        if (clients.get_socket_write_state(sockfd) == HEADER_SENT)
+        if (clients.get_socket_write_state(sockfd) == HEADER_SENT && !switch_client)
         {
             //to_send = clients.get_socket_write_bytes_number(sockfd);
             std::cout << "before send message after sending header, to send: " << clients.get_socket_write_bytes_number(sockfd) << std::endl;
@@ -426,7 +595,7 @@ int Server::client_login(int sockfd)
                     clients.update_logged(sockfd);
                     //login_ended = true; // to delete
                 }
-                switch_client = true;
+                switch_client = true; // now recv some
                 //return Server::LOGIN_SUCCESSFUL;
             }
                 //else if (res == 0)
@@ -438,9 +607,9 @@ int Server::client_login(int sockfd)
             }
         }
         if (clients.get_socket_read_state(sockfd) == HEADER_TO_RECV &&
-            clients.get_socket_write_state(sockfd) == MSG_SENT)
+            clients.get_socket_write_state(sockfd) == MSG_SENT && !clients.login_ended(sockfd) && !switch_client)
         {
-
+            std::cout << "receiving header before login info" << std::endl;
             //res = recv_nbytes(sockfd, to_recv);
             res = recv_msg(sockfd, clients, Message::HEADER);
             if (res == -1)
@@ -464,7 +633,8 @@ int Server::client_login(int sockfd)
                 return res;
             }
         }
-        if (clients.get_socket_read_state(sockfd) == HEADER_RECVD && clients.get_socket_write_state(sockfd) == MSG_SENT)
+        if (clients.get_socket_read_state(sockfd) == HEADER_RECVD && clients.get_socket_write_state(sockfd) == MSG_SENT
+        && !clients.login_ended(sockfd))
         {
             std::cout << "header recvd, now get login" << std::endl;
 
@@ -479,7 +649,7 @@ int Server::client_login(int sockfd)
             }
             else if (res == 1)
             {
-                std::cout << "success recvd " << res << " bytes in header" << std::endl;
+                //std::cout << "success recvd " << res << " bytes in header" << std::endl;
                 /* parse msg */
                 int login_result = login_handler.check_login(recv_buffers.get_string_from_bytes(sockfd));
                 //std::cout << "login: " << login_result << std::endl;
@@ -488,11 +658,13 @@ int Server::client_login(int sockfd)
                     if (clients.is_rejected(sockfd))
                         clients.remove_rejected(sockfd);
                     clients.add_logged_client(sockfd);
+                    networking.add_client(sockfd);
                 }
                 else
                     clients.add_rejected_login(sockfd);
                 // cleanup buffer
                 recv_buffers.clear_buff(sockfd);
+                switch_client = true;
             }
 //        else if (res == 0)
 //            // partial recv
@@ -509,58 +681,10 @@ int Server::client_login(int sockfd)
         }
     }
 
-    if (switch_client && clients.login_ended(sockfd))
+    if (clients.login_ended(sockfd))
         return Server::LOGIN_SUCCESSFUL;
     return -1;
 }
-
-//std::string Server::make_header(int msg_type, int msg_len)
-//{
-//    //int msg_type_len = 2;
-//    std::string result;
-//    if (msg_type < 10)
-//        result = std::to_string(0) + std::to_string(msg_type);
-//    else
-//        result = std::to_string(msg_type);
-//    std::string len = std::to_string(msg_len);
-//    result += len;
-//    if(result.size() < header_size)
-//    {
-//        int diff = header_size - result.size();
-//        std::string padding;
-//        for (int i = 0; i < diff; i++)
-//            padding += std::to_string(0);
-//        result.insert(msg_type_len, padding);
-//    }
-//    return result;
-//}
-
-//int Server::send_header(int msg_type, int msg_len, int sockfd)
-//{
-//    std::string header = make_header(msg_type, msg_len);
-//    // statement made only for login, for now
-////    if (msg_type == STATEMENT)
-////    {
-//        int to_send = clients.get_socket_write_bytes_number(sockfd);
-//        int bytes_sent = 0;
-//        //int bytes_left = header_size;
-//        int offset = header_size - to_send; // useful for partial sends
-//        //char* msg_to_send;
-//        //prepare_buff_to_send(header_size, to_send, header, msg_to_send);
-//        auto msg_to_send = header.substr(offset, to_send).c_str();
-//        bytes_sent = nonblock_send(sockfd, msg_to_send, to_send);
-//        //std::cout << "msg to send 1 char: " << *msg_to_send << std::endl;
-//        if (bytes_sent == -1)
-//            return -1; // change client, EWOULDBLOCK occured
-//        else if (bytes_sent < -1)
-//            return -2;
-//        // some data was sent
-//        return bytes_sent;
-////    }
-////    else
-////        std::cout << "no statement lol";
-//    return -3;
-//}
 
 int Server::nonblock_send(int sockfd, const char *buff, int nbytes)
 {
@@ -580,23 +704,6 @@ int Server::nonblock_send(int sockfd, const char *buff, int nbytes)
     return bytes_sent;
 }
 
-//int Server::get_byte_width(int num)
-//{
-//    if (num < 0)
-//        return -1;
-//    int res = 0;
-//    //std::cout << "in get_b_width, num: " << num << std::endl;
-//    do
-//    {
-//        num /= 10;
-//        res += 1;
-//    }
-//    while (num > 0);
-//    //std::cout << "result from width: " << res << std::endl;
-//    return res;
-//}
-
-
 int Server::send_nbytes(int sockfd, Message const &msg, int nbytes)
 {
     std::string msg_bytes = msg.get_string_rep();
@@ -610,39 +717,6 @@ int Server::send_nbytes(int sockfd, Message const &msg, int nbytes)
     else if (bytes_sent < -1)
         return -2;
     return bytes_sent;
-}
-
-void Server::handle_existing_outbound_connection(int sockfd)
-{
-    bool change_client = false;
-    int res = 0;
-    // send as much data as it's possible otherwise change the client
-    while (!change_client)
-    {
-        std::cout << "handle outbound conn, desc: " << sockfd << std::endl << "login ended: " << clients.login_ended(sockfd) << std::endl;
-        if (!clients.is_logged(sockfd) || !clients.login_ended(sockfd))
-        {
-            res = client_login(sockfd);
-            if (res < 0)
-            {
-                if (res != -1)
-                    std::cerr << "error" << std::endl;
-                //EWOULDBLOCK
-                change_client = true;
-            }
-            else if (res == Statement::WORK_END || res == LOGIN_SUCCESSFUL)
-           	{
-           		std::cout << "now recv some, conns to write: " << clients.get_to_write_connections_number() << std::endl;
-           		change_client = true;
-           		//conn_to_write -= 1;
-           	}
-        }
-        else
-        {
-            std::cout << "logged user may edit the document, some writing from server here" << std::endl;
-            change_client = true;
-        }
-    }
 }
 
 int Server::nonblock_recv(int sockfd, char *buff, int nbytes)
@@ -741,10 +815,12 @@ int Server::send_msg(int sockfd, ClientsMonitor& cm, Message const &msg)
 int Server::recv_msg(int sockfd, ClientsMonitor &cm, int msg_type)
 {
     int to_recv = cm.get_socket_read_bytes_number(sockfd);
+    std::cout << "in recv_msg to recv: " << to_recv << std::endl;
     int res = recv_nbytes(sockfd, to_recv);
     if (res == -1)
     {
         std::cout << "blocking operation, return to select" << std::endl;
+        //std::cout << "bufor: " << recv_buffers.get_string_from_bytes(sockfd) << std::endl;
         return -1;
     }
     else if (res == to_recv)
@@ -773,6 +849,10 @@ int Server::recv_msg(int sockfd, ClientsMonitor &cm, int msg_type)
     else if (res > 0 && res < to_recv)
     {
         std::cout << "partial recv: " << res << " bytes" << std::endl;
+        std::string recvd = recv_buffers.get_string_from_bytes(sockfd);
+        for (auto c : recvd)
+            std::cout << c << std::endl;
+        std::cout << "recvd: " << recv_buffers.get_string_from_bytes(sockfd) << std::endl;
         cm.set_socket_read_bytes_number(sockfd, to_recv - res);
         return 0;
     }

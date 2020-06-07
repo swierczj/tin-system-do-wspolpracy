@@ -47,3 +47,11 @@ bool FileIOHandler::is_empty(const std::string &fn)
     std::ifstream f(fn);
     return f.peek() == std::ifstream::traits_type::eof();
 }
+
+int FileIOHandler::get_files_number(const std::string &path)
+{
+    int res = 0;
+    for (auto const &entry : std::filesystem::directory_iterator(path))
+        res += 1;
+    return res;
+}

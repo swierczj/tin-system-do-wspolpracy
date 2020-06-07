@@ -15,7 +15,7 @@ private:
 public:
     void add_filename(std::string const &fn);
     void delete_filename(std::string const &fn);
-    std::string get_filenames_in_str(char delimeter);
+    std::string get_filenames_in_str(char delimiter);
     int get_size();
     std::string get_filename_at_pos(int index);
 };
