@@ -29,7 +29,7 @@ public class Notepad{
     @FXML public void initialize(){
         text = new LinkedList<>();
         Character c = new Character();
-        c.append( 0, 0 );
+        c.position.add( 0 );
         text.add( c );
         addedBuffer = new ArrayList<>();
         deletedBuffer = new ArrayList<>();
@@ -63,7 +63,6 @@ public class Notepad{
             str.append( c.toString() ).append( ( char )CHAR_SPLITTER_ASCII_CODE );
         addedBuffer.clear();
         deletedBuffer.clear();
-        System.out.print( "\n" + str.toString() + "\n\n" );
         return str.toString();
     }
 
@@ -216,7 +215,7 @@ public class Notepad{
         deletedBuffer.clear();
         text.clear();
         Character c = new Character();
-        c.append( 0, 0 );
+        c.position.add( 0 );
         text.add( c );
     }
 
@@ -257,13 +256,13 @@ public class Notepad{
                 // Both whole positions are equal
                 if( next.position.size() <= i ){
                     c.position.addAll( prev.position );
-                    c.append( 1, clientId );
+                    c.position.add( 1 );
                     return c;
                 }
                 c.position.addAll( next.position );
-                c.append( c.pop() - 1, clientId );
-                if( c.position.get( c.position.size() - 1 ).pos < 1 )     // we have to add 1 on the end
-                    c.append( 1, clientId );
+                c.position.add( c.pop() - 1 );
+                if( c.position.get( c.position.size() - 1 ) < 1 )     // we have to add 1 on the end
+                    c.position.add( 1 );
                 return c;
             }
             // CASE 2
@@ -271,23 +270,23 @@ public class Notepad{
             // Should be only when 'on end insertion'
             // New char's position will be head of previous incremented by 1
             else if( next.position.size() <= i && index >= text.size() - 1 ){
-                c.append( prev.position.get( 0 ).pos + 1, clientId );
+                c.position.add( prev.position.get( 0 ) + 1 );
                 return c;
             }
             // CASE 3
             // positions[ i ] are different
-            else if( prev.position.get( i ).pos != next.position.get( i ).pos ){
+            else if( prev.position.get( i ) != next.position.get( i ) ){
                 c.position.addAll( prev.position );
                 // CASE 3.1
                 // Previous position has more elements than on i position
                 // New char's position will be previous char's position with last element incremented
                 if( prev.position.size() - 1 > i )
-                    c.append( c.pop() + 1, clientId );
+                    c.position.add( c.pop() + 1 );
                 // CASE 3.2
                 // Previous position's 'i' element is last element
                 // We take previous element and append 1
                 else
-                    c.append( 1, clientId );
+                    c.position.add( 1 );
                 return c;
             }
             // CASE 4
@@ -304,9 +303,9 @@ public class Notepad{
         for( int i = 0; ; ++i ){
             if( first.position.size() <= i ){           // if some of pos( i ) don't exist
                 if( second.position.size() <= i ){       // whole positions are equal, check creators Id
-                    if( first.position.get( i - 1 ).creator > second.position.get( i - 1 ).creator )
+                    if( first.creator > second.creator )
                         return 1;
-                    if(  first.position.get( i - 1 ).creator < second.position.get( i - 1 ).creator  )
+                    if(  first.creator < second.creator  )
                         return -1;
                     if( first.c == second.c ) return 0; // exactly equal
                     return -2;          // equal positions, different chars, sth fucked, we have to reject char
@@ -315,9 +314,9 @@ public class Notepad{
             }
             if( second.position.size() <= i )
                 return 1;                   // 2 position has ended
-            if( first.position.get( i ).pos > second.position.get( i ).pos )
+            if( first.position.get( i ) > second.position.get( i ) )
                 return 1;                   // both pos( i ) exist, 1 is greater
-            if( second.position.get( i ).pos > first.position.get( i ).pos )
+            if( second.position.get( i ) > first.position.get( i ) )
                 return -1;                  // both pos( i ) exist, 2 is greater
         }           // both pos( i ) are equal, next loop
         //if( first.c == second.c ) return 0;
@@ -328,10 +327,9 @@ public class Notepad{
         Character c = new Character();
         c.c = str.charAt( 0 );
         String[] splitStr = str.substring( 1 ).split( "_", 0 );
-        for( String s : splitStr ){
-            String[] splitPair = s.split( "," );
-            c.append( Integer.parseInt( splitPair[ 0 ] ), Integer.parseInt( splitPair[ 1 ] ) );
-        }
+        String[] splitPos = splitStr[ 0 ].split( ",", 0 );
+        for( String s : splitPos )
+            c.position.add( Integer.parseInt( s ) );
         return c;
     }
 
@@ -348,14 +346,12 @@ public class Notepad{
     private class Character{
         public Character(){
             position = new ArrayList<>();
+            creator = clientId;
         }
         // Appends element on end of pos array
-        public void append( int p, int c ){
-            this.position.add( new pair( p, c ) );
-        }
 
         public int pop(){
-            int ret = this.position.get( this.position.size() - 1 ).pos;
+            int ret = this.position.get( this.position.size() - 1 );
             this.position.remove( this.position.size() - 1 );
             return ret;
         }
@@ -365,18 +361,15 @@ public class Notepad{
         public String toString(){
             StringBuilder str = new StringBuilder();
             str.append( this.c );
-            for( Character.pair pair : this.position )
-                str.append( pair.pos ).append( "," ).append( pair.creator ).append( "_" );
+            for( Object pos : this.position )
+                str.append( pos ).append( "," );
+            str.append( "_" ).append( creator );
             return str.toString();
         }
 
         public char c;
-        public List< pair > position;      // position CRDT
-        private class pair{
-            pair( int p, int c ){ pos = p; creator = c; }
-            public int pos;         // sign position
-            public int creator;     // Who created sign
-        }
+        public List< Integer > position;      // position CRDT
+        public int creator;
     }
 
     private String serverFile = "";                 // server file name

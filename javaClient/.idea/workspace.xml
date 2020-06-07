@@ -25,20 +25,17 @@
       <path>
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="BRANCH:JavaGUI" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:JavaGUI-algorithmChange" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Poprawiony enter - Nawet Sobczyk nie ogarnal na Studia ze textArea zwraca &quot;\r&quot; a przyjmuje &quot;\n&quot; xD">
+    <list default="true" id="29a3f0a0-4c32-48ae-b060-47937f268e3d" name="Default Changelist" comment="Zmiana funkcji wysylajacej na printf">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Client.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/javaClient/client/Connect.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Connect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Connect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Message.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Notepad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Notepad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/connect20.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/connect20.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +53,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="javaGUI-encryption" />
+        <entry key="$PROJECT_DIR$/.." value="JavaGUI" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -393,7 +390,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591198957076</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Zmiana funkcji wysylajacej na printf">
+      <created>1591476317963</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1591476317964</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -417,7 +421,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="JavaGUI" />
+                        <option value="JavaGUI-algorithmChange" />
                       </list>
                     </value>
                   </entry>
@@ -451,7 +455,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="No nie wierzę - TO DZIALAAAAA!!!" />
     <MESSAGE value="Dziala usuwanie deletem i backspacem" />
     <MESSAGE value="Dodano gety do buforow" />
     <MESSAGE value="zmienilem na wspolnego geta obu buforow" />
@@ -476,7 +479,8 @@
     <MESSAGE value="Dodalem poprawne pobieranie pliku z serwera" />
     <MESSAGE value="Poprawka watkow w petli" />
     <MESSAGE value="Poprawiony enter - Nawet Sobczyk nie ogarnal na Studia ze textArea zwraca &quot;\r&quot; a przyjmuje &quot;\n&quot; xD" />
-    <option name="LAST_COMMIT_MESSAGE" value="Poprawiony enter - Nawet Sobczyk nie ogarnal na Studia ze textArea zwraca &quot;\r&quot; a przyjmuje &quot;\n&quot; xD" />
+    <MESSAGE value="Zmiana funkcji wysylajacej na printf" />
+    <option name="LAST_COMMIT_MESSAGE" value="Zmiana funkcji wysylajacej na printf" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590846583888">
@@ -495,42 +499,42 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="236" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591043979718" />
-    <state width="1876" height="230" key="GridCell.Tab.0.bottom" timestamp="1591474139344">
+    <state width="1876" height="225" key="GridCell.Tab.0.bottom" timestamp="1591537800947">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139344" />
+    <state width="1876" height="225" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591537800947" />
     <state width="1540" height="375" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1600.900@1920.0.1600.900" timestamp="1591444736451" />
-    <state width="1876" height="230" key="GridCell.Tab.0.center" timestamp="1591474139344">
+    <state width="1876" height="225" key="GridCell.Tab.0.center" timestamp="1591537800947">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139344" />
+    <state width="1876" height="225" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591537800947" />
     <state width="1540" height="375" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1600.900@1920.0.1600.900" timestamp="1591444736451" />
-    <state width="1876" height="230" key="GridCell.Tab.0.left" timestamp="1591474139343">
+    <state width="1876" height="225" key="GridCell.Tab.0.left" timestamp="1591537800947">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139343" />
+    <state width="1876" height="225" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591537800947" />
     <state width="1540" height="375" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1600.900@1920.0.1600.900" timestamp="1591444736451" />
-    <state width="1876" height="230" key="GridCell.Tab.0.right" timestamp="1591474139344">
+    <state width="1876" height="225" key="GridCell.Tab.0.right" timestamp="1591537800947">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139344" />
+    <state width="1876" height="225" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591537800947" />
     <state width="1540" height="375" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1600.900@1920.0.1600.900" timestamp="1591444736451" />
-    <state width="1876" height="230" key="GridCell.Tab.1.bottom" timestamp="1591474139344">
+    <state width="1876" height="230" key="GridCell.Tab.1.bottom" timestamp="1591476959096">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139344" />
-    <state width="1876" height="230" key="GridCell.Tab.1.center" timestamp="1591474139344">
+    <state width="1876" height="230" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591476959096" />
+    <state width="1876" height="230" key="GridCell.Tab.1.center" timestamp="1591476959096">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139344" />
-    <state width="1876" height="230" key="GridCell.Tab.1.left" timestamp="1591474139344">
+    <state width="1876" height="230" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591476959096" />
+    <state width="1876" height="230" key="GridCell.Tab.1.left" timestamp="1591476959096">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139344" />
-    <state width="1876" height="230" key="GridCell.Tab.1.right" timestamp="1591474139344">
+    <state width="1876" height="230" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591476959096" />
+    <state width="1876" height="230" key="GridCell.Tab.1.right" timestamp="1591476959096">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1876" height="230" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591474139344" />
+    <state width="1876" height="230" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591476959096" />
     <state x="267" y="85" width="1620" height="870" key="MergeDialog" timestamp="1590882510846">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -555,10 +559,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="731" y="432" key="VCS.ChangelistChooser/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591041127103" />
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1591198960285">
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2" timestamp="1591476321092">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591198960285" />
+    <state x="552" y="239" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1600.900@0.0.1920.1040" timestamp="1591476321092" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1590858764341">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
