@@ -15,7 +15,8 @@
 class Note{
 	struct Character{
 		char c;		// coded character
-		std::vector< std::pair< int, int > > position;	// position of character
+		std::vector< int > position;	// position of character
+		int creator;
 	};
 	std::vector< std::string > addedChars;
 	std::vector< std::string > deletedChars;
@@ -48,10 +49,9 @@ private:
 		Character c;
 		c.c = str[ 0 ];
 		auto splitStr = split( str.substr( 1 ), "_", false );
-		for( auto i = splitStr.begin(); i < splitStr.end(); ++i ){
-			auto splitPair = split( *i, "," );
-			c.position.push_back( std::make_pair( atoi( splitPair[ 0 ].c_str() ), atoi( splitPair[ 1 ].c_str() ) ) );
-		}
+		auto splitPos = split( splitStr[ 0 ], ",", false );
+		for( auto i = splitPos.begin(); i < splitPos.end(); ++i )
+			c.position.push_back(  atoi( ( *i ).c_str() ) );
 		return c;
 	}
 
@@ -59,9 +59,9 @@ private:
 		for( int i = 0; ; ++i ){
 			if( first.position.size <= i ){
 				if( second.position.size <= i ){
-					if( first.position[ i - 1 ].second < second.position[ i - 1 ].second )
+					if( first.creator < second.creator )
 						return false;
-					if( first.position[ i - 1 ].second > second.position[ i - 1 ].second )
+					if( first.creator > second.creator )
 						return true;
 					if( first.c == second.c )
 						return false;
@@ -71,9 +71,9 @@ private:
 			}
 			if( second.position.size <= i )
 				return false;
-			if( first.position[ i ].first > second.position[ i ].first )
+			if( first.position[ i ] > second.position[ i ] )
 				return false;
-			if( second.position[ i ].first > first.position[ i ].first )
+			if( second.position[ i ] > first.position[ i ] )
 				return true;
 		}
 		return false;
@@ -108,13 +108,13 @@ public:
 	std::string setBuffers( std::string text ){
 		std::string changes( 1, BUFFER_SPLITTER_ASCII );
 		for( int i = 0; i < text.length; ++i ){
-			addedChars.push_back( text[ i ] + std::to_string( i ) + "," + std::to_string( _serverId ) + "_" );
+			addedChars.push_back( text[ i ] + std::to_string( i ) + ",_" + std::to_string( _serverId ) );
 			changes += addedChars[ i ] + std::string( 1, CHAR_SPLITTER_ASCII );
 		}
 		return changes;
 	}
 
-	// Function returns sting with coded file during work
+	// Function returns string with coded file during work
 	std::string getFileChanges(){
 		std::string changes( 1, BUFFER_SPLITTER_ASCII );
 		for( auto i = addedChars.begin(); i < addedChars.end(); ++i ){
