@@ -301,7 +301,6 @@ public class Notepad{
             // We compare next positions by continuing the for loop
         }
         // CASE 5
-        // Sth fucked up
         // I would throw an exception but intelliJ has a problem because it's unreachable statement
         // that's pretty satisfying
     }
