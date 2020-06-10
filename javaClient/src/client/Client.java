@@ -169,11 +169,12 @@ public class Client{
         if( !canLogIn ) getMsg();
         if( !canLogIn ) return -1;
         Message loginMsg = new Message( login, password );
-        writeMsg( LOGIN, loginMsg.getMessage() );
+        //writeMsg( LOGIN, loginMsg.getMessage() );
         getMsg();
         if( !isAlive ) return -2;
         if( !logged ) return -1;
         canLogIn = false;
+        isAlive = true;
         return 0;
     }
 
@@ -211,12 +212,13 @@ public class Client{
             writer.interrupt();
             reader.interrupt();
         }
-        writeStatement( LOG_OUT );
-        writeStatement( WORK_END );
+        //writeStatement( LOG_OUT );
+        //writeStatement( WORK_END );
     }
 
     public int connect() throws IOException{
-        if( socket != null ) socket.close();
+        if( socket != null )
+            socket.close();
         try{
             socket = new Socket( ip, port );
         }catch( UnknownHostException e ){
@@ -274,7 +276,7 @@ public class Client{
         } );
     }
 
-    private void createWriter(){        //TODO
+    private void createWriter(){
         writer = new Thread( () -> {
             try{
                 String changes = "";
@@ -302,13 +304,13 @@ public class Client{
         keepAlive = new Thread( () -> {
             try{
                 while( isAlive && isRunning ){
-                    Thread.sleep( 100000 );
+                    Thread.sleep( 1000000 );
                     isAlive = false;
                     writeStatement( KEEP_ALIVE );
                     Thread.sleep( 1000 );
                 }
                 Platform.runLater( () -> notepad.displayError( "Connection broken.\nYour changes are no longer updated.\nPlease restart connection." ) );
-                isRunning = false;
+                //isRunning = false;
                 scanner.close();
             }catch( InterruptedException iEx ){
                 System.out.print( "Keep-alive thread ended.\n" );

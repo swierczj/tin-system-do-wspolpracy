@@ -64,27 +64,27 @@ public class Connect{
     }
 
     private int createClient() throws IOException{
-//        if( !connected ){                 //TODO uncomment if server is working
+        if( !connected ){                 //TODO uncomment if server is working
             client = new Client( ip, port );
-//            if( client.connect() != 0 ){
-//                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
-//                return -1;
-//            }
-//            connected = true;
-//            System.out.print( "Connected\n" );
-//        }
-//        client.setLoginData( loginField.getText(), passwordField.getText() );
-//        int isLogged = client.login();
-//        if( isLogged == -1 ){
-//            //client.quit();
-//            displayError( "Login or password incorrect." );
-//            return -2;
-//        }
-//        if( isLogged == -2 ){
-//            displayError( "Server is dead." );
-//            connected = false;
-//            return -3;
-//        }
+            if( client.connect() != 0 ){
+                displayError( "Cannot connect to " + ip + ":" + portField.getText() );
+                return -1;
+            }
+            connected = true;
+            System.out.print( "Connected\n" );
+        }
+        client.setLoginData( loginField.getText(), passwordField.getText() );
+        int isLogged = client.login();
+        if( isLogged == -1 ){
+            //client.quit();
+            displayError( "Login or password incorrect." );
+            return -2;
+        }
+        if( isLogged == -2 ){
+            displayError( "Server is dead." );
+            connected = false;
+            return -3;
+        }
         client.createGUI();
         return 0;
     }
