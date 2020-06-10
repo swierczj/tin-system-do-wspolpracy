@@ -77,10 +77,14 @@ public class Notepad{
     public void applyChanges( String changes ){
         int caretPos = textArea.getCaretPosition();
         String[] temp = changes.split( String.valueOf( ( char )BUFFER_SPLITTER_ASCII_CODE ) );
-        String[] deletedChars = temp[ 0 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
-        String[] addedChars = temp[ 1 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
-        if( addedChars[ 0 ].equals( "" ) ) addedChars = new String[ 0 ];
-        if( deletedChars[ 0 ].equals( "" ) ) deletedChars = new String[ 0 ];
+        String[] deletedChars = {};
+        String[] addedChars = {};
+        if( temp.length > 0 )
+            deletedChars = temp[ 0 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
+        if( temp.length > 1 )
+            addedChars = temp[ 1 ].split( String.valueOf( ( char )CHAR_SPLITTER_ASCII_CODE ), 0 );
+        if( addedChars.length == 0 || addedChars[ 0 ].equals( "" ) ) addedChars = new String[ 0 ];
+        if( deletedChars.length == 0 || deletedChars[ 0 ].equals( "" ) ) deletedChars = new String[ 0 ];
         for( String c : addedChars )
             addChar( toCharacter( c ), caretPos );
         for( String c : deletedChars )
