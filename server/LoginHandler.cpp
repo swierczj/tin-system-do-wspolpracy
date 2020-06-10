@@ -52,7 +52,7 @@ int LoginHandler::is_login_info_correct(const LoginInfo &login_inf)
     auto login_pos = user_exists(login);
     if (login_pos != -1)
     {
-        // pseudocode below!!!
+        // pseudocode below
         // version with encryption below
         // auto salt = get_salt(login);
         // auto hash = get_hash(login);
@@ -66,8 +66,6 @@ int LoginHandler::is_login_info_correct(const LoginInfo &login_inf)
 bool LoginHandler::LoginInfo::is_lexically_correct() const
 {
     return (login.find_first_of("\n\t ") == std::string::npos && passwd.find_first_of("\n\t ") == std::string::npos);
-//    return (login.find(' ') == std::string::npos && login.find('\n') == std::string::npos && login.find('\t') == std::string::npos
-//         && passwd.find(' ') == std::string::npos && passwd.find('\n') == std::string::npos && passwd.find('\t') == std::string::npos)
 }
 
 int LoginHandler::user_exists(std::string const &login)
@@ -76,9 +74,7 @@ int LoginHandler::user_exists(std::string const &login)
     std::cout << "in user_exists" << std::endl;
     if (!users_info.get_size())
         return false;
-        //return std::string::npos;
     // else
-    //FileIOHandler file_handler;
     if (is_buff_empty())
     {
         FileIOHandler file_handler;

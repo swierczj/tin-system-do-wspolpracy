@@ -26,19 +26,17 @@ int Header::get_msg_type() { return msg_type; }
 
 int Header::get_message_type() const
 {
-    // -1 for Header
     return Message::HEADER;
 }
 
 Header parse_from_string(std::string const &str)
 {
-    std::cout << "header: " << str << " size: " << str.size() /*<< "and exception check values: " << (str.size() != Header::header_size) << " and 2nd: " << std::all_of(str.begin(), str.end(), ::isdigit)*/ << std::endl;
+    std::cout << "header: " << str << " size: " << str.size() << std::endl;
     if (str.size() != Header::header_size || !std::all_of(str.begin(), str.end(), ::isdigit))
         throw std::underflow_error("wrong header");
     std::string msg_type_part = str.substr(0, Header::msg_type_len);
     std::string msg_len_part = str.substr(Header::msg_type_len, Header::header_size);
     int msg_type = std::stoi(msg_type_part);
     int msg_len = std::stoi(msg_len_part);
-    //std::cout << "msg type: " << msg_type << std::endl << "msg len: " << msg_len << std::endl;
     return Header(msg_type, msg_len);
 }

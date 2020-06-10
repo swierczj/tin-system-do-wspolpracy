@@ -84,13 +84,10 @@ private:
 public:
 	// Function remembers given changes directly from clients
 	void applyChanges( std::string changes ){
-		std::cout << "in apply changes, str: " << changes << std::endl;
 	    auto buffers = split( changes, std::string( 1, BUFFER_SPLITTER_ASCII ) );
 		auto added = split( buffers[ 1 ], std::string( 1, CHAR_SPLITTER_ASCII ), false );
 		auto deleted = split( buffers[ 0 ], std::string( 1, CHAR_SPLITTER_ASCII ), false );
-		std::cout << "before added and deleted chars" << std::endl;
 		addedChars.insert( std::end( addedChars ), std::begin( added ), std::end( added ) );
-		std::cout << "before " << std::endl;
 		deletedChars.insert( std::end( deletedChars ), std::begin( deleted ), std::end( deleted ) );
 	}
 

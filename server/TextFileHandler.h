@@ -1,7 +1,6 @@
 #ifndef TIN_TEXTFILEHANDLER_H
 #define TIN_TEXTFILEHANDLER_H
 
-
 #include <string>
 #include <vector>
 #include <algorithm>

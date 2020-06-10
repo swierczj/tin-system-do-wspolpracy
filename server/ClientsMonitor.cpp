@@ -5,6 +5,7 @@ void ClientsMonitor::add_new_cli(int sockfd)
     clients_state.insert(std::make_pair(sockfd, std::make_pair(std::make_pair(IDLE, 0), std::make_pair(HEADER_TO_SEND, Header::consts::header_size))));
 }
 
+// get number of clients to whom server must init communication
 int ClientsMonitor::get_to_write_connections_number()
 {
     int count = 0;

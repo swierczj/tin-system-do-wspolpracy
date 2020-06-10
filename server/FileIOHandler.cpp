@@ -4,8 +4,6 @@ void FileIOHandler::create_file(std::string const &fn)
 {
     if (fn.empty())
         throw std::runtime_error("creating file error");
-    //std::string full = path + name;
-    //std::cout << "full: " << full << std::endl;
     std::ofstream file(fn);
     file.close();
 }
@@ -15,14 +13,8 @@ bool FileIOHandler::file_exists(const std::string &fn)
     std::fstream f;
     f.open(fn);
     auto res = !f.fail();
-    //f.close();
     return res;
-    //return !f.fail();
 }
-//void FileIOHandler::find(const std::string &str)
-//{
-//
-//}
 
 std::string FileIOHandler::read_to_buffer(const std::string &fn)
 {

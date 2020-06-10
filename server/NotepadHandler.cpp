@@ -21,21 +21,18 @@ bool NotepadHandler::is_active(int sockfd)
 
 void NotepadHandler::add_client(int sockfd)
 {
-    //if (!is_active(sockfd))
-    //{
-        add_contributor(sockfd);
-        if (get_active_users_number() == 1)
-        {
-            int files_count = FileIOHandler().get_files_number("./texts");
-            std::string fn = "./texts/id_" + std::to_string(sockfd) + "_" + std::to_string(files_count + 1);
-            std::cout << "filename: " << fn << std::endl;
-            FileIOHandler().create_file(fn);
-            text_files.add_filename(fn);
-            //init(fn); //for many files
-        }
-        else
-            to_fetch_changes.insert(sockfd);
-    //}
+    add_contributor(sockfd);
+    if (get_active_users_number() == 1)
+    {
+        int files_count = FileIOHandler().get_files_number("./texts");
+        std::string fn = "./texts/id_" + std::to_string(sockfd) + "_" + std::to_string(files_count + 1);
+        std::cout << "filename: " << fn << std::endl;
+        FileIOHandler().create_file(fn);
+        text_files.add_filename(fn);
+        //init(fn); //for many files
+    }
+    else
+        to_fetch_changes.insert(sockfd);
 }
 
 void NotepadHandler::edit_contents(const std::string &changes)
@@ -92,11 +89,6 @@ std::string NotepadHandler::get_stored_changes(int sockfd)
     return changes_buffs.at(sockfd);
 }
 
-int NotepadHandler::get_changes_left()
-{
-    return changes_left;
-}
-
 std::string NotepadHandler::get_changes(int sockfd)
 {
     auto recent_change = changes_tracker[sockfd].front();
@@ -107,10 +99,8 @@ std::string NotepadHandler::get_changes(int sockfd)
     if (changes_left == 0)
     {
         last_change = recent_change;
-        //changes_left = contributors.size() - 1;
     }
     std::string res = changes_buffs[editor_id].substr(0, recent_change.change_nbytes);
-    //remove_extracted_changes(recent_change, sockfd);
     return res;
 }
 
@@ -127,13 +117,6 @@ void NotepadHandler::keep_track_of_changes(int sockfd, int nbytes)
         else
             std::cout << "not emplaced" << std::endl;
     }
-}
-
-void NotepadHandler::remove_extracted_changes(PendingChanges &pc, int sockfd)
-{
-    int editor_id = pc.from;
-    changes_buffs[editor_id].erase(0, pc.change_nbytes);
-    changes_tracker[sockfd].pop_front();
 }
 
 void NotepadHandler::remove_sent_changes(int sockfd)

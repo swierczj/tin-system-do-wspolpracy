@@ -73,11 +73,6 @@ void Networking::add_to_send(int sockfd, int msg_type, int msg_len)
     send_queues[sockfd].emplace_back(NetState(msg_type, msg_len));
 }
 
-void Networking::pop_ended_send(int sockfd)
-{
-    send_queues[sockfd].pop_front();
-}
-
 int Networking::get_queue_len(int sockfd)
 {
     return send_queues[sockfd].size();
@@ -111,11 +106,4 @@ void Networking::remove_sent(int sockfd, int msg_t)
         }
     }
     send_queues[sockfd].erase(it);
-//    auto queue = send_queues[sockfd];
-//    for (auto &elem : queue)
-//    {
-//        auto comp = elem.msg_type;
-//        if (msg_t == comp)
-//            send_queues[sockfd].remove(elem);
-//    }
 }

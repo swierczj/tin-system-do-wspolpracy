@@ -11,8 +11,6 @@ class Header : public Message
 private:
     int msg_type;
     int msg_len;
-//    enum header_msg_type {LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3};
-//    enum consts {header_size = 6, msg_type_len = 2};
 public:
     Header(int type, int len) : msg_type(type), msg_len(len) {};
     enum header_msg_type {LOGIN = 0, STATEMENT = 1, EDIT = 2, PUBLIC_KEY = 3};

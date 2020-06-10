@@ -1,9 +1,7 @@
 #ifndef TIN_NOTEPADHANDLER_H
 #define TIN_NOTEPADHANDLER_H
 
-//#include <filesystem>
 #include <map>
-//#include <chrono>
 #include <set>
 #include "TextFileHandler.h"
 #include "FileIOHandler.h"
@@ -14,7 +12,6 @@ class NotepadHandler
 private:
     bool opened;
     TextFileHandler text_files;
-    //unsigned int active_users;
     std::set<int> contributors;
     Note notepad;
     std::set<int> to_fetch_changes;
@@ -32,7 +29,7 @@ private:
     void init(std::string const &fn);
     void keep_track_of_changes(int sockfd, int nbytes);
     PendingChanges last_change;
-    void remove_extracted_changes(PendingChanges &pc, int sockfd);
+    //void remove_extracted_changes(PendingChanges &pc, int sockfd);
 public:
     NotepadHandler() : opened(false), notepad(-1) {}
     void open();
@@ -48,7 +45,7 @@ public:
     std::set<int> get_contributors();
     std::string get_file_as_str();
     std::string get_stored_changes(int sockfd);
-    int get_changes_left();
+    //int get_changes_left();
     std::string get_changes(int sockfd);
     void remove_sent_changes(int sockfd);
     void remove_contributor(int sockfd);
