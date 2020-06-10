@@ -1,0 +1,49 @@
+syntax = "proto2";
+
+package protocole;
+
+option java_package = "clientJava";
+option java_outer_classname = "clientJava";
+
+message Header{
+  required int32 msgLength = 1;
+
+  enum MsgType{
+    LOGIN = 0;
+    STATEMENT = 1;
+    EDIT = 2;
+    PUBLIC_KEY = 3;
+  }
+  required MsgType msgType = 2;
+}
+
+message LoginInfo{
+    required string login = 1;
+    required string password = 2;
+}
+
+message Statement{
+    enum Info{
+        KEEP_ALIVE = 0;
+        REQUEST_LOGIN = 1;
+        LOGIN_ACCEPTED = 2;
+        LOGIN_REJECTED = 3;
+        LOG_OUT = 4;
+        WORK_END = 5;
+        PUBLIC_KEY_REQUEST = 6;
+    }
+    required Info info = 1;
+}
+
+message Edit{
+  required string data = 1;
+}
+
+message Key{
+  enum KeyType{
+     SYMMETRIC = 0;
+     PUBLIC = 1;
+  }
+  required KeyType keyType = 1; 
+  required string key =2;
+}

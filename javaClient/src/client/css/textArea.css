@@ -1,0 +1,12 @@
+.text-area{
+	-fx-background-color: white;
+	-fx-text-fill: white;
+	-fx-highlight-text-fill: #202020;
+	-fx-highlight-fill: white;
+	-fx-border-radius: 0;
+	-fx-background-radius: 0;
+}
+
+.text-area .content{
+	-fx-background-color: #202020;
+}

@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="javaClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/javaClient_jar</output-path>
+    <root id="archive" name="javaClient.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="javaClient" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/src.zip" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx-swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx.web.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx.base.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx.fxml.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx.media.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx.swing.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx.controls.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/Java/javafx-sdk-14.0.1/lib/javafx.graphics.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="C:/Program Files/SceneBuilder/app/scenebuilder-11.0.0-all.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

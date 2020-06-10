@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ASCII"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.Notepad">
+  <children>
+      <GridPane maxHeight="32.0" minHeight="32.0" prefHeight="32.0" prefWidth="1280.0" style="-fx-background-color: #2b2a4c;">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+          <MenuBar fx:id="dragPane" prefHeight="38.0" prefWidth="1215.0" stylesheets="@css/menu.css">
+            <menus>
+              <Menu mnemonicParsing="false" style="-fx-text-fill: white;" text="File">
+                <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openFromServer" text="Open from server" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#save" text="Save" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Save As…" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
+                </items>
+              </Menu>
+              <Menu mnemonicParsing="false" text="Net">
+                <items>
+                  <MenuItem mnemonicParsing="false" onAction="#reconnect" text="Reconnect" />
+                </items>
+              </Menu>
+              <Menu mnemonicParsing="false" text="Help">
+                <items>
+                  <MenuItem mnemonicParsing="false" onAction="#goToGitHub" text="GitHub repo" />
+                </items>
+              </Menu>
+            </menus>
+          </MenuBar>
+            <Button contentDisplay="CENTER" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#quit" prefHeight="32.0" prefWidth="32.0" stylesheets="@css/quitButton.css" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/quit.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </GridPane>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <TextArea fx:id="textArea" onMouseClicked="#setPrevCaretPos" prefHeight="688.0" prefWidth="1280.0" stylesheets="@css/textArea.css" wrapText="true" />
+         </children>
+    </AnchorPane>
+  </children>
+</VBox>
