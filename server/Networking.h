@@ -6,6 +6,7 @@
 #include "ClientsMonitor.h"
 #include "Message.h"
 
+
 class Networking
 {
 private:
@@ -32,10 +33,13 @@ public:
     void set_msg_len(int sockfd, int msg_l);
     int get_msg_type(int sockfd);
     int get_msg_len(int sockfd);
-    void set_multicast(std::set<int> const &receivers, ClientsMonitor &cm, int msg_t, int msg_len);
+    void set_multicast(std::set<int> const &receivers, ClientsMonitor &cm, int msg_t, int msg_len); // possibly add flag immediate, to make service without delay for example when client fetched changes and edited document
     void add_to_send(int sockfd, int msg_type, int msg_len);
     void pop_ended_send(int sockfd);
     int get_queue_len(int sockfd);
+    int get_first_obs_len(int sockfd, int msg_t);
+    void remove_sent(int sockfd, int msg_t);
+
 };
 
 

@@ -2,12 +2,12 @@
 
 bool Networking::is_waiting_for_header(int sockfd, ClientsMonitor &cm)
 {
-    return cm.get_socket_read_state(sockfd) == ClientsMonitor::HEADER_TO_RECV;
+    return cm.get_socket_read_state(sockfd) == ClientsMonitor::HEADER_TO_RECV || cm.get_socket_read_state(sockfd) == ClientsMonitor::MSG_SENT;
 }
 
 bool Networking::is_waiting_for_msg(int sockfd, ClientsMonitor &cm)
 {
-    std::cout << "in is waiting func state: " << cm.get_socket_read_state(sockfd) << std::endl;
+    std::cout << "in is waiting for msg func state: " << cm.get_socket_read_state(sockfd) << std::endl;
     return cm.get_socket_read_state(sockfd) == ClientsMonitor::HEADER_RECVD;
 }
 
@@ -81,4 +81,41 @@ void Networking::pop_ended_send(int sockfd)
 int Networking::get_queue_len(int sockfd)
 {
     return send_queues[sockfd].size();
+}
+
+int Networking::get_first_obs_len(int sockfd, int msg_t)
+{
+    bool found;
+    int res = -1;
+    for (auto i = send_queues[sockfd].begin(); i != send_queues[sockfd].end() && !found; ++i)
+    {
+        if (i->msg_type == msg_t)
+        {
+            res = i->msg_len;
+            found = true;
+        }
+    }
+    return res;
+}
+
+void Networking::remove_sent(int sockfd, int msg_t)
+{
+    bool found = false;
+    auto it = send_queues[sockfd].begin();
+    for (auto i = it; i != send_queues[sockfd].end() && !found; ++i)
+    {
+        if (i->msg_type == msg_t)
+        {
+            found = true;
+            it = i;
+        }
+    }
+    send_queues[sockfd].erase(it);
+//    auto queue = send_queues[sockfd];
+//    for (auto &elem : queue)
+//    {
+//        auto comp = elem.msg_type;
+//        if (msg_t == comp)
+//            send_queues[sockfd].remove(elem);
+//    }
 }

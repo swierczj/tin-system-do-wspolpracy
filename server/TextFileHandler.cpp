@@ -38,3 +38,8 @@ std::string TextFileHandler::get_filename_at_pos(int index)
 {
     return filenames[index];
 }
+
+std::string TextFileHandler::get_recent_fn()
+{
+    return filenames.back();
+}

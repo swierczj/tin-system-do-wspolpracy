@@ -50,6 +50,11 @@ public:
     std::string get_stored_changes(int sockfd);
     int get_changes_left();
     std::string get_changes(int sockfd);
+    void remove_sent_changes(int sockfd);
+    void remove_contributor(int sockfd);
+    void save_to_file();
+
+    std::string get_str();
 };
 
 

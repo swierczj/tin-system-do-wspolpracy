@@ -15,15 +15,31 @@ void Server::run()
         //FileIOHandler().create_file("./", "test");
         fd_set read_set = master;
         fd_set write_set;
+        //&write_set = nullptr;
+        //FD_ZERO(&write_set);
         int socket_count;
         if (clients.get_to_write_connections_number() > 0 /*&& !login_ended*/)
         {
-            write_set = init_set_with_fds(clients.get_write_descriptors());
+            auto tmp = clients.get_write_descriptors();
+            auto t = tmp;
+            t.erase(t.begin(), t.end());
+            for(auto &elem : tmp)
+            {
+                if (!clients.login_ended(elem) || (clients.login_ended(elem) && networking.get_queue_len(elem) > 0))
+                    t.push_back(elem);
+            }
+
+
+            //write_set = init_set_with_fds(clients.get_write_descriptors());
+            write_set = init_set_with_fds(t);
             //write_set = master;
             socket_count = select_fds(max_sd + 1, &read_set, &write_set);
         }
         else
+        {
             socket_count = select_fds(max_sd + 1, &read_set);
+            FD_ZERO(&write_set);
+        }
         if (socket_count < 1)
             break;
         int desc_ready = socket_count;
@@ -43,6 +59,7 @@ void Server::run()
             }
             // handle situation when server must be the one to initialize communication
             //std::cout << "for loop, before get_socket_write check cli state.size: " << clients_state.size() << std::endl;
+            std::cout << "socket write state: " << clients.get_socket_write_state(current_desc) << " is set in writing: " << (FD_ISSET(current_desc, &write_set)) << std::endl;
             if ((clients.get_socket_write_state(current_desc) == HEADER_TO_SEND || clients.get_socket_write_state(current_desc) == HEADER_SENT) && FD_ISSET(current_desc, &write_set))
             {
                 desc_ready -= 1;
@@ -277,7 +294,20 @@ void Server::handle_existing_incoming_connection(int sockfd)
                 if (res < 0)
                 {
                     if (res < -1)
+                    {
+                        if (res == -2)
+                        {
+                            if (notepad.is_active(sockfd))
+                            {
+                                notepad.remove_contributor(sockfd);
+                                // if last client, save contents to file
+                                if (notepad.get_active_users_number() == 0)
+                                    notepad.save_to_file();
+                            }
+                            std::cout << "closed conn by client" << std::endl << "left to send: " << networking.get_queue_len(sockfd) << std::endl;
+                        }
                         close_conn = true;
+                    }
                     else
                         change_cli = true;
                 }
@@ -300,11 +330,7 @@ void Server::handle_existing_incoming_connection(int sockfd)
                 if (res < 0)
                 {
                     if (res < -1)
-                    {
-                        if (res == -2)
-                            std::cout << "closed conn by client" << std::endl;
                         close_conn = true;
-                    }
                     else
                         change_cli = true;
                 }
@@ -326,7 +352,9 @@ void Server::handle_existing_incoming_connection(int sockfd)
                         // if client sending EDIT is using system
                         if (!notepad.is_to_fetch_changes(sockfd))
                         {
+
                             notepad.edit_contents(edit_text);
+                            std::cout << "decoded value of file: "/* << notepad.get_str()*/ << std::endl;
                             // prepare header to send other clients info
                             //networking.set_msg_len(sockfd, edit_text.size());
                             auto multicast_clients = notepad.get_contributors();
@@ -340,39 +368,40 @@ void Server::handle_existing_incoming_connection(int sockfd)
                         }
                         recv_buffers.clear_buff(sockfd);
                     }
+                    change_cli = true; // for tests
                 }
             }
 
 
 
-            std::cout << "blocked on recv() OUTSIDE THE MAIN PROGRAM" << std::endl;
-            int bytes_recv = recv(sockfd, buffer, buff_size, 0);
-            if (bytes_recv < 0)
-            {
-                if (errno != EWOULDBLOCK)
-                {
-                    std::cerr << "recv() error" << std::endl;
-                    close_conn = true;
-                }
-                change_cli = true;
-                //break;
-
-            }
-            else if (bytes_recv == 0)
-            {
-                std::cout << "client disconnected" << std::endl;
-                close_conn = true;
-            }
-            else
-            {
-                if (set_socket_opt(sockfd, IPPROTO_TCP, TCP_QUICKACK, true) < 0)
-                    close_conn = true;
-                else
-                {
-                    std::cout << "server received: " << std::string(buffer, 0, bytes_recv) << std::endl;
-                    close_conn = forward_message(sockfd, buffer);
-                }
-            }
+//            std::cout << "blocked on recv() OUTSIDE THE MAIN PROGRAM" << std::endl;
+//            int bytes_recv = recv(sockfd, buffer, buff_size, 0);
+//            if (bytes_recv < 0)
+//            {
+//                if (errno != EWOULDBLOCK)
+//                {
+//                    std::cerr << "recv() error" << std::endl;
+//                    close_conn = true;
+//                }
+//                change_cli = true;
+//                //break;
+//
+//            }
+//            else if (bytes_recv == 0)
+//            {
+//                std::cout << "client disconnected" << std::endl;
+//                close_conn = true;
+//            }
+//            else
+//            {
+//                if (set_socket_opt(sockfd, IPPROTO_TCP, TCP_QUICKACK, true) < 0)
+//                    close_conn = true;
+//                else
+//                {
+//                    std::cout << "server received: " << std::string(buffer, 0, bytes_recv) << std::endl;
+//                    close_conn = forward_message(sockfd, buffer);
+//                }
+//            }
         }
         //}
     } // while
@@ -404,6 +433,8 @@ void Server::handle_existing_outbound_connection(int sockfd)
                 std::cout << "sending sockets, change to receiving" << std::endl;
                 change_client = true;
             }
+            if (clients.login_ended(sockfd))
+                change_client = true;
 //            else if (res == LOGIN_SUCCESSFUL)
 //            {
 //                std::cout << "now recv some, conns to write: " << clients.get_to_write_connections_number() << std::endl;
@@ -419,16 +450,25 @@ void Server::handle_existing_outbound_connection(int sockfd)
             {
                 int msg_type = networking.get_msg_type(sockfd);
                 int msg_len = networking.get_msg_len(sockfd);
+                std::cout << "assigned in sending msg_len: " << msg_len << ", msg type: " << msg_type << std::endl;
                 if (msg_type == Message::EDIT)
                 {
+                    std::cout << "sending edit msg" << std::endl;
                     if (notepad.is_to_fetch_changes(sockfd))
                     {
+                        std::cout << "to fetch changes header prep" << std::endl;
                         // prepare to send whole file contents
                         msg_len = notepad.get_notepad_current_size();
                         networking.set_msg_len(sockfd, msg_len);
                     }
-                    /*TODO else multicast client*/
+                    else
+                    {
+                        // there may be many pending messages, so we are looking for correct one i.e. first occurrence in pending list for given socket
+                        msg_len = networking.get_first_obs_len(sockfd, msg_type);
+                        networking.set_msg_len(sockfd, msg_len);
+                    }
                 }
+                std::cout << "before sending header with edit: " << msg_len << " type: " << msg_type << std::endl;
                 res = send_msg(sockfd, clients, Header(msg_type, msg_len));
                 if (res == -1)
                 {
@@ -443,6 +483,7 @@ void Server::handle_existing_outbound_connection(int sockfd)
             }
             if (networking.to_send_msg(sockfd, clients))
             {
+                // get type and len of msg to send
                 auto msg_type = networking.get_msg_type(sockfd);
                 auto msg_len = networking.get_msg_len(sockfd);
                 if (msg_type == Message::EDIT)
@@ -463,16 +504,21 @@ void Server::handle_existing_outbound_connection(int sockfd)
                         if (notepad.is_to_fetch_changes(sockfd))
                         // message with file sent so data fetched, now apply changes stored
                         {
-                            std::string edit_text = notepad.get_stored_changes(sockfd); // may not work properly
+                            std::string edit_text = notepad.get_stored_changes(sockfd); // may not work properly, someone would have modified the file
+                            // edit file
                             notepad.get_stored_changes(sockfd);
                             notepad.edit_contents(edit_text);
-                            // prepare header to send other clients info
+                            // prepare header to send other clients info about edits
                             auto multicast_clients = notepad.get_contributors();
                             multicast_clients.erase(sockfd);
                             networking.set_multicast(multicast_clients, clients, Message::EDIT, edit_text.size());
                         }
                         else
-                            /*TODO multicast, received edits*/
+                        {
+                            notepad.remove_sent_changes(sockfd);
+                            networking.remove_sent(sockfd, msg_type);
+                        }
+                        /*TODO multicast, sent all edits*/
                         change_client = true; // now recv some
                         //return Server::LOGIN_SUCCESSFUL;
                     }
@@ -744,8 +790,11 @@ int Server::recv_nbytes(int sockfd, int to_recv)
     bytes_recv = nonblock_recv(sockfd, buff, to_recv);
     if (bytes_recv == -1)
         return -1; // change client, EWOULDBLOCK occured
-    else if (bytes_recv < -1)
+    else if (bytes_recv == 0 /*&& to_recv != 0*/)
         return -2;
+    else if (bytes_recv < -1)
+        return -3;
+
     recv_buffers.cpy_to_recv_buff(buff, bytes_recv, sockfd);
     //cpy_to_recv_buff(buff, bytes_recv, sockfd);
     return bytes_recv;
@@ -856,7 +905,7 @@ int Server::recv_msg(int sockfd, ClientsMonitor &cm, int msg_type)
         cm.set_socket_read_bytes_number(sockfd, to_recv - res);
         return 0;
     }
-    else if (res == 0)
+    else if (res == -2)
     {
         std::cout << "connection closed" << std::endl;
         return -2;
@@ -864,7 +913,7 @@ int Server::recv_msg(int sockfd, ClientsMonitor &cm, int msg_type)
     else
     {
         std::cout << "other error: " << res;
-        return res - 1; // -2 taken for signaling closed connection, so errno subtracted
+        return res;
     }
 }
 

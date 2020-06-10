@@ -3,8 +3,8 @@ CXXFLAGS=-c -g -std=gnu++17 -std=c++17
 
 all: server
 
-server: main.o Server.o Networking.o RecvBuffers.o ClientsMonitor.o LoginHandler.o NotepadHandler.o TextFileHandler.o ClientID.o Statement.o Header.o Message.o FileIOHandler.o Note.o serv_func.o
-	$(CXX) main.o Server.o Networking.o RecvBuffers.o ClientsMonitor.o LoginHandler.o NotepadHandler.o TextFileHandler.o ClientID.o Statement.o Header.o Message.o FileIOHandler.o Note.o serv_func.o -o server
+server: main.o Server.o Networking.o RecvBuffers.o ClientsMonitor.o LoginHandler.o NotepadHandler.o TextFileHandler.o Edit.o ClientID.o Statement.o Header.o Message.o FileIOHandler.o Note.o serv_func.o
+	$(CXX) main.o Server.o Networking.o RecvBuffers.o ClientsMonitor.o LoginHandler.o NotepadHandler.o TextFileHandler.o Edit.o ClientID.o Statement.o Header.o Message.o FileIOHandler.o Note.o serv_func.o -o server
 
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) main.cpp
@@ -29,6 +29,9 @@ NotepadHandler.o: NotepadHandler.h NotepadHandler.cpp
 
 TextFileHandler.o: TextFileHandler.h TextFileHandler.cpp
 	$(CXX) $(CXXFLAGS) TextFileHandler.h TextFileHandler.cpp
+
+Edit.o: Edit.h Edit.cpp
+	$(CXX) $(CXXFLAGS) Edit.h Edit.cpp
 
 ClientID.o: ClientID.h ClientID.cpp
 	$(CXX) $(CXXFLAGS) ClientID.h ClientID.cpp

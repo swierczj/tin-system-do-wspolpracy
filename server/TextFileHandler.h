@@ -18,6 +18,7 @@ public:
     std::string get_filenames_in_str(char delimiter);
     int get_size();
     std::string get_filename_at_pos(int index);
+    std::string get_recent_fn();
 };
 
 
